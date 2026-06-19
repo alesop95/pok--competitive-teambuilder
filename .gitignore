@@ -1,0 +1,37 @@
+# --- Sistema di progetto portabile: livello privato e ignorato (PROJECT-SYSTEM.md 6/10) ---
+
+# Livello privato e verboso
+_notes/
+
+# Override personali e permessi personali
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Estratti temporanei dei .docx (cartelle scratch)
+_notes/.tmp-docx-*/
+.tmp-docx-*/
+
+# Documenti Word grezzi (binari). Dichiarare qui le eventuali eccezioni curate, es:
+#   *.docx
+#   !docs/specifica-ufficiale.docx
+*.docx
+
+# --- Ambiente materializzato (sezione 13): si versiona il manifesto, si ignora il derivato ---
+
+# Node
+node_modules/
+dist/
+build/
+.env
+*.log
+
+# Python (residuo, non usato dopo il pivot a Node/TS — ADR-001)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

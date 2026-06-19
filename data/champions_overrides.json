@@ -1,0 +1,4 @@
+{
+  "_note": "Eccezioni residue del formato Champions NON coperte dalla mod 'champions' di Pokémon Showdown (ADR-005). Layer secondario: la fonte primaria delle regole è la mod. Una voce per specie, es: { \"Aggron\": { \"banned_abilities\": [], \"banned_moves\": [], \"notes\": \"...\" } }.",
+  "overrides": {}
+}

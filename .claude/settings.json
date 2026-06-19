@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "autoMemoryEnabled": false,
+  "env": {
+    "PROJECT_NAME": "poke-competitive-teambuilder",
+    "PROJECT_PHASE": "init"
+  }
+}
