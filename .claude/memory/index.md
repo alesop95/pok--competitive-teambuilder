@@ -8,7 +8,7 @@
 
 ```
 Branch attivo:         main
-Commit di riferimento: PENDING-FIRST-COMMIT
+Commit di riferimento: 373419b
 Data snapshot:         2026-06-19
 ```
 
@@ -16,19 +16,17 @@ Data snapshot:         2026-06-19
 
 | Scheda | last-verified | Stato |
 |---|---|---|
-| STACK.md | PENDING-FIRST-COMMIT | aggiornata |
-| design-and-security.md | PENDING-FIRST-COMMIT | aggiornata |
-| deployment.md | PENDING-FIRST-COMMIT | aggiornata |
-| dev-testing.md | PENDING-FIRST-COMMIT | aggiornata |
-| current-work.md | PENDING-FIRST-COMMIT | aggiornata |
-| roadmap.md | PENDING-FIRST-COMMIT | aggiornata |
+| STACK.md | 373419b | aggiornata |
+| design-and-security.md | 373419b | aggiornata |
+| deployment.md | 373419b | aggiornata |
+| dev-testing.md | 373419b | aggiornata |
+| current-work.md | 373419b | aggiornata |
+| roadmap.md | 373419b | aggiornata |
 
 ## Punto di ripresa
 
-Il sistema è inizializzato e lo scaffold della Fase 0 è creato ma non ancora committato. Prossima
-azione: l'utente esegue il primo commit manuale, poi si lancia la skill `sync-context` per
-sostituire ogni `PENDING-FIRST-COMMIT` con l'hash reale di HEAD. Subito dopo, Fase 1 dell'handoff:
-implementare il tagging dei ruoli (`src/roleTagging.ts`, §4.1) e la generazione team
-(`src/teamGenerator.ts`, §4.2) sul roster M-B quando Alessio lo fornisce. Domanda aperta da
-chiudere in Fase 0/1: la mod `champions` di Showdown è esposta da `@pkmn/mods` o va importata dal
-repository (vedi `current-work.md`).
+Sistema inizializzato e scaffold della Fase 0 committato (`373419b`); schede ancorate a HEAD via
+`sync-context`. Prossima azione: Fase 1 dell'handoff — implementare il tagging dei ruoli
+(`src/roleTagging.ts`, §4.1) e la generazione team (`src/teamGenerator.ts`, §4.2) sul roster M-B
+quando Alessio lo fornisce. Domanda aperta da chiudere in Fase 1: la mod `champions` di Showdown è
+esposta da `@pkmn/mods` o va importata dal repository (ADR-005, vedi `current-work.md`).
