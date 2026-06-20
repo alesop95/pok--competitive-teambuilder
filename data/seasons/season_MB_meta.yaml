@@ -1,0 +1,56 @@
+season_id: M-B
+# Meta curato a mano (handoff §3.3). PRELIMINARE: il Regulation M-B è iniziato il 17 giugno 2026 e
+# il meta è ancora in formazione; questa è una prima istantanea da tier list e analisi, da
+# raffinare con le usage stats man mano. Le specie sono indicate col nome base (la dex risolve la
+# forma base e ne dà i tipi corretti per la coverage; le Mega rilevanti sono citate in why_relevant).
+
+top_threats:
+  - species: Incineroar
+    role_tags: [intimidate, fake_out, pivot, support]
+    why_relevant: "Quasi un auto-pick in doppio: Intimidate, Fake Out e mosse di supporto (Parting Shot/U-turn) spezzano i lead avversari."
+  - species: Sneasler
+    role_tags: [fast_attacker, fake_out, setup]
+    why_relevant: "Indicato tra i migliori del formato: forte pressione offensiva unita al supporto con Fake Out (Unburden con Grass Knot/Acrobatics)."
+  - species: Kingambit
+    role_tags: [late_game_sweeper, priority]
+    why_relevant: "Minaccia di late-game dominante: Supreme Overlord scala col proseguire della partita, Sucker Punch chiude in priorità."
+  - species: Sinistcha
+    role_tags: [bulky_support, trick_room, redirection]
+    why_relevant: "Tra i migliori pezzi di supporto del formato secondo le fonti; bulk elevato e utilità in regime Trick Room."
+  - species: Metagross
+    role_tags: [fast, coverage, steel]
+    why_relevant: "Mega Metagross: indicato come miglior nuova Mega Acciaio, base Speed 110 da Mega, difese e coverage super-efficace ampia."
+  - species: Swampert
+    role_tags: [rain_abuser, wallbreaker]
+    why_relevant: "Mega Swampert: domina i team pioggia con Speed raddoppiata sotto Swift Swim e Wave Crash."
+  - species: Mawile
+    role_tags: [huge_power, wallbreaker]
+    why_relevant: "Mega Mawile: Huge Power trasforma un Attacco modesto in danno devastante; minaccia i pezzi chiave del meta."
+  - species: Staraptor
+    role_tags: [contrary, physical_attacker]
+    why_relevant: "Mega Staraptor: Contrary rende Close Combat senza calo difese, attaccante fisico solido con Dual Wingbeat."
+  - species: Basculegion
+    role_tags: [adaptability, wallbreaker]
+    why_relevant: "Adaptability rende le STAB Acqua/Spettro estremamente potenti: crea problemi di matchup a molte aggiunte nuove."
+  - species: Grimmsnarl
+    role_tags: [screens_setter, prankster, support]
+    why_relevant: "Supporto da schermi con Prankster (Reflect/Light Screen), abilita gli archetipi screens offense."
+
+common_cores:
+  - members: [Incineroar, Grimmsnarl]
+    archetype: screens_support
+  - members: [Sneasler, Incineroar]
+    archetype: fake_out_offense
+
+speed_benchmarks:
+  - tier: "fast offense (post Life Orb)"
+    min_speed_after_items: 100
+
+notes_freeform: |
+  Meta giovanissimo (M-B dal 17 giugno 2026). L'introduzione di Life Orb e Wide Lens favorisce
+  attaccanti potenti ma fragili: attese usage elevate per offensive frette. Lista da aggiornare con
+  le usage stats reali quando disponibili. Fonti consultate:
+  - https://www.pokemon-zone.com/champions/ (metagame & tier list)
+  - https://nintendoeverything.com/pokemon-champions-regulation-m-b-new-pokemon/ (winners/losers)
+  - https://www.sportskeeda.com/pokemon/all-pokemon-tier-list-pokemon-champions-regulation-set-m-b
+  - https://game8.co/games/Pokemon-Champions/archives/605482

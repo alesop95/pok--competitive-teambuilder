@@ -51,11 +51,13 @@ solo se è presente `ANTHROPIC_API_KEY`.
 
 ```
 npm install
-npm run dev      # avvia l'app in sviluppo
+npm run dev      # avvia l'app web su http://127.0.0.1:5187 (porta override con PORT)
+npm run generate # in alternativa: genera i team da CLI e scrive un report in data/generated_teams/
 npm test         # esegue la suite Vitest
 ```
 
-L'avvio è identico su Windows e Linux.
+L'avvio è identico su Windows e Linux. La porta di default è 5187; si cambia con la variabile
+d'ambiente `PORT`.
 
 ---
 

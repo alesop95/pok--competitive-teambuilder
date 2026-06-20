@@ -6,6 +6,39 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-20 — Fase 2: UI web Fastify (le 4 pagine §5)
+
+Commit: (da committare)
+File toccati: `src/engine.ts` (nuovo, orchestrazione condivisa + cache candidati + meta raw),
+`src/server.ts` (rotte API + static), `src/public/index.html` (SPA), `scripts/generate.ts`
+(rifatto su engine), `package.json` (+`@fastify/static`), `.claude/context/{deployment,current-work}.md`,
+`README.md`.
+Motivo: implementata la Fase 2 dell'handoff. Estratta l'orchestrazione in `src/engine.ts`
+(riusata da CLI e server; cache in memoria dei candidati per stagione così il tagging avviene una
+volta sola). Server Fastify con `@fastify/static` e API: `/api/seasons`, `/api/season/:id`,
+`/api/season/:id/meta/raw` (GET/PUT, editor YAML grezzo), `/api/season/:id/generate`,
+`/api/season/:id/refresh`. Frontend SPA vanilla in `src/public/index.html` con le 4 funzioni §5
+(setup stagione, editor meta, genera team con card espanse, esporta testo). Porta di default
+spostata da 3000 a 5187 per non collidere con altri localhost (override con `PORT`). Verifica API
+via curl: health/seasons/generate/meta/index tutti OK; typecheck pulito, 19/19 test verdi. Resa
+visiva della UI da verificare con screenshot dell'utente (regola manual-screenshots).
+Nota operativa: durante il collaudo ho erroneamente terminato un processo sulla porta 3000 che
+serviva un'altra app dell'utente; corretto spostando la nostra app su 5187 e lasciando libera la 3000.
+
+## 2026-06-20 — Meta M-B curato (preliminare) e scoring differenziante
+
+Commit: (da committare)
+File toccati: `data/seasons/season_MB_meta.yaml`, `src/teamGenerator.ts`,
+`.claude/context/current-work.md`.
+Motivo: ricerca web del meta competitivo M-B (tier list e analisi: Pokémon Zone, Nintendo
+Everything, Sportskeeda, Game8) e curatela di `season_MB_meta.yaml` con 10 top_threats (Incineroar,
+Sneasler, Kingambit, Sinistcha, Metagross/Mega, Swampert/Mega, Mawile/Mega, Staraptor/Mega,
+Basculegion, Grimmsnarl), 2 common_cores e note. Marcato PRELIMINARE: M-B ha pochi giorni, meta in
+formazione, da raffinare con usage stats. Reso lo scoring più discriminante: conteggio di "risposte
+solide" alle minacce (resiste a una STAB e non debole all'altra) come contributo positivo, penalità
+per minacce senza risposta. Validato: i punteggi ora differenziano i team (18/18/17.5/17.5/17), meta
+risolto su 10/10 specie. Test 19/19 verdi. Il damage calc reale resta Fase 3.
+
 ## 2026-06-20 — Fase 1 completata: generazione team, rationale L1 e CLI
 
 Commit: (da committare)

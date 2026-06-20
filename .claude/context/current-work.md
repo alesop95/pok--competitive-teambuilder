@@ -68,6 +68,20 @@ agganciata al posto della curatela manuale della legalità. Da monitorare.
 Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il
 pacchetto va tenuto intero. Non bloccante.
 
+## Feature: Fase 2 — UI web minima (handoff §5)
+
+Cosa fa: espone il motore via browser. Engine condiviso `src/engine.ts` (cache candidati), server
+Fastify `src/server.ts` con API REST + static, SPA `src/public/index.html` con le 4 pagine §5.
+
+Definition of done:
+
+- [x] engine condiviso riusato da CLI e server (`generateForSeason`, meta raw GET/PUT)
+- [x] server Fastify + `@fastify/static`; API seasons/season/meta/generate verificate via curl
+- [x] SPA con setup stagione, editor meta YAML, genera team (card), esporta testo
+- [x] porta default 5187 (non collide con altri localhost; la 3000 è di un'altra app utente)
+- [x] resa visiva della UI verificata con screenshot dell'utente (tab Setup: layout/dati OK)
+
 ## Riconciliazione
 
-Ultima verifica: 2026-06-20 al commit 373419b.
+Ultima verifica: 2026-06-20 al commit 373419b (le schede non riflettono ancora i commit successivi;
+ri-ancorare con `sync-context` dopo il prossimo commit).

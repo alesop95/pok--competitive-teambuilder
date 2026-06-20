@@ -1,6 +1,189 @@
-<!-- Placeholder del frontend statico servito da Fastify (handoff §5). La UID minima (le 4 pagine:
-     setup stagione, editor meta, genera team, dettaglio/esporta) arriva in Fase 2. -->
-<main>
-  <h1>Pokémon Champions Team Builder</h1>
-  <p>Scaffold di Fase 0. La UI arriva in Fase 2.</p>
-</main>
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pokémon Champions Team Builder</title>
+  <style>
+    :root { --bg:#0f1216; --panel:#171c23; --line:#2a323d; --txt:#e6eaf0; --muted:#97a3b4; --accent:#5aa9e6; --good:#5fd08a; --warn:#e6c15a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--txt); }
+    header { padding:16px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+    h1 { font-size:18px; margin:0; }
+    select, button, input { font:inherit; color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:7px 11px; }
+    button { cursor:pointer; }
+    button.primary { background:var(--accent); color:#06121f; border-color:var(--accent); font-weight:600; }
+    button:hover { border-color:var(--accent); }
+    nav { display:flex; gap:8px; padding:12px 20px; border-bottom:1px solid var(--line); }
+    nav button.active { background:var(--accent); color:#06121f; border-color:var(--accent); }
+    main { padding:20px; max-width:1000px; margin:0 auto; }
+    section { display:none; }
+    section.active { display:block; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
+    .muted { color:var(--muted); }
+    textarea { width:100%; min-height:340px; font-family:ui-monospace,Consolas,monospace; font-size:13px; color:var(--txt); background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:12px; }
+    .card { border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; background:var(--panel); }
+    .card h3 { margin:0 0 4px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .score { color:var(--accent); font-variant-numeric:tabular-nums; }
+    .members { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+    .mon { background:#0c0f13; border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:13px; }
+    .mon small { color:var(--muted); }
+    .tag-good { color:var(--good); }
+    .tag-warn { color:var(--warn); }
+    ul { margin:6px 0; padding-left:18px; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .status { font-size:13px; color:var(--muted); }
+    pre.export { white-space:pre-wrap; background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pokémon Champions Team Builder</h1>
+    <div class="row">
+      <label class="muted" for="season">Stagione</label>
+      <select id="season"></select>
+    </div>
+    <span id="seasonInfo" class="status"></span>
+  </header>
+  <nav>
+    <button data-tab="setup" class="active">Setup stagione</button>
+    <button data-tab="meta">Editor meta</button>
+    <button data-tab="generate">Genera team</button>
+  </nav>
+  <main>
+    <section id="setup" class="active">
+      <div class="panel" id="setupBody"><span class="muted">Carico…</span></div>
+    </section>
+
+    <section id="meta">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <strong>season_&lt;id&gt;_meta.yaml</strong>
+          <div class="row">
+            <button class="primary" id="metaSave">Salva meta</button>
+            <span id="metaStatus" class="status"></span>
+          </div>
+        </div>
+        <p class="muted">Editor YAML grezzo di <code>top_threats</code> e <code>common_cores</code>. Salvando, le proposte useranno il nuovo meta.</p>
+        <textarea id="metaText" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <section id="generate">
+      <div class="panel row" style="justify-content:space-between">
+        <div class="row">
+          <label class="muted" for="topN">Proposte</label>
+          <input id="topN" type="number" min="1" max="10" value="5" style="width:64px" />
+          <button class="primary" id="genBtn">Genera team</button>
+        </div>
+        <span id="genStatus" class="status"></span>
+      </div>
+      <div id="teams"></div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const seasonSel = $('#season');
+    let currentId = null;
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const ct = res.headers.get('content-type') || '';
+      return ct.includes('application/json') ? res.json() : res.text();
+    }
+
+    // tabs
+    document.querySelectorAll('nav button').forEach((b) => {
+      b.onclick = () => {
+        document.querySelectorAll('nav button').forEach((x) => x.classList.remove('active'));
+        document.querySelectorAll('main section').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        $('#' + b.dataset.tab).classList.add('active');
+      };
+    });
+
+    async function loadSeasons() {
+      const { seasons } = await api('/api/seasons');
+      seasonSel.innerHTML = seasons.map((s) => `<option value="${s}">${s}</option>`).join('');
+      currentId = seasons[0];
+      if (currentId) await onSeasonChange();
+    }
+
+    async function onSeasonChange() {
+      currentId = seasonSel.value || currentId;
+      const { season, meta } = await api('/api/season/' + currentId);
+      const reg = season.regulation || {};
+      const roster = (season.available_pokemon || []).length;
+      $('#seasonInfo').textContent = `${season.format} · ${reg.name || currentId} · ${roster} forme · ${(meta.top_threats||[]).length} minacce meta`;
+      $('#setupBody').innerHTML = `
+        <h3 style="margin-top:0">Stagione ${season.season_id}</h3>
+        <p><strong>Formato:</strong> ${season.format} &nbsp; <strong>Regolamento:</strong> ${reg.name || '—'}</p>
+        <p class="muted">${reg.restricted_note || ''}</p>
+        <p><strong>Squadra:</strong> porta ${reg.team?.bring_min}-${reg.team?.bring_max}, ne giochi ${reg.team?.pick} · ${reg.team?.level_rule || ''}</p>
+        <p><strong>Roster disponibile:</strong> ${roster} forme · <strong>Minacce meta:</strong> ${(meta.top_threats||[]).length}</p>
+        <p class="muted">Validità: ${reg.active_from_utc || '?'} → ${reg.active_until_utc || '?'}</p>`;
+      $('#metaText').value = await api('/api/season/' + currentId + '/meta/raw');
+    }
+    seasonSel.onchange = onSeasonChange;
+
+    $('#metaSave').onclick = async () => {
+      $('#metaStatus').textContent = 'Salvataggio…';
+      try {
+        const r = await api('/api/season/' + currentId + '/meta/raw', {
+          method: 'PUT', headers: { 'content-type': 'text/plain' }, body: $('#metaText').value,
+        });
+        $('#metaStatus').textContent = r.ok ? 'Salvato.' : ('Errore: ' + r.error);
+      } catch (e) { $('#metaStatus').textContent = 'Errore: ' + e.message; }
+    };
+
+    function roleChips(roles) {
+      const r = roles || [];
+      return r.length ? r.join(', ') : 'supporto generico';
+    }
+
+    function teamCard(t) {
+      const members = t.members.map((m) => `<span class="mon">${m} <small>${roleChips(t.roles[m])}</small></span>`).join('');
+      const strengths = (t.strengths||[]).map((s) => `<li class="tag-good">${s}</li>`).join('');
+      const weak = (t.weaknesses||[]).length ? `Debolezze impilate: <span class="tag-warn">${t.weaknesses.join(', ')}</span>` : 'Nessuna debolezza di tipo impilata.';
+      const notes = (t.notes||[]).map((n) => `<li>${n}</li>`).join('');
+      const exportText = `${t.archetype} (score ${t.score})\n` + t.members.join('\n');
+      return `<div class="card">
+        <h3>${t.archetype} <span class="score">score ${t.score}</span></h3>
+        <div class="members">${members}</div>
+        ${strengths ? '<strong>Punti di forza</strong><ul>'+strengths+'</ul>' : ''}
+        <p>${weak}</p>
+        ${notes ? '<strong>Note di coverage</strong><ul>'+notes+'</ul>' : ''}
+        <div class="row">
+          <button onclick='copyText(this)' data-text="${encodeURIComponent(exportText)}">Esporta testo</button>
+          <span class="status"></span>
+        </div>
+        <pre class="export" hidden>${exportText}</pre>
+      </div>`;
+    }
+
+    window.copyText = (btn) => {
+      const txt = decodeURIComponent(btn.dataset.text);
+      const pre = btn.parentElement.nextElementSibling;
+      navigator.clipboard?.writeText(txt).then(
+        () => { btn.nextElementSibling.textContent = 'Copiato negli appunti.'; },
+        () => { pre.hidden = false; btn.nextElementSibling.textContent = 'Copia manuale dal box sotto.'; },
+      );
+    };
+
+    $('#genBtn').onclick = async () => {
+      $('#genStatus').textContent = 'Genero (primo run: tagging del roster, ~2s)…';
+      $('#teams').innerHTML = '';
+      try {
+        const topN = $('#topN').value || 5;
+        const { teams } = await api('/api/season/' + currentId + '/generate?topN=' + topN, { method: 'POST' });
+        $('#teams').innerHTML = teams.map(teamCard).join('');
+        $('#genStatus').textContent = `${teams.length} proposte.`;
+      } catch (e) { $('#genStatus').textContent = 'Errore: ' + e.message; }
+    };
+
+    loadSeasons().catch((e) => { $('#setupBody').textContent = 'Errore: ' + e.message; });
+  </script>
+</body>
+</html>

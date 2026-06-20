@@ -139,17 +139,28 @@ function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, thr
   score += Math.min(resistedTypes.length, 12) * 0.25;
   if (stacked.length === 0) strengths.push('nessuna debolezza di tipo impilata su 3+ membri');
 
-  // copertura difensiva delle minacce meta: per ogni minaccia, almeno un membro deve resistere ai
-  // suoi tipi (proxy di "risposta alla minaccia" finché non c'è il damage calc reale, Fase 3).
+  // Copertura difensiva delle minacce meta (proxy finché non c'è il damage calc reale, Fase 3).
+  // Risposta "solida": un membro che resiste ad almeno una STAB della minaccia e non è debole a
+  // nessuna delle sue STAB. Le risposte solide contribuiscono al punteggio (così team diversi si
+  // differenziano); una minaccia a cui nessuno resiste è un buco penalizzato.
+  let solidAnswers = 0;
   for (const threat of meta.topThreats) {
     const tt = threatTypes.get(threat);
     if (!tt) continue;
-    const answered = team.some((c) => tt.some((ty) => resists(c, ty)));
-    if (answered) strengths.push(`risposta difensiva a ${threat}`);
-    else {
+    const solid = team.some((c) => tt.some((ty) => resists(c, ty)) && !tt.some((ty) => isWeak(c, ty)));
+    const anyResist = team.some((c) => tt.some((ty) => resists(c, ty)));
+    if (solid) {
+      solidAnswers += 1;
+    } else if (!anyResist) {
       score -= 1.5;
-      notes.push(`nessuna risposta difensiva chiara a ${threat}`);
+      notes.push(`nessuna risposta difensiva a ${threat}`);
+    } else {
+      notes.push(`risposta solo parziale a ${threat} (resiste a una STAB ma è debole all'altra)`);
     }
+  }
+  if (meta.topThreats.length) {
+    score += solidAnswers * 0.5;
+    strengths.push(`risposte difensive solide a ${solidAnswers}/${meta.topThreats.length} minacce del meta`);
   }
 
   return { score: Math.round(score * 100) / 100, strengths, weaknesses: stacked, notes };

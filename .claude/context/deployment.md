@@ -31,10 +31,15 @@ persistente, quindi i file flat o `better-sqlite3` andrebbero sostituiti con uno
 
 ```
 npm install     installa le dipendenze e genera package-lock.json
-npm run dev      avvia l'app in sviluppo (tsx src/server.ts)
+npm run dev      avvia l'app web Fastify su http://127.0.0.1:5187 (override con PORT)
+npm run generate genera i team da CLI e scrive report in data/generated_teams/
+npm run roster   ri-scarica il roster di stagione da serebii in data/seasons/
 npm run build    compila TypeScript in dist/ (per un eventuale rilascio)
 npm test         esegue la suite Vitest
 ```
+
+Porta di default 5187 (scelta non comune per non collidere con altri localhost); sovrascrivibile
+con la variabile d'ambiente `PORT`.
 
 ## Variabili d'ambiente e segreti
 

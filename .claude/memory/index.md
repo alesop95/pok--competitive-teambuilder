@@ -25,9 +25,11 @@ Data snapshot:         2026-06-19
 
 ## Punto di ripresa
 
-Fase 1 COMPLETA (19/19 test verdi): data layer su mod `champions`, regolamento M-B + roster
-(`season_MB.json`), tagging ruoli §4.1, generazione team §4.2, rationale L1 §4.3 e CLI
-`scripts/generate.ts` (tag→genera→rationale→file in ~2s). ADR-005/006/007 chiuse. Prossima azione:
-o Fase 2 (UI web minima Fastify, handoff §5), o curare `season_MB_meta.yaml` (top_threats) per
-alzare la qualità dello scoring (oggi piatto senza meta; damage calc reale è Fase 3). Nota: ultimo
-blocco (teamGenerator/rationale/CLI) non ancora committato.
+Fase 2 implementata (MVP). Fatto: motore Fase 1 (data layer, tagging §4.1, generazione §4.2,
+rationale L1 §4.3), meta M-B curato (preliminare), engine condiviso `src/engine.ts`, server Fastify
++ API + SPA `src/public/index.html` con le 4 pagine §5. App web su http://127.0.0.1:5187 (PORT
+override; la 3000 è di un'altra app dell'utente, non usarla). 19/19 test verdi, API verificate via
+curl. Prossima azione: verificare la resa visiva della UI con uno screenshot dell'utente, poi
+committare il blocco Fase 2. Limiti noti: scoring senza damage calc reale (Fase 3); meta da
+raffinare con usage stats. Modifiche non committate: meta + Fase 1 (teamGenerator/rationale/CLI) +
+Fase 2 (engine/server/UI).
