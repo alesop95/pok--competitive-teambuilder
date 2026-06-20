@@ -6,6 +6,23 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-20 — Fase 1: integrazione data layer (mod champions) verificata
+
+Commit: (da committare)
+File toccati: `package.json` (+`@pkmn/mods`), `src/pkmnData.ts`, `src/pkmn-mods.d.ts`,
+`tests/pkmnData.test.ts`, `tsconfig.json`, `.claude/memory/decisions.md`,
+`.claude/context/current-work.md`.
+Motivo: chiuse ADR-005 (mod `champions` raggiungibile via `@pkmn/mods@0.10.11`, verificato) e
+ADR-007 (fonte dati = mod champions + serebii cross-check; regolamento target Reg M-B, in vigore
+17 giu → 2 set 2026 UTC; `championsregma` del README è confermato Reg M-A). Implementato
+`pkmnData.ts` che carica `@pkmn/dex` con la mod `champions` (`Dex.mod('champions', import(...))`) e
+interroga le specie; risolto TS7016 sui subpath di `@pkmn/mods` con dichiarazioni ambient in
+`src/pkmn-mods.d.ts`. Verifica: dex champions con 1427 voci specie; query reali corrette
+(Incineroar Fire/Dark + Intimidate, Garganacl Purifying Salt, Grimmsnarl Prankster). Tradotto in
+test Vitest (`tests/pkmnData.test.ts`, 3 casi verdi). Typecheck pulito, suite 4/4 verde.
+Prossimo: generare `data/seasons/season_MB.json` (lista M-B da serebii) e implementare il tagging
+dei ruoli §4.1.
+
 ## 2026-06-19 — Primo ancoraggio post-init (sync-context)
 
 Commit: 373419b

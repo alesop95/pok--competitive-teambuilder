@@ -25,8 +25,8 @@ Data snapshot:         2026-06-19
 
 ## Punto di ripresa
 
-Sistema inizializzato e scaffold della Fase 0 committato (`373419b`); schede ancorate a HEAD via
-`sync-context`. Prossima azione: Fase 1 dell'handoff — implementare il tagging dei ruoli
-(`src/roleTagging.ts`, §4.1) e la generazione team (`src/teamGenerator.ts`, §4.2) sul roster M-B
-quando Alessio lo fornisce. Domanda aperta da chiudere in Fase 1: la mod `champions` di Showdown è
-esposta da `@pkmn/mods` o va importata dal repository (ADR-005, vedi `current-work.md`).
+Fase 1 in corso. Data layer verificato: `pkmnData.ts` carica la mod `champions` via `@pkmn/mods` e
+interroga le specie (test verdi). ADR-005 e ADR-007 chiuse. Prossima azione: generare
+`data/seasons/season_MB.json` (lista M-B da serebii, con validità regolamento 17 giu → 2 set 2026)
+e implementare il tagging dei ruoli `src/roleTagging.ts` (§4.1) con i relativi test. Nota: ci sono
+modifiche non committate (data layer + decisioni + ancoraggio sync-context).

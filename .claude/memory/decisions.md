@@ -60,16 +60,41 @@ rationale Livello 2 resta in `.env` ignorato).
 ## ADR-005 — Mod "champions" di Showdown come layer dati primario del formato
 
 Data: 2026-06-19
-Stato: proposta (da verificare l'accessibilità via `@pkmn/mods` in Fase 0/1)
+Stato: accettata (verificata il 2026-06-19)
 Contesto: esiste una mod community-maintained `champions` nel repository MIT di Pokémon Showdown
-(`data/mods/champions`), usata anche dal calcolatore ufficiale Smogon, che copre presumibilmente
-già gran parte delle differenze del formato Champions (incluso il sistema Stat Points).
-Decisione: partire dalla mod esistente come fonte di verità delle regole Champions, non da zero;
-`data/champions_overrides.json` resta solo per le eventuali eccezioni residue non coperte.
-Motivazione: evita di reimplementare a mano regole già curate e testate dalla community.
-Conseguenze: da verificare in sviluppo se la mod è esposta dal pacchetto npm `@pkmn/mods` o va
-recuperata direttamente dal repository Showdown perché troppo recente (gioco uscito aprile 2026).
-Questa voce si promuove ad accettata quando la verifica conferma la via di accesso.
+(`data/mods/champions`), usata anche dal calcolatore ufficiale Smogon, che copre già le differenze
+del formato Champions (incluso il sistema Stat Points).
+Verifica: il pacchetto npm `@pkmn/mods@0.10.11` (MIT, pubblicato il 2026-06-18) espone direttamente
+sia la mod `champions` ("data and logic for Pokémon Champions" su Gen 9) sia una variante
+`championsregma` che applica le restrizioni di regolamento. Quindi la mod è raggiungibile via npm,
+NON va recuperata a mano dal repository Showdown.
+Decisione: usare `@pkmn/mods` (mod `champions`) come fonte di verità delle regole e dei dati del
+formato Champions, sopra `@pkmn/dex`; `data/champions_overrides.json` resta solo per eventuali
+eccezioni residue non coperte.
+Motivazione: evita di reimplementare a mano regole già curate e testate dalla community, e di
+gestire un import manuale dal repo.
+Conseguenze: dipendenza npm `@pkmn/mods` (pesante, ~173 MB unpacked: valutare se serve l'intero
+pacchetto o solo la mod champions). La legalità di regolamento è gestita da `championsregma`, ma il
+nome suggerisce Reg M-A: la copertura del Reg M-B è da chiarire (vedi ADR-007).
+
+## ADR-007 — Fonte dati del roster di stagione e regolamento target
+
+Data: 2026-06-19
+Stato: accettata (decisa con l'utente il 2026-06-20)
+Contesto: il roster "M-B" può essere derivato dalla mod `@pkmn/mods` (dati di gioco) e/o dalla
+lista leggibile di serebii.net. La mod community ha solo `championsregma` (verosimilmente Reg M-A);
+non risulta una cartella per Reg M-B.
+Decisione: i dati di gioco (stats, abilità, movepool, mosse, strumenti, regole del formato) vengono
+programmaticamente dalla mod `champions` via `@pkmn/mods` + `@pkmn/dex`, in modo deterministico e
+riproducibile. Il regolamento target è Reg M-B: poiché la mod copre M-A, la legalità di regolamento
+e la lista di disponibilità M-B le deriviamo da serebii.net (cross-check umano, ADR-006) e dalla
+conoscenza dell'utente, curate sopra i dati della mod, finché la community non pubblica M-B.
+Motivazione: massima riproducibilità sui dati di gioco senza scraping fragile, mantenendo serebii
+come fonte di disponibilità per il regolamento corrente.
+Conseguenze: `data/seasons/season_MB.json` contiene la lista M-B-legale (derivata da serebii +
+curatela), arricchita a runtime con i dati della mod. Workflow stagionale §8 invariato: a ogni
+stagione si rilegge serebii e si aggiorna il file. Da chiarire in seguito se/quando `championsregma`
+o una nuova mod coprirà M-B, per agganciarla.
 
 ## ADR-006 — Fonti dati di stagione: serebii.net
 
