@@ -51,8 +51,14 @@ Definition of done:
 - [x] regolamento M-B ufficiale ricercato sul web e versionato in `season_MB.json` (con fonti)
 - [x] `season_MB.json` generato (283 forme / 208 specie da serebii via `scripts/fetch_roster.ts`)
 - [x] `roleTagging.ts` implementa le regole §4.1, coperto da test verdi (14/14)
-- [ ] `teamGenerator.ts` (§4.2): archetipi, core, scoring coverage/sinergia
-- [ ] `rationale.ts` Livello 1 (§4.3) e output CLF/Markdown (fine Fase 1)
+- [x] `teamGenerator.ts` (§4.2): archetipi, core, riempimento greedy, scoring coverage (test verdi)
+- [x] `rationale.ts` Livello 1 (§4.3) e CLI `scripts/generate.ts` con output Markdown + JSON
+- [x] Fase 1 completa: pipeline offline tag→genera→rationale→file gira in ~2s sul roster M-B
+
+Limiti noti (rinviati a Fase 3, non bloccanti): con meta non curato i punteggi sono quasi tutti
+pari (manca la coverage offensiva reale); il riempimento è greedy con tiebreak sul numero di ruoli;
+lo scoring non usa ancora il damage calc reale (`@smogon/calc`). La qualità sale quando si cura
+`season_MB_meta.yaml` (top_threats) e in Fase 3.
 
 Domande aperte:
 

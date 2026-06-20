@@ -16,7 +16,9 @@
     "dev": "tsx src/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "roster": "tsx scripts/fetch_roster.ts",
+    "generate": "tsx scripts/generate.ts"
   },
   "dependencies": {
     "@pkmn/dex": "^0.9.0",

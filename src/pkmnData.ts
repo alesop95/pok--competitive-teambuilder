@@ -5,6 +5,7 @@
 // data/champions_overrides.json. Il damage calc reale (@smogon/calc) si aggancia da qui in Fase 3.
 import { Dex, type ID, type ModData } from '@pkmn/dex';
 import { tagRoles, type TaggingInput, type MoveInfo, type RoleTag } from './roleTagging.js';
+import type { Candidate } from './teamGenerator.js';
 
 // Carica la mod "champions" (Gen 9 + dati/logica di Pokémon Champions). Il cast a ModData è quello
 // raccomandato dal README di @pkmn/mods per via delle differenze di tipo tra @pkmn/sim e @pkmn/dex.
@@ -69,4 +70,54 @@ export async function getTaggingInput(name: string): Promise<TaggingInput | null
 export async function tagSpecies(name: string): Promise<RoleTag[]> {
   const input = await getTaggingInput(name);
   return input ? tagRoles(input) : [];
+}
+
+// Codifica del type chart di @pkmn/dex (campo damageTaken): 0 neutro, 1 debole (2x), 2 resiste
+// (0.5x), 3 immune (0x). Calcola la mappa difensiva di una combinazione di tipi.
+const CODE_TO_MULT: Record<number, number> = { 0: 1, 1: 2, 2: 0.5, 3: 0 };
+
+async function getDefenseMap(types: string[]): Promise<Record<string, number>> {
+  const dex = await getChampionsDex();
+  const attackingTypes = dex.types.all().map((t) => t.name);
+  const map: Record<string, number> = {};
+  for (const atk of attackingTypes) {
+    let mult = 1;
+    for (const def of types) {
+      const code = dex.types.get(def).damageTaken[atk];
+      mult *= CODE_TO_MULT[code] ?? 1;
+    }
+    map[atk] = mult;
+  }
+  return map;
+}
+
+// Arricchisce un elenco di specie in candidati per il generatore di team (§4.2): tag di ruolo,
+// tipi, numero Pokédex (per la Species Clause) e mappa difensiva di type-effectiveness.
+export async function buildCandidates(names: string[]): Promise<Candidate[]> {
+  const dex = await getChampionsDex();
+  const out: Candidate[] = [];
+  for (const name of names) {
+    const s = dex.species.get(name);
+    if (!s?.exists) continue;
+    const input = await getTaggingInput(name);
+    out.push({
+      species: s.name,
+      dexNum: s.num,
+      tags: input ? tagRoles(input) : [],
+      types: s.types,
+      defense: await getDefenseMap(s.types),
+    });
+  }
+  return out;
+}
+
+// Tipi delle specie-minaccia del meta, per la coverage difensiva nel team scoring (§4.2).
+export async function getThreatTypes(names: string[]): Promise<Map<string, string[]>> {
+  const dex = await getChampionsDex();
+  const map = new Map<string, string[]>();
+  for (const name of names) {
+    const s = dex.species.get(name);
+    if (s?.exists) map.set(name, s.types);
+  }
+  return map;
 }

@@ -25,9 +25,9 @@ Data snapshot:         2026-06-19
 
 ## Punto di ripresa
 
-Fase 1 in corso. Fatti e testati (14/14 verdi): data layer (`pkmnData.ts` su mod `champions`),
-regolamento M-B ufficiale + roster (`season_MB.json`, 283 forme via `scripts/fetch_roster.ts`),
-tagging dei ruoli §4.1 (`roleTagging.ts`). ADR-005/006/007 chiuse. Prossima azione: implementare
-`src/teamGenerator.ts` (§4.2) — archetipi, core, scoring di coverage/sinergia — poi `rationale.ts`
-Livello 1 (§4.3) per chiudere la Fase 1. Nota: molte modifiche non committate (più sessioni di
-lavoro accumulate).
+Fase 1 COMPLETA (19/19 test verdi): data layer su mod `champions`, regolamento M-B + roster
+(`season_MB.json`), tagging ruoli §4.1, generazione team §4.2, rationale L1 §4.3 e CLI
+`scripts/generate.ts` (tag→genera→rationale→file in ~2s). ADR-005/006/007 chiuse. Prossima azione:
+o Fase 2 (UI web minima Fastify, handoff §5), o curare `season_MB_meta.yaml` (top_threats) per
+alzare la qualità dello scoring (oggi piatto senza meta; damage calc reale è Fase 3). Nota: ultimo
+blocco (teamGenerator/rationale/CLI) non ancora committato.

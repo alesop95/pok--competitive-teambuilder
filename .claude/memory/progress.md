@@ -6,6 +6,22 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-20 — Fase 1 completata: generazione team, rationale L1 e CLI
+
+Commit: (da committare)
+File toccati: `src/teamGenerator.ts`, `src/rationale.ts`, `src/pkmnData.ts` (+`buildCandidates`,
+`getThreatTypes`, mappa difensiva), `scripts/generate.ts`, `tests/teamGenerator.test.ts`,
+`package.json` (script `roster`, `generate`), `.claude/context/current-work.md`.
+Motivo: implementato il generatore §4.2 (modulo puro: rilevamento archetipi da tag, costruzione
+core, riempimento greedy con coverage difensiva via type chart di @pkmn/dex e tiebreak sui ruoli,
+scoring con penalità per debolezze impilate e per minacce meta non coperte) e il rationale §4.3
+Livello 1 (testo Markdown deterministico). La CLI `scripts/generate.ts` lega la pipeline: legge
+`season_MB.json`, tagga le 208 specie base, genera i top 5 team, scrive report `.md` + `.json`
+timestampati in `data/generated_teams/`. Esecuzione end-to-end in ~2s. Test: 19/19 verdi (unit su
+fixture + integrazione reale), typecheck pulito. Limiti noti documentati in `current-work.md`
+(scoring piatto senza meta curato, no damage calc reale: Fase 3). Prossimo: Fase 2 (UI web minima)
+o curatela di `season_MB_meta.yaml` per alzare la qualità dello scoring.
+
 ## 2026-06-20 — Fase 1: regolamento M-B, roster e tagging dei ruoli
 
 Commit: (da committare)
