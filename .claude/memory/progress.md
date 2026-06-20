@@ -6,6 +6,23 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-20 — Fase 1: regolamento M-B, roster e tagging dei ruoli
+
+Commit: (da committare)
+File toccati: `data/seasons/season_MB.json`, `scripts/fetch_roster.ts`, `src/roleTagging.ts`,
+`src/pkmnData.ts`, `tests/roleTagging.test.ts`, `tests/pkmnData.test.ts`,
+`.claude/context/current-work.md`.
+Motivo: ricerca web delle regole ufficiali di Regulation M-B (doppio, squadra 4-6 a Lv50, Species
+e Item Clause, una sola Megaevoluzione per battaglia, nessun Pokémon specifico restritto, Mega
+Lucario Z e Mega Garchomp Z non possono Megaevolvere; +22 Pokémon e +16 Mega rispetto a M-A;
+nuovi item Life Orb/Wide Lens/Light Clay; periodo 17 giu → 2 set 2026). Dati versionati in
+`season_MB.json` con le fonti (serebii, game8, pokemon-zone, sportskeeda, bulbagarden). Scritto lo
+scraper deterministico `scripts/fetch_roster.ts` che popola `available_pokemon` da serebii: 283
+forme, 208 specie base. Implementato il tagging dei ruoli §4.1 (`roleTagging.ts`, modulo puro) con
+wrapper `getTaggingInput`/`tagSpecies` in `pkmnData.ts` che legge movepool e metadati mossa dalla
+dex champions. Test: 14/14 verdi (10 unit su fixture + integrazione reale Grimmsnarl=screens_setter,
+Amoonguss=redirection_support), typecheck pulito. Prossimo: `teamGenerator.ts` (§4.2).
+
 ## 2026-06-20 — Fase 1: integrazione data layer (mod champions) verificata
 
 Commit: (da committare)

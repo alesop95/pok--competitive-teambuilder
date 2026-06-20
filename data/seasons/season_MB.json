@@ -1,0 +1,1479 @@
+{
+  "season_id": "M-B",
+  "format": "doubles",
+  "regulation": {
+    "name": "Regulation M-B",
+    "active_from_utc": "2026-06-17T02:00:00Z",
+    "active_until_utc": "2026-09-02T01:59:00Z",
+    "active_until_note": "Data di fine indicata dall'utente (01:59 UTC). Una fonte (Game8) riportava 05:59 UTC: da riconfermare in-game.",
+    "team": {
+      "bring_min": 4,
+      "bring_max": 6,
+      "pick": 4,
+      "level_rule": "Tutti i Pokémon portati al Livello 50 (input Lv 1-100)"
+    },
+    "time_limits": {
+      "your_time_min": 7,
+      "team_preview_sec": 90,
+      "turn_sec": 45
+    },
+    "clauses": [
+      "Species Clause: la squadra non può contenere due Pokémon con lo stesso numero Pokédex",
+      "Item Clause: due Pokémon non possono tenere lo stesso strumento",
+      "Mega Clause: si possono portare più Mega Stone ma si può Megaevolvere un solo Pokémon per battaglia"
+    ],
+    "restricted_pokemon": [],
+    "restricted_note": "M-B non restringe alcun Pokémon specifico (diversamente da M-A, che bandiva tutti i Leggendari/Restricted). Eleggibili tutti i Pokémon trasferibili da Pokémon HOME presenti nel pool Champions.",
+    "mega_prohibited": [
+      "Mega Lucario Z",
+      "Mega Garchomp Z"
+    ],
+    "mega_prohibited_note": "Le forme base sono usabili; è vietata solo la Megaevoluzione in queste due forme.",
+    "new_in_mb": {
+      "pokemon_count": 22,
+      "mega_count": 16,
+      "examples_pokemon": [
+        "Gholdengo",
+        "Annihilape",
+        "Grimmsnarl",
+        "Sceptile",
+        "Blaziken",
+        "Swampert"
+      ],
+      "mega_note": "Le restanti Mega Z-A non disponibili nel formato precedente (es. starter di Hoenn, Mawile, Metagross)",
+      "new_items": [
+        "Life Orb",
+        "Wide Lens",
+        "Light Clay"
+      ]
+    },
+    "sources": [
+      "https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-b.shtml",
+      "https://game8.co/games/Pokemon-Champions/archives/605482",
+      "https://www.pokemon-zone.com/champions/regulations/",
+      "https://www.sportskeeda.com/pokemon/all-pokemon-allowed-pokemon-champions-regulation-set-m-b",
+      "https://bulbagarden.net/threads/pokemon-champions-launches-new-ruleset-for-competitive-vgc-regulation-set-m-a-runs-until-june-17th-2026.310333/"
+    ]
+  },
+  "budget_system": {
+    "enabled": false
+  },
+  "available_pokemon": [
+    {
+      "species": "Venusaur",
+      "slug": "venusaur",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Venusaur",
+      "slug": "venusaur",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Charizard",
+      "slug": "charizard",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Charizard X",
+      "slug": "charizard",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Charizard Y",
+      "slug": "charizard",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Blastoise",
+      "slug": "blastoise",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Blastoise",
+      "slug": "blastoise",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Beedrill",
+      "slug": "beedrill",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Beedrill",
+      "slug": "beedrill",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pidgeot",
+      "slug": "pidgeot",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Pidgeot",
+      "slug": "pidgeot",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Arbok",
+      "slug": "arbok",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pikachu",
+      "slug": "pikachu",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Raichu",
+      "slug": "raichu",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Raichu X",
+      "slug": "raichu",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Raichu Y",
+      "slug": "raichu",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Clefable",
+      "slug": "clefable",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Clefable",
+      "slug": "clefable",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Ninetales",
+      "slug": "ninetales",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Vileplume",
+      "slug": "vileplume",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Arcanine",
+      "slug": "arcanine",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Alakazam",
+      "slug": "alakazam",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Alakazam",
+      "slug": "alakazam",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Machamp",
+      "slug": "machamp",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Victreebel",
+      "slug": "victreebel",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Victreebel",
+      "slug": "victreebel",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Slowbro",
+      "slug": "slowbro",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Slowbro",
+      "slug": "slowbro",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gengar",
+      "slug": "gengar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Gengar",
+      "slug": "gengar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Kangaskhan",
+      "slug": "kangaskhan",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Kangaskhan",
+      "slug": "kangaskhan",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Starmie",
+      "slug": "starmie",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Starmie",
+      "slug": "starmie",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pinsir",
+      "slug": "pinsir",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Pinsir",
+      "slug": "pinsir",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Tauros",
+      "slug": "tauros",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gyarados",
+      "slug": "gyarados",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Gyarados",
+      "slug": "gyarados",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Ditto",
+      "slug": "ditto",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Vaporeon",
+      "slug": "vaporeon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Jolteon",
+      "slug": "jolteon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Flareon",
+      "slug": "flareon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Aerodactyl",
+      "slug": "aerodactyl",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Aerodactyl",
+      "slug": "aerodactyl",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Snorlax",
+      "slug": "snorlax",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Dragonite",
+      "slug": "dragonite",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Dragonite",
+      "slug": "dragonite",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Meganium",
+      "slug": "meganium",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Meganium",
+      "slug": "meganium",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Typhlosion",
+      "slug": "typhlosion",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Feraligatr",
+      "slug": "feraligatr",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Feraligatr",
+      "slug": "feraligatr",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Ariados",
+      "slug": "ariados",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Ampharos",
+      "slug": "ampharos",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Ampharos",
+      "slug": "ampharos",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Azumarill",
+      "slug": "azumarill",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Politoed",
+      "slug": "politoed",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Espeon",
+      "slug": "espeon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Umbreon",
+      "slug": "umbreon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Slowking",
+      "slug": "slowking",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Forretress",
+      "slug": "forretress",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Steelix",
+      "slug": "steelix",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Steelix",
+      "slug": "steelix",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Qwilfish",
+      "slug": "qwilfish",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Scizor",
+      "slug": "scizor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Scizor",
+      "slug": "scizor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Heracross",
+      "slug": "heracross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Heracross",
+      "slug": "heracross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Skarmory",
+      "slug": "skarmory",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Skarmory",
+      "slug": "skarmory",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Houndoom",
+      "slug": "houndoom",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Houndoom",
+      "slug": "houndoom",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Tyranitar",
+      "slug": "tyranitar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Tyranitar",
+      "slug": "tyranitar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sceptile",
+      "slug": "sceptile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Sceptile",
+      "slug": "sceptile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Blaziken",
+      "slug": "blaziken",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Blaziken",
+      "slug": "blaziken",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Swampert",
+      "slug": "swampert",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Swampert",
+      "slug": "swampert",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pelipper",
+      "slug": "pelipper",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gardevoir",
+      "slug": "gardevoir",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Gardevoir",
+      "slug": "gardevoir",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sableye",
+      "slug": "sableye",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Sableye",
+      "slug": "sableye",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mawile",
+      "slug": "mawile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Mawile",
+      "slug": "mawile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Aggron",
+      "slug": "aggron",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Aggron",
+      "slug": "aggron",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Medicham",
+      "slug": "medicham",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Medicham",
+      "slug": "medicham",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Manectric",
+      "slug": "manectric",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Manectric",
+      "slug": "manectric",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sharpedo",
+      "slug": "sharpedo",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Sharpedo",
+      "slug": "sharpedo",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Camerupt",
+      "slug": "camerupt",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Camerupt",
+      "slug": "camerupt",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Torkoal",
+      "slug": "torkoal",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Altaria",
+      "slug": "altaria",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Altaria",
+      "slug": "altaria",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Milotic",
+      "slug": "milotic",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Castform",
+      "slug": "castform",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Banette",
+      "slug": "banette",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Banette",
+      "slug": "banette",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Chimecho",
+      "slug": "chimecho",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Chimecho",
+      "slug": "chimecho",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Absol",
+      "slug": "absol",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Absol",
+      "slug": "absol",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Glalie",
+      "slug": "glalie",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Glalie",
+      "slug": "glalie",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Metagross",
+      "slug": "metagross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Metagross",
+      "slug": "metagross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Torterra",
+      "slug": "torterra",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Infernape",
+      "slug": "infernape",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Empoleon",
+      "slug": "empoleon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Staraptor",
+      "slug": "staraptor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Staraptor",
+      "slug": "staraptor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Luxray",
+      "slug": "luxray",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Roserade",
+      "slug": "roserade",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Rampardos",
+      "slug": "rampardos",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Bastiodon",
+      "slug": "bastiodon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Lopunny",
+      "slug": "lopunny",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Lopunny",
+      "slug": "lopunny",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Spiritomb",
+      "slug": "spiritomb",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Garchomp",
+      "slug": "garchomp",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Garchomp",
+      "slug": "garchomp",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Lucario",
+      "slug": "lucario",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Lucario",
+      "slug": "lucario",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Hippowdon",
+      "slug": "hippowdon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Toxicroak",
+      "slug": "toxicroak",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Abomasnow",
+      "slug": "abomasnow",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Abomasnow",
+      "slug": "abomasnow",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Weavile",
+      "slug": "weavile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Rhyperior",
+      "slug": "rhyperior",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Leafeon",
+      "slug": "leafeon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Glaceon",
+      "slug": "glaceon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gliscor",
+      "slug": "gliscor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mamoswine",
+      "slug": "mamoswine",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gallade",
+      "slug": "gallade",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Gallade",
+      "slug": "gallade",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Froslass",
+      "slug": "froslass",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Froslass",
+      "slug": "froslass",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Rotom",
+      "slug": "rotom",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Serperior",
+      "slug": "serperior",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Emboar",
+      "slug": "emboar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Emboar",
+      "slug": "emboar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Samurott",
+      "slug": "samurott",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Watchog",
+      "slug": "watchog",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Liepard",
+      "slug": "liepard",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Simisage",
+      "slug": "simisage",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Simisear",
+      "slug": "simisear",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Simipour",
+      "slug": "simipour",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Musharna",
+      "slug": "musharna",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Excadrill",
+      "slug": "excadrill",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Excadrill",
+      "slug": "excadrill",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Audino",
+      "slug": "audino",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Audino",
+      "slug": "audino",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Conkeldurr",
+      "slug": "conkeldurr",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Scolipede",
+      "slug": "scolipede",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Scolipede",
+      "slug": "scolipede",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Whimsicott",
+      "slug": "whimsicott",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Krookodile",
+      "slug": "krookodile",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Scrafty",
+      "slug": "scrafty",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Scrafty",
+      "slug": "scrafty",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Cofagrigus",
+      "slug": "cofagrigus",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Garbodor",
+      "slug": "garbodor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Zoroark",
+      "slug": "zoroark",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Reuniclus",
+      "slug": "reuniclus",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Vanilluxe",
+      "slug": "vanilluxe",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Emolga",
+      "slug": "emolga",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Eelektross",
+      "slug": "eelektross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Eelektross",
+      "slug": "eelektross",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Chandelure",
+      "slug": "chandelure",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Chandelure",
+      "slug": "chandelure",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Beartic",
+      "slug": "beartic",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Stunfisk",
+      "slug": "stunfisk",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Golurk",
+      "slug": "golurk",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Golurk",
+      "slug": "golurk",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Hydreigon",
+      "slug": "hydreigon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Volcarona",
+      "slug": "volcarona",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Chesnaught",
+      "slug": "chesnaught",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Chesnaught",
+      "slug": "chesnaught",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Delphox",
+      "slug": "delphox",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Delphox",
+      "slug": "delphox",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Greninja",
+      "slug": "greninja",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Greninja",
+      "slug": "greninja",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Diggersby",
+      "slug": "diggersby",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Talonflame",
+      "slug": "talonflame",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Vivillon",
+      "slug": "vivillon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pyroar",
+      "slug": "pyroar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Pyroar",
+      "slug": "pyroar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Floette",
+      "slug": "floette",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Floette",
+      "slug": "floette",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Florges",
+      "slug": "florges",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Pangoro",
+      "slug": "pangoro",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Furfrou",
+      "slug": "furfrou",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Meowstic",
+      "slug": "meowstic",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Meowstic",
+      "slug": "meowstic",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Aegislash",
+      "slug": "aegislash",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Aromatisse",
+      "slug": "aromatisse",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Slurpuff",
+      "slug": "slurpuff",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Malamar",
+      "slug": "malamar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Malamar",
+      "slug": "malamar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Barbaracle",
+      "slug": "barbaracle",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Barbaracle",
+      "slug": "barbaracle",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Dragalge",
+      "slug": "dragalge",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Dragalge",
+      "slug": "dragalge",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Clawitzer",
+      "slug": "clawitzer",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Heliolisk",
+      "slug": "heliolisk",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Tyrantrum",
+      "slug": "tyrantrum",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Aurorus",
+      "slug": "aurorus",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sylveon",
+      "slug": "sylveon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Hawlucha",
+      "slug": "hawlucha",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Hawlucha",
+      "slug": "hawlucha",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Dedenne",
+      "slug": "dedenne",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Goodra",
+      "slug": "goodra",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Klefki",
+      "slug": "klefki",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Trevenant",
+      "slug": "trevenant",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gourgeist",
+      "slug": "gourgeist",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Avalugg",
+      "slug": "avalugg",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Noivern",
+      "slug": "noivern",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Decidueye",
+      "slug": "decidueye",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Incineroar",
+      "slug": "incineroar",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Primarina",
+      "slug": "primarina",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Toucannon",
+      "slug": "toucannon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Crabominable",
+      "slug": "crabominable",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Crabominable",
+      "slug": "crabominable",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Lycanroc",
+      "slug": "lycanroc",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Toxapex",
+      "slug": "toxapex",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mudsdale",
+      "slug": "mudsdale",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Araquanid",
+      "slug": "araquanid",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Salazzle",
+      "slug": "salazzle",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Tsareena",
+      "slug": "tsareena",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Oranguru",
+      "slug": "oranguru",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Passimian",
+      "slug": "passimian",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mimikyu",
+      "slug": "mimikyu",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Drampa",
+      "slug": "drampa",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Drampa",
+      "slug": "drampa",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Kommo-o",
+      "slug": "kommo-o",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Corviknight",
+      "slug": "corviknight",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Flapple",
+      "slug": "flapple",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Appletun",
+      "slug": "appletun",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sandaconda",
+      "slug": "sandaconda",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Polteageist",
+      "slug": "polteageist",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Hatterene",
+      "slug": "hatterene",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Grimmsnarl",
+      "slug": "grimmsnarl",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mr. Rime",
+      "slug": "mr.rime",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Runerigus",
+      "slug": "runerigus",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Alcremie",
+      "slug": "alcremie",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Falinks",
+      "slug": "falinks",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Falinks",
+      "slug": "falinks",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Morpeko",
+      "slug": "morpeko",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Dragapult",
+      "slug": "dragapult",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Wyrdeer",
+      "slug": "wyrdeer",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Kleavor",
+      "slug": "kleavor",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Basculegion",
+      "slug": "basculegion",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sneasler",
+      "slug": "sneasler",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Overqwil",
+      "slug": "overqwil",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Meowscarada",
+      "slug": "meowscarada",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Skeledirge",
+      "slug": "skeledirge",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Quaquaval",
+      "slug": "quaquaval",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Maushold",
+      "slug": "maushold",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Garganacl",
+      "slug": "garganacl",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Armarouge",
+      "slug": "armarouge",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Ceruledge",
+      "slug": "ceruledge",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Bellibolt",
+      "slug": "bellibolt",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Scovillain",
+      "slug": "scovillain",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Scovillain",
+      "slug": "scovillain",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Espathra",
+      "slug": "espathra",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Tinkaton",
+      "slug": "tinkaton",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Palafin",
+      "slug": "palafin",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Orthworm",
+      "slug": "orthworm",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Glimmora",
+      "slug": "glimmora",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Mega Glimmora",
+      "slug": "glimmora",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Houndstone",
+      "slug": "houndstone",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Annihilape",
+      "slug": "annihilape",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Farigiraf",
+      "slug": "farigiraf",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Kingambit",
+      "slug": "kingambit",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Gholdengo",
+      "slug": "gholdengo",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Sinistcha",
+      "slug": "sinistcha",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Archaludon",
+      "slug": "archaludon",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    },
+    {
+      "species": "Hydrapple",
+      "slug": "hydrapple",
+      "source": "serebii pokemonchampions/pokemon.shtml"
+    }
+  ],
+  "available_pokemon_note": "Generato da scripts/fetch_roster.ts il 2026-06-20 da https://www.serebii.net/pokemonchampions/pokemon.shtml. 283 forme (le forme regionali che condividono nome+slug sono unite: da raffinare se serve distinguerle)."
+}

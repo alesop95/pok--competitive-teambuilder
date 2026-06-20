@@ -25,8 +25,9 @@ Data snapshot:         2026-06-19
 
 ## Punto di ripresa
 
-Fase 1 in corso. Data layer verificato: `pkmnData.ts` carica la mod `champions` via `@pkmn/mods` e
-interroga le specie (test verdi). ADR-005 e ADR-007 chiuse. Prossima azione: generare
-`data/seasons/season_MB.json` (lista M-B da serebii, con validità regolamento 17 giu → 2 set 2026)
-e implementare il tagging dei ruoli `src/roleTagging.ts` (§4.1) con i relativi test. Nota: ci sono
-modifiche non committate (data layer + decisioni + ancoraggio sync-context).
+Fase 1 in corso. Fatti e testati (14/14 verdi): data layer (`pkmnData.ts` su mod `champions`),
+regolamento M-B ufficiale + roster (`season_MB.json`, 283 forme via `scripts/fetch_roster.ts`),
+tagging dei ruoli §4.1 (`roleTagging.ts`). ADR-005/006/007 chiuse. Prossima azione: implementare
+`src/teamGenerator.ts` (§4.2) — archetipi, core, scoring di coverage/sinergia — poi `rationale.ts`
+Livello 1 (§4.3) per chiudere la Fase 1. Nota: molte modifiche non committate (più sessioni di
+lavoro accumulate).

@@ -1,7 +1,7 @@
 // Verifica l'integrazione di @pkmn/dex con la mod "champions" (ADR-005/007): la dex si carica e le
 // query restituiscono dati reali del formato Pokémon Champions.
 import { describe, it, expect } from 'vitest';
-import { getChampionsDex, getSpecies } from '../src/pkmnData.js';
+import { getChampionsDex, getSpecies, tagSpecies } from '../src/pkmnData.js';
 
 describe('pkmnData / mod champions', () => {
   it('carica la dex champions con un numero plausibile di specie', async () => {
@@ -20,5 +20,10 @@ describe('pkmnData / mod champions', () => {
 
   it('restituisce null per una specie inesistente', async () => {
     expect(await getSpecies('Notapokemon')).toBeNull();
+  });
+
+  it('tagSpecies su dati reali: Grimmsnarl è screens_setter, Amoonguss redirection_support', async () => {
+    expect(await tagSpecies('Grimmsnarl')).toContain('screens_setter');
+    expect(await tagSpecies('Amoonguss')).toContain('redirection_support');
   });
 });

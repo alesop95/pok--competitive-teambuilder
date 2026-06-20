@@ -48,8 +48,11 @@ Definition of done:
 - [x] ADR-005 chiusa: la mod `champions` è raggiungibile via `@pkmn/mods` (verificato)
 - [x] fonte dati e regolamento decisi (ADR-007)
 - [x] `@pkmn/mods` installato e `pkmnData.ts` carica la mod champions e interroga una specie reale (test verdi)
-- [ ] `season_MB.json` generato (lista M-B da serebii) con validità regolamento registrata
-- [ ] `roleTagging.ts` implementa le regole §4.1, coperto da test verdi
+- [x] regolamento M-B ufficiale ricercato sul web e versionato in `season_MB.json` (con fonti)
+- [x] `season_MB.json` generato (283 forme / 208 specie da serebii via `scripts/fetch_roster.ts`)
+- [x] `roleTagging.ts` implementa le regole §4.1, coperto da test verdi (14/14)
+- [ ] `teamGenerator.ts` (§4.2): archetipi, core, scoring coverage/sinergia
+- [ ] `rationale.ts` Livello 1 (§4.3) e output CLF/Markdown (fine Fase 1)
 
 Domande aperte:
 
