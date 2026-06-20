@@ -42,12 +42,14 @@ DevDependencies: TypeScript (compilatore Apache 2.0), Vitest (MIT,
 https://www.npmjs.com/package/vitest) come test runner, e tsx (MIT) per eseguire TS senza build
 in sviluppo.
 
-Pacchetti opzionali, da valutare in fase avanzata e non installati ora: `@pkmn/mods` (MIT,
-estrazione delle mod non-canoniche di Showdown, incluso `champions` — vedi ADR-005), `@smogon/sets`
-(MIT, set da usage stats Showdown; riflette il meta dei tier Showdown, non quello Champions, quindi
-solo riferimento generico), `@pkmn/sets` (MIT, import/export team in formato testo), `@pkmn/dmg`
-(MIT, successore di `@smogon/calc`, da valutare per integrazione più diretta), `better-sqlite3`
-(MIT, solo se servirà un DB — vedi ADR-003).
+Installati in aggiunta (Fase 1-3): `@pkmn/mods` (MIT, espone la mod `champions` — ADR-005),
+`@pkmn/data` (MIT, costruisce la `Generation` per `@smogon/calc` dalla dex moddata — Fase 3),
+`@fastify/static` (MIT, serve il frontend — Fase 2).
+
+Pacchetti opzionali non installati: `@smogon/sets` (MIT, set da usage stats Showdown; riflette il
+meta dei tier Showdown, non quello Champions, solo riferimento generico), `@pkmn/sets` (MIT,
+import/export team in formato testo), `@pkmn/dmg` (MIT, successore di `@smogon/calc`),
+`better-sqlite3` (MIT, solo se servirà un DB — vedi ADR-003).
 
 ## Fonti open source da consultare (non installate, ma origine di dati/logica)
 
@@ -87,12 +89,14 @@ La struttura sorgente segue §6 dell'handoff. In Fase 0 i moduli sono stub comme
 arriva in Fase 1+.
 
 ```
-src/server.ts        entrypoint Fastify; espone le rotte dell'app (health + generazione team)
-src/pkmnData.ts      wrapper su @pkmn/dex + @smogon/calc; punto unico di accesso ai dati di gioco
+src/server.ts        entrypoint Fastify + @fastify/static; API REST (seasons/season/meta/generate)
+src/engine.ts        orchestrazione condivisa CLI+server: load dati, cache candidati, post-pass coverage offensiva
+src/pkmnData.ts      wrapper su @pkmn/dex + mod champions; specie, movepool, tagging, mappa difensiva
+src/calc.ts          damage calc reale (@smogon/calc + @pkmn/data sulla mod champions); bestDamagePercent
 src/roleTagging.ts   §4.1 — assegna tag di ruolo deterministici a ogni Pokémon (regole su stats/ability/movepool)
 src/teamGenerator.ts §4.2 — identifica archetipi, costruisce core, riempie slot, assegna punteggio
-src/rationale.ts     §4.3 — Livello 1 testo deterministico da template; hook Livello 2 via API Claude
-src/public/          frontend statico servito da Fastify (Fase 2)
+src/rationale.ts     §4.3 — Livello 1 testo deterministico (con coverage offensiva); hook Livello 2 via API Claude
+src/public/index.html SPA frontend servita da Fastify (Fase 2): le 4 pagine §5
 data/champions_overrides.json   eccezioni residue non coperte dalla mod champions (ADR-005)
 data/seasons/                   roster (season_<id>.json) e meta (season_<id>_meta.yaml) per stagione
 data/generated_teams/           storico team generati, un file JSON timestampato per generazione

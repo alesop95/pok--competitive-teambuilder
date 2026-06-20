@@ -9,6 +9,8 @@ import yaml from 'js-yaml';
 import { buildCandidates, getThreatTypes } from './pkmnData.js';
 import { generateTeams, type Candidate, type MetaContext, type TeamProposal } from './teamGenerator.js';
 import { buildRationale } from './rationale.js';
+import { bestDamagePercent } from './calc.js';
+import { buildSet, type PokemonSet } from './setBuilder.js';
 import type { RoleTag } from './roleTagging.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,8 +28,19 @@ export interface MetaFile {
   common_cores?: Array<{ members: string[]; archetype: string }>;
 }
 
+export interface OffensiveAnswer {
+  threat: string;
+  by: string; // membro del team che colpisce meglio
+  move: string;
+  pctMax: number; // danno massimo (% degli HP della minaccia), spread standard
+  answered: boolean; // true se >= 50% (risposta offensiva reale in doppio)
+}
+
 export interface EnrichedTeam extends TeamProposal {
   roles: Record<string, RoleTag[]>;
+  baseScore: number; // punteggio difensivo/sinergia prima della coverage offensiva
+  offensive: OffensiveAnswer[];
+  sets: PokemonSet[]; // set completo (item, abilità, natura, Stat Points, mosse) per ogni membro
   rationale: string;
 }
 
@@ -94,14 +107,53 @@ export async function generateForSeason(id: string, topN = 5): Promise<EnrichedT
 
   const meta: MetaContext = { topThreats: (metaFile.top_threats ?? []).map((t) => t.species) };
   const threatTypes = await getThreatTypes(meta.topThreats);
-  const teams = generateTeams(candidates, { topN, meta, threatTypes });
+  // genera tutte le proposte di archetipo, poi affina con la coverage offensiva reale (Fase 3) e
+  // riordina; il topN si applica dopo, così la scelta tiene conto anche del danno verificato.
+  const proposals = generateTeams(candidates, { topN: 99, meta, threatTypes });
 
   const tagsBySpecies: Record<string, RoleTag[]> = {};
   for (const c of candidates) tagsBySpecies[c.species] = c.tags;
 
-  return teams.map((t) => {
+  const enriched: EnrichedTeam[] = [];
+  for (const t of proposals) {
     const roles: Record<string, RoleTag[]> = {};
     for (const m of t.members) roles[m] = tagsBySpecies[m] ?? [];
-    return { ...t, roles, rationale: buildRationale(t, tagsBySpecies, 1) };
-  });
+
+    // coverage offensiva: per ogni minaccia meta, la risposta migliore (danno massimo) del team
+    const offensive: OffensiveAnswer[] = [];
+    for (const threat of meta.topThreats) {
+      let best: OffensiveAnswer | null = null;
+      for (const m of t.members) {
+        const d = await bestDamagePercent(m, threat);
+        if (d && (!best || d.pctMax > best.pctMax)) {
+          best = { threat, by: m, move: d.move, pctMax: d.pctMax, answered: d.pctMax >= 50 };
+        }
+      }
+      if (best) offensive.push(best);
+    }
+    const answered = offensive.filter((o) => o.answered).length;
+    const finalScore = Math.round((t.score + answered * 0.5) * 100) / 100;
+
+    // set competitivo completo per ogni membro (item, abilità, natura, Stat Points, mosse)
+    const sets: PokemonSet[] = [];
+    for (const m of t.members) {
+      const s = await buildSet(m, roles[m] ?? []);
+      if (s) sets.push(s);
+    }
+
+    const enrichedTeam: EnrichedTeam = {
+      ...t,
+      score: finalScore,
+      baseScore: t.score,
+      roles,
+      offensive,
+      sets,
+      rationale: '',
+    };
+    enrichedTeam.rationale = buildRationale(enrichedTeam, tagsBySpecies, offensive, sets);
+    enriched.push(enrichedTeam);
+  }
+
+  enriched.sort((a, b) => b.score - a.score);
+  return enriched.slice(0, topN);
 }

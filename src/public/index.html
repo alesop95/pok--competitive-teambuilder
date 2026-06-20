@@ -34,6 +34,8 @@
     .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .status { font-size:13px; color:var(--muted); }
     pre.export { white-space:pre-wrap; background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px; }
+    .sets { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; margin:8px 0 12px; }
+    .set { background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; line-height:1.45; }
   </style>
 </head>
 <body>
@@ -147,13 +149,20 @@
       const members = t.members.map((m) => `<span class="mon">${m} <small>${roleChips(t.roles[m])}</small></span>`).join('');
       const strengths = (t.strengths||[]).map((s) => `<li class="tag-good">${s}</li>`).join('');
       const weak = (t.weaknesses||[]).length ? `Debolezze impilate: <span class="tag-warn">${t.weaknesses.join(', ')}</span>` : 'Nessuna debolezza di tipo impilata.';
+      const offensive = (t.offensive||[]).map((o) => `<li class="${o.answered?'tag-good':'tag-warn'}">${o.threat}: ${o.by} con ${o.move} → ${o.pctMax}%</li>`).join('');
+      const sp = (obj) => Object.entries(obj||{}).map(([k,v]) => `${k.toUpperCase()} ${v}`).join(' / ');
+      const sets = (t.sets||[]).map((s) => `<div class="set"><strong>${s.species}</strong> @ ${s.item} · ${s.ability} · ${s.nature}<br><span class="muted">SP:</span> ${sp(s.statPoints)}<br><span class="muted">Mosse:</span> ${(s.moves||[]).join(' / ')}</div>`).join('');
       const notes = (t.notes||[]).map((n) => `<li>${n}</li>`).join('');
-      const exportText = `${t.archetype} (score ${t.score})\n` + t.members.join('\n');
+      const exportText = `${t.archetype} (score ${t.score})\n\n` + (t.sets||[]).map((s) =>
+        `${s.species} @ ${s.item}\nAbilità: ${s.ability}\nNatura: ${s.nature}\nStat Points: ${sp(s.statPoints)}\n` + (s.moves||[]).map((m) => '- ' + m).join('\n')
+      ).join('\n\n');
       return `<div class="card">
         <h3>${t.archetype} <span class="score">score ${t.score}</span></h3>
         <div class="members">${members}</div>
+        ${sets ? '<strong>Set completi</strong><div class="sets">'+sets+'</div>' : ''}
         ${strengths ? '<strong>Punti di forza</strong><ul>'+strengths+'</ul>' : ''}
         <p>${weak}</p>
+        ${offensive ? '<strong>Coverage offensiva vs meta (danno reale @smogon/calc)</strong><ul>'+offensive+'</ul>' : ''}
         ${notes ? '<strong>Note di coverage</strong><ul>'+notes+'</ul>' : ''}
         <div class="row">
           <button onclick='copyText(this)' data-text="${encodeURIComponent(exportText)}">Esporta testo</button>

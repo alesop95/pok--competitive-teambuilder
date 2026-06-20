@@ -69,6 +69,13 @@ const ARCHETYPES: ArchetypeDef[] = [
     coreSize: 2,
   },
   {
+    id: 'weather_offense',
+    name: 'Weather Offense',
+    available: (c) => c('weather_setter') >= 1 && c('wallbreaker') + c('autonomous_sweeper') >= 1,
+    coreTags: ['weather_setter', 'wallbreaker', 'autonomous_sweeper'],
+    coreSize: 3,
+  },
+  {
     // fallback sempre disponibile: bilanciato attorno a pivot/speed control
     id: 'balance',
     name: 'Balance',
@@ -138,6 +145,14 @@ function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, thr
   const resistedTypes = allTypes.filter((t) => team.some((c) => resists(c, t)));
   score += Math.min(resistedTypes.length, 12) * 0.25;
   if (stacked.length === 0) strengths.push('nessuna debolezza di tipo impilata su 3+ membri');
+
+  // sinergia: premia la presenza di ruoli di supporto strutturali (controllo velocità, redirezione,
+  // pivot, schermi), che tengono insieme la squadra al di là dei soli attaccanti.
+  const teamTags = new Set(team.flatMap((c) => c.tags));
+  const synergyRoles: RoleTag[] = ['speed_control', 'redirection_support', 'pivot', 'screens_setter'];
+  const synergyPresent = synergyRoles.filter((r) => teamTags.has(r));
+  score += synergyPresent.length * 0.3;
+  if (synergyPresent.length >= 2) strengths.push(`spina dorsale di supporto: ${synergyPresent.join(', ')}`);
 
   // Copertura difensiva delle minacce meta (proxy finché non c'è il damage calc reale, Fase 3).
   // Risposta "solida": un membro che resiste ad almeno una STAB della minaccia e non è debole a

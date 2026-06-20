@@ -8,8 +8,21 @@
 // ANTHROPIC_API_KEY; degrada con grazia al Livello 1 se la chiave non c'è.
 import type { TeamProposal } from './teamGenerator.js';
 import type { RoleTag } from './roleTagging.js';
+import type { PokemonSet } from './setBuilder.js';
+
+const formatSP = (sp: PokemonSet['statPoints']): string =>
+  Object.entries(sp).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(' / ') || '—';
 
 export type RationaleLevel = 1 | 2;
+
+// Risposta offensiva a una minaccia meta, con danno reale da @smogon/calc (Fase 3).
+export interface OffensiveCoverageItem {
+  threat: string;
+  by: string;
+  move: string;
+  pctMax: number;
+  answered: boolean;
+}
 
 const ROLE_LABELS: Record<RoleTag, string> = {
   screens_setter: 'schermi',
@@ -31,6 +44,8 @@ const describeRoles = (tags: RoleTag[]): string =>
 export function buildRationaleL1(
   team: TeamProposal,
   perMemberTags: Record<string, RoleTag[]> = {},
+  offensive: OffensiveCoverageItem[] = [],
+  sets: PokemonSet[] = [],
 ): string {
   const lines: string[] = [];
   lines.push(`### ${team.archetype} — punteggio ${team.score}`);
@@ -38,6 +53,15 @@ export function buildRationaleL1(
   lines.push('Composizione e ruoli:');
   for (const m of team.members) lines.push(`- ${m}: ${describeRoles(perMemberTags[m] ?? [])}`);
   lines.push('');
+
+  if (sets.length) {
+    lines.push('Set completi (Stat Points di Champions: 66 totali, max 32/stat):');
+    for (const s of sets) {
+      lines.push(`- ${s.species} @ ${s.item} · ${s.ability} · ${s.nature} · SP: ${formatSP(s.statPoints)}`);
+      lines.push(`  Mosse: ${s.moves.join(' / ')}`);
+    }
+    lines.push('');
+  }
 
   if (team.strengths.length) {
     lines.push('Punti di forza:');
@@ -54,6 +78,16 @@ export function buildRationaleL1(
   }
   lines.push('');
 
+  if (offensive.length) {
+    const answered = offensive.filter((o) => o.answered).length;
+    lines.push(`Coverage offensiva contro le minacce meta (danno reale, @smogon/calc) — ${answered}/${offensive.length} con risposta solida:`);
+    for (const o of offensive) {
+      const mark = o.answered ? 'OK' : 'debole';
+      lines.push(`- ${o.threat}: ${o.by} con ${o.move} fa fino al ${o.pctMax}% (${mark})`);
+    }
+    lines.push('');
+  }
+
   if (team.notes.length) {
     lines.push('Note e buchi di coverage:');
     for (const n of team.notes) lines.push(`- ${n}`);
@@ -67,9 +101,9 @@ export function buildRationaleL1(
 export function buildRationale(
   team: TeamProposal,
   perMemberTags: Record<string, RoleTag[]> = {},
-  level: RationaleLevel = 1,
+  offensive: OffensiveCoverageItem[] = [],
+  sets: PokemonSet[] = [],
 ): string {
-  // TODO Fase 4: se level === 2 e ANTHROPIC_API_KEY è presente, arricchire via @anthropic-ai/sdk.
-  void level;
-  return buildRationaleL1(team, perMemberTags);
+  // TODO Fase 4: con ANTHROPIC_API_KEY presente, arricchire la prosa via @anthropic-ai/sdk.
+  return buildRationaleL1(team, perMemberTags, offensive, sets);
 }

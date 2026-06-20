@@ -76,7 +76,7 @@ export async function tagSpecies(name: string): Promise<RoleTag[]> {
 // (0.5x), 3 immune (0x). Calcola la mappa difensiva di una combinazione di tipi.
 const CODE_TO_MULT: Record<number, number> = { 0: 1, 1: 2, 2: 0.5, 3: 0 };
 
-async function getDefenseMap(types: string[]): Promise<Record<string, number>> {
+export async function getDefenseMap(types: string[]): Promise<Record<string, number>> {
   const dex = await getChampionsDex();
   const attackingTypes = dex.types.all().map((t) => t.name);
   const map: Record<string, number> = {};

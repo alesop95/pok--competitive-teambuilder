@@ -68,6 +68,27 @@ agganciata al posto della curatela manuale della legalità. Da monitorare.
 Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il
 pacchetto va tenuto intero. Non bloccante.
 
+## Feature: Fase 3 — damage calc reale e raffinamento (handoff §7)
+
+Cosa fa: porta numeri di danno verificati nel motore e affina lo scoring. `src/calc.ts` usa
+`@smogon/calc` su una `Generation` `@pkmn/data` costruita sulla mod champions; l'engine calcola la
+coverage offensiva reale contro le minacce meta e la espone in rationale e UI.
+
+Definition of done:
+
+- [x] `@smogon/calc` + `@pkmn/data` integrati con la mod champions (verificato, numeri plausibili)
+- [x] `bestDamagePercent` con scelta mossa pesata sulla stat offensiva, filtro mosse poco pratiche, memo
+- [x] engine: post-pass coverage offensiva (≥50% = risposta solida), score aggiornato e riordino
+- [x] rationale e card UI mostrano i numeri di danno reali; coverage 10/10 minacce M-B
+- [x] archetipo Weather Offense + bonus di sinergia; 21/21 test verdi, typecheck pulito
+- [x] set completi per ogni membro: item, abilità, natura, Stat Points (66/max32, §0.5), 4 mosse
+      (`src/setBuilder.ts`), esposti in rationale, API e UI + export testuale
+- [x] resa visiva di coverage offensiva e set nelle card verificata con screenshot (OK)
+
+Limiti noti: scelte di set euristiche (talvolta mosse subottimali, abilità non ideale se l'unica
+utile è hidden); la scelta mossa del calc resta euristica (1 calc per coppia, spread standard, niente
+field/abilità avversarie); Mega via strumento non auto-evolve in calc; il meta è preliminare.
+
 ## Feature: Fase 2 — UI web minima (handoff §5)
 
 Cosa fa: espone il motore via browser. Engine condiviso `src/engine.ts` (cache candidati), server

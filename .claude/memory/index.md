@@ -25,11 +25,14 @@ Data snapshot:         2026-06-19
 
 ## Punto di ripresa
 
-Fase 2 implementata (MVP). Fatto: motore Fase 1 (data layer, tagging §4.1, generazione §4.2,
-rationale L1 §4.3), meta M-B curato (preliminare), engine condiviso `src/engine.ts`, server Fastify
-+ API + SPA `src/public/index.html` con le 4 pagine §5. App web su http://127.0.0.1:5187 (PORT
-override; la 3000 è di un'altra app dell'utente, non usarla). 19/19 test verdi, API verificate via
-curl. Prossima azione: verificare la resa visiva della UI con uno screenshot dell'utente, poi
-committare il blocco Fase 2. Limiti noti: scoring senza damage calc reale (Fase 3); meta da
-raffinare con usage stats. Modifiche non committate: meta + Fase 1 (teamGenerator/rationale/CLI) +
-Fase 2 (engine/server/UI).
+Fase 3 implementata. Fatto: Fasi 0-2 (data layer, tagging §4.1, generazione §4.2, rationale §4.3,
+meta M-B, engine/server/UI) + damage calc reale `src/calc.ts` (`@smogon/calc` + `@pkmn/data` sulla
+mod champions) con coverage offensiva verificata in rationale e card UI (10/10 minacce M-B),
+archetipo Weather e bonus sinergia. Inoltre: set competitivi completi per membro (`src/setBuilder.ts`)
+con item, abilità, natura, Stat Points (66/max32, §0.5) e 4 mosse, esposti in rationale/API/UI/export.
+App web su http://127.0.0.1:5187 (PORT override; NON usare la 3000, è di un'altra app dell'utente).
+24/24 test verdi, typecheck pulito, pipeline ~2s. Prossima
+azione: verificare la resa visiva delle card (coverage offensiva) con screenshot, poi committare il
+blocco Fase 3 e ri-ancorare le schede con `sync-context` (puntano ancora a 373419b). Possibili
+sviluppi: Fase 4 (rationale Livello 2 via API Claude) o Fase 5 (packaging/deploy), o raffinare il
+meta con usage stats. Modifiche Fase 3 non committate.

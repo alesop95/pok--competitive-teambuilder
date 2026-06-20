@@ -6,6 +6,44 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-20 — Set competitivi completi (item, abilità, natura, Stat Points, mosse)
+
+Commit: (da committare)
+File toccati: `src/setBuilder.ts` (nuovo), `src/engine.ts` (sets per membro), `src/rationale.ts`
+(sezione set), `src/public/index.html` (card + export), `tests/setBuilder.test.ts`.
+Motivo: su richiesta utente, le proposte ora includono il set completo di ogni Pokémon. Deciso col
+gate: sistema statistiche = Stat Points di Champions (66 totali, max 32/stat, §0.5), non EV/IV; set
+completo con 4 mosse. `src/setBuilder.ts` (euristiche deterministiche): abilità per preferenza
+competitiva, strumento per ruolo (Light Clay schermi, Life Orb breaker/sweeper, Safety Goggles
+redirezione, Sitrus default), natura per orientamento/ruolo (Adamant/Modest, Brave/Quiet in TR,
+Impish/Calm supporto), spread SP (due stat a 32 + resto), 4 mosse (STAB + coverage + mossa di ruolo
++ Protect). Agganciato all'engine (`sets` per team), al rationale e alla UI (sezione Set completi +
+export testuale). Verifica: typecheck pulito, 24/24 test verdi, CLI e API mostrano i set
+(es. Slowbro @ Sitrus · Regenerator · Quiet · SPA32/HP32 · Hydro Pump/Psychic/Trick Room/Protect).
+Limiti: scelte euristiche (talvolta mosse subottimali come Focus Punch in doppio, abilità non
+ideale se l'unica utile è hidden); raffinabili. Resa UI da verificare con screenshot.
+
+## 2026-06-20 — Fase 3: damage calc reale e raffinamento motore
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (nuovo), `src/engine.ts` (post-pass coverage offensiva),
+`src/teamGenerator.ts` (archetipo weather + bonus sinergia), `src/rationale.ts` (sezione coverage
+offensiva), `src/pkmnData.ts` (`getDefenseMap` esportata), `src/public/index.html` (render
+coverage), `tests/calc.test.ts`, `package.json` (+`@pkmn/data`).
+Motivo: integrato il damage calc reale del formato Champions. De-risk: `@smogon/calc` funziona con
+una `Generation` di `@pkmn/data` costruita sulla dex moddata `champions` (predicato `exists`
+permissivo per non perdere specie isNonstandard come Mawile). `src/calc.ts`: gen singleton +
+`bestDamagePercent(att, dif)` che sceglie la mossa migliore (bp × STAB × efficacia × stat offensiva
+reale, scartando mosse a due turni/ricarica/differite e <80 precisione) e ritorna la % di danno a
+Lv50 con spread standard; risultati memoizzati. Engine: post-pass che per ogni team calcola la
+risposta offensiva migliore a ciascuna minaccia meta (≥50% = risposta solida), aggiunge il punteggio
+e riordina; il rationale espone i numeri reali (es. Incineroar <- Blastoise/Water Spout/96%).
+Generator: archetipo Weather Offense e bonus di sinergia per ruoli di supporto. Verifica:
+typecheck pulito, 21/21 test verdi, CLI e API ~2s, coverage 10/10 minacce. UI aggiornata con la
+sezione coverage offensiva (resa da verificare con screenshot). Nota: durante il riavvio del server
+ho dovuto terminare il processo node rimasto appeso sulla 5187 (TaskStop non uccide il nipote);
+la 3000 dell'utente non è stata toccata.
+
 ## 2026-06-20 — Fase 2: UI web Fastify (le 4 pagine §5)
 
 Commit: (da committare)
