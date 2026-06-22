@@ -4,7 +4,7 @@ generated-from-branch: main
 generated-date: 2026-06-19
 covers-paths:
   - package.json
-last-verified-commit: 373419b
+last-verified-commit: 17fdd2a
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 

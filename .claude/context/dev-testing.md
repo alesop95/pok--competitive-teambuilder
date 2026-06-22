@@ -5,7 +5,7 @@ generated-date: 2026-06-19
 covers-paths:
   - tests/**
   - package.json
-last-verified-commit: 373419b
+last-verified-commit: 17fdd2a
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -16,16 +16,18 @@ source-doc: pokemon-champions-team-builder-spec.md
 
 ## Test runner e comandi
 
-Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). I test stanno sotto
-`tests/`. In Fase 0 c'è un test placeholder; la copertura reale parte in Fase 1 sul tagging dei
-ruoli (`tests/roleTagging.test.ts`), dove le regole deterministiche di §4.1 sono naturalmente
-testabili con casi noti (un Pokémon con Prankster + Reflect deve risultare `screens_setter`, ecc.).
+Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). I test stanno sotto `tests/`
+e sono 29 su sei file: `roleTagging.test.ts` (regole §4.1 su fixture), `pkmnData.test.ts` (mod
+champions: specie reali e tagging), `teamGenerator.test.ts` (archetipi, Species Clause, ordinamento,
+integrazione), `calc.test.ts` (damage calc reale su matchup noti), `setBuilder.test.ts` (set, Mega,
+filtro mosse, Stat Points), `legality.test.ts` (validazione legalità formato). I test unitari usano
+fixture pure; quelli di integrazione interrogano la dex champions in-process.
 
 ## Rotte e dati mockati
 
-Per i test del motore non serve rete: i dati di gioco vengono da `@pkmn/dex` in-process e i roster
-di test sono fixture JSON locali. Il rationale Livello 2 (API Claude) si testa solo con la chiave
-presente e va isolato dietro un flag, così la suite gira offline per default.
+Per i test del motore non serve rete: i dati di gioco vengono da `@pkmn/dex` in-process. Il damage
+calc è memoizzato. Il rationale Livello 2 (API Claude) non è implementato; quando lo sarà andrà
+isolato dietro la presenza di `ANTHROPIC_API_KEY`, così la suite resta offline per default.
 
 ## Hook e controlli di qualità
 

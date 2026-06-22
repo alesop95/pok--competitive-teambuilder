@@ -7,7 +7,7 @@ covers-paths:
   - package.json
   - tsconfig.json
   - data/**
-last-verified-commit: 373419b
+last-verified-commit: 17fdd2a
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 

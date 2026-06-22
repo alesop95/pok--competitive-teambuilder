@@ -8,20 +8,20 @@
 
 ```
 Branch attivo:         main
-Commit di riferimento: 373419b
-Data snapshot:         2026-06-19
+Commit di riferimento: 17fdd2a
+Data snapshot:         2026-06-22
 ```
 
 ## Stato di verifica delle schede
 
 | Scheda | last-verified | Stato |
 |---|---|---|
-| STACK.md | 373419b | aggiornata |
-| design-and-security.md | 373419b | aggiornata |
-| deployment.md | 373419b | aggiornata |
-| dev-testing.md | 373419b | aggiornata |
-| current-work.md | 373419b | aggiornata |
-| roadmap.md | 373419b | aggiornata |
+| STACK.md | 17fdd2a | aggiornata |
+| design-and-security.md | 17fdd2a | aggiornata |
+| deployment.md | 17fdd2a | aggiornata |
+| dev-testing.md | 17fdd2a | aggiornata |
+| current-work.md | 17fdd2a | aggiornata |
+| roadmap.md | 17fdd2a | aggiornata |
 
 ## Stato sintetico (2026-06-22)
 

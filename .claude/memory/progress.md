@@ -6,6 +6,18 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — sync-context: ri-ancoraggio schede a HEAD 17fdd2a
+
+Commit: 17fdd2a
+File toccati: le 6 schede di `context/` (frontmatter `last-verified-commit` → 17fdd2a),
+`design-and-security.md` e `dev-testing.md` (delta update di contenuto), `memory/index.md`.
+Motivo: dopo il commit `17fdd2a` (motore Fase 3 → documentazione), eseguito `sync-context`. Tutte le
+`covers-paths` risultavano cambiate dal precedente ancoraggio (373419b). Le schede mantenute durante
+la sessione (STACK, deployment, current-work, roadmap) erano già allineate nel contenuto: solo bump
+del `last-verified`. Le schede `design-and-security` e `dev-testing` erano indietro e hanno ricevuto
+un delta update mirato (pipeline con viability/damage calc/legalità; suite reale a 29 test su 6
+file). Snapshot di `index.md` portato a 17fdd2a.
+
 ## 2026-06-22 — Rifinitura motore, prep deploy (Fase 5) e documentazione tecnica
 
 Commit: (da committare)
