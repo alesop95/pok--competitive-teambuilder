@@ -6,6 +6,18 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — Diagramma Mermaid della pipeline (sorgente + SVG)
+
+Commit: (da committare)
+File toccati: `.claude/context/diagrams/pipeline.mmd` (nuovo), `.claude/context/diagrams/pipeline.svg`
+(nuovo, reso), `.claude/context/design-and-security.md` (registrazione diagramma),
+`docs/TECHNICAL.md` (blocco Mermaid inline + embed SVG in §3), `README.md` implicito.
+Motivo: aggiunto il diagramma della pipeline del motore in Mermaid (`pipeline.mmd`) e reso in
+`pipeline.svg` con `tools/render-diagrams.mjs` (Edge di sistema). Etichette brevi e solo trattini
+brevi per leggibilità; verificato l'SVG (1264x1328, box dimensionati sul testo, nodi distanziati,
+nessuna sovrapposizione). Registrato in `design-and-security.md` (corrispondenza uno a uno coi
+moduli) e referenziato da `docs/TECHNICAL.md` §3 (blocco ```mermaid``` reso da GitHub + embed SVG).
+
 ## 2026-06-22 — Limiti noti (calc ability-aware) + documentazione esaustiva e fonti
 
 Commit: (da committare)

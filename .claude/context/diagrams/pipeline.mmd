@@ -1,0 +1,37 @@
+%% Pipeline del motore di generazione team. Sorgente del diagramma registrato in
+%% context/design-and-security.md e referenziato da docs/TECHNICAL.md. Reso in pipeline.svg
+%% con tools/render-diagrams.mjs. Etichette brevi per leggibilita; solo trattini brevi.
+flowchart TD
+  subgraph FONTI[Fonti dati]
+    DEX["@pkmn/dex + mod champions"]
+    SRB["serebii: roster, mosse, item"]
+    USE["usage meta (Pikalytics)"]
+  end
+
+  DEX --> PK["pkmnData: specie, movepool, type chart"]
+  SRB --> SEAS["data/seasons: roster, legalita"]
+  USE --> META["season meta: minacce, core"]
+
+  PK --> TAG["roleTagging: tag ruoli"]
+  TAG --> CAND["candidati: tag, tipi, difesa, stats"]
+  SEAS --> CAND
+
+  CALC["@smogon/calc: danno reale"]
+
+  CAND --> VIAB["engine: viability"]
+  META --> VIAB
+  CALC --> VIAB
+
+  VIAB --> GEN["teamGenerator: archetipi, core, riempimento, scoring"]
+  META --> GEN
+
+  GEN --> OFF["engine: coverage offensiva"]
+  CALC --> OFF
+
+  OFF --> SET["setBuilder: item, abilita, natura, Stat Points, mosse, Mega"]
+  SET --> LEG["validazione legalita"]
+  SEAS --> LEG
+
+  LEG --> RAT["rationale: testo e numeri"]
+  RAT --> CLI["CLI: file md e json"]
+  RAT --> WEB["server Fastify e UI"]

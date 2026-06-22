@@ -46,10 +46,11 @@ la legalità degli strumenti/mosse dei set è verificata contro `data/seasons/le
 
 ## Diagrammi
 
-Nessun diagramma ancora. Quando si documenterà la pipeline del motore (Fase 1+), i sorgenti `.mmd`
-andranno in `diagrams/` e si renderanno in `.svg` con `tools/render-diagrams.mjs`, in
-corrispondenza uno a uno coi componenti descritti.
+La pipeline del motore è rappresentata in `diagrams/pipeline.svg`, reso da `diagrams/pipeline.mmd`
+con `tools/render-diagrams.mjs` (browser Chromium di sistema). La corrispondenza è uno a uno coi
+moduli descritti sopra e in `docs/TECHNICAL.md` §3: ogni nodo del diagramma è un file/stadio reale
+del codice.
 
 | Diagramma | Sorgente | Componenti rappresentati |
 |---|---|---|
-| (nessuno) | | |
+| `pipeline.svg` | `pipeline.mmd` | Fonti dati (`@pkmn/dex`+mod, serebii, usage), `pkmnData`, `roleTagging`, `engine` (viability/coverage), `@smogon/calc`, `teamGenerator`, `setBuilder`, validazione legalità, `rationale`, output CLI e server |

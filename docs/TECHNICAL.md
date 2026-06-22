@@ -74,24 +74,49 @@ generazione e lo scoring in `src/teamGenerator.ts:generateTeams`, il damage calc
 `src/rationale.ts:buildRationale`. Lo stesso motore alimenta sia la CLI (`scripts/generate.ts`) sia
 il server (`src/server.ts`).
 
+La pipeline è rappresentata dal diagramma sotto. Il sorgente Mermaid canonico è
+`.claude/context/diagrams/pipeline.mmd` e la versione resa è
+[`.claude/context/diagrams/pipeline.svg`](../.claude/context/diagrams/pipeline.svg), generata con
+`tools/render-diagrams.mjs`. Il blocco Mermaid seguente è reso nativamente da GitHub.
+
+```mermaid
+flowchart TD
+  subgraph FONTI[Fonti dati]
+    DEX["@pkmn/dex + mod champions"]
+    SRB["serebii: roster, mosse, item"]
+    USE["usage meta (Pikalytics)"]
+  end
+
+  DEX --> PK["pkmnData: specie, movepool, type chart"]
+  SRB --> SEAS["data/seasons: roster, legalita"]
+  USE --> META["season meta: minacce, core"]
+
+  PK --> TAG["roleTagging: tag ruoli"]
+  TAG --> CAND["candidati: tag, tipi, difesa, stats"]
+  SEAS --> CAND
+
+  CALC["@smogon/calc: danno reale"]
+
+  CAND --> VIAB["engine: viability"]
+  META --> VIAB
+  CALC --> VIAB
+
+  VIAB --> GEN["teamGenerator: archetipi, core, riempimento, scoring"]
+  META --> GEN
+
+  GEN --> OFF["engine: coverage offensiva"]
+  CALC --> OFF
+
+  OFF --> SET["setBuilder: item, abilita, natura, Stat Points, mosse, Mega"]
+  SET --> LEG["validazione legalita"]
+  SEAS --> LEG
+
+  LEG --> RAT["rationale: testo e numeri"]
+  RAT --> CLI["CLI: file md e json"]
+  RAT --> WEB["server Fastify e UI"]
 ```
-@pkmn/dex + mod champions
-        │  (pkmnData)
-        ▼
-roleTagging (§4.1)  ─→  candidati con tag, tipi, mappa difensiva, stats
-        │
-        ▼
-engine: viability per candidato  ──(usa)── calc (@smogon/calc)
-        │
-        ▼
-teamGenerator (§4.2): archetipi → core → riempimento → scoring
-        │
-        ▼
-engine: coverage offensiva reale (calc) + set completi (setBuilder) + legalità
-        │
-        ▼
-rationale (§4.3)  →  CLI (file .md/.json)  |  server Fastify → UI
-```
+
+![Pipeline del motore](../.claude/context/diagrams/pipeline.svg)
 
 ## 4. La matematica del motore
 
