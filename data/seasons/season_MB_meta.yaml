@@ -1,56 +1,80 @@
 season_id: M-B
-# Meta curato a mano (handoff §3.3). PRELIMINARE: il Regulation M-B è iniziato il 17 giugno 2026 e
-# il meta è ancora in formazione; questa è una prima istantanea da tier list e analisi, da
-# raffinare con le usage stats man mano. Le specie sono indicate col nome base (la dex risolve la
-# forma base e ne dà i tipi corretti per la coverage; le Mega rilevanti sono citate in why_relevant).
+# Meta curato dalle USAGE STATS REALI del formato (non più solo tier list). Fonte primaria:
+# Pikalytics (Reg M-B, S3 Ranked Battle Data) e ChampionsMeta, ~22 giugno 2026. L'ordine dei
+# top_threats segue il ranking di usage. Le specie sono indicate col nome base (la dex risolve la
+# forma base e ne dà i tipi per la coverage; le Mega rilevanti sono citate in why_relevant).
+# Aggiornare a ogni rilettura delle usage man mano che il meta matura.
 
 top_threats:
-  - species: Incineroar
-    role_tags: [intimidate, fake_out, pivot, support]
-    why_relevant: "Quasi un auto-pick in doppio: Intimidate, Fake Out e mosse di supporto (Parting Shot/U-turn) spezzano i lead avversari."
-  - species: Sneasler
-    role_tags: [fast_attacker, fake_out, setup]
-    why_relevant: "Indicato tra i migliori del formato: forte pressione offensiva unita al supporto con Fake Out (Unburden con Grass Knot/Acrobatics)."
-  - species: Kingambit
-    role_tags: [late_game_sweeper, priority]
-    why_relevant: "Minaccia di late-game dominante: Supreme Overlord scala col proseguire della partita, Sucker Punch chiude in priorità."
+  - species: Garchomp
+    role_tags: [physical_attacker, mega, speed]
+    why_relevant: "Specie più usata del formato. Mega Garchomp picchia forte (Earthquake/Stomping Tantrum, Dragon STAB); minaccia gran parte del campo."
   - species: Sinistcha
     role_tags: [bulky_support, trick_room, redirection]
-    why_relevant: "Tra i migliori pezzi di supporto del formato secondo le fonti; bulk elevato e utilità in regime Trick Room."
-  - species: Metagross
-    role_tags: [fast, coverage, steel]
-    why_relevant: "Mega Metagross: indicato come miglior nuova Mega Acciaio, base Speed 110 da Mega, difese e coverage super-efficace ampia."
-  - species: Swampert
-    role_tags: [rain_abuser, wallbreaker]
-    why_relevant: "Mega Swampert: domina i team pioggia con Speed raddoppiata sotto Swift Swim e Wave Crash."
-  - species: Mawile
-    role_tags: [huge_power, wallbreaker]
-    why_relevant: "Mega Mawile: Huge Power trasforma un Attacco modesto in danno devastante; minaccia i pezzi chiave del meta."
-  - species: Staraptor
-    role_tags: [contrary, physical_attacker]
-    why_relevant: "Mega Staraptor: Contrary rende Close Combat senza calo difese, attaccante fisico solido con Dual Wingbeat."
+    why_relevant: "Secondo per usage e pezzo di supporto difensivo top; bulk elevato, utility, regime Trick Room."
   - species: Basculegion
     role_tags: [adaptability, wallbreaker]
-    why_relevant: "Adaptability rende le STAB Acqua/Spettro estremamente potenti: crea problemi di matchup a molte aggiunte nuove."
+    why_relevant: "Adaptability rende le STAB Acqua/Spettro estremamente potenti; tra i più usati come breaker."
+  - species: Whimsicott
+    role_tags: [prankster, support, speed_control]
+    why_relevant: "Prankster per Tailwind/Light Screen/Encore; supporto velocissimo onnipresente nei team offensivi."
+  - species: Kingambit
+    role_tags: [late_game_sweeper, priority]
+    why_relevant: "Supreme Overlord scala col proseguire della partita, Sucker Punch chiude in priorità."
+  - species: Staraptor
+    role_tags: [contrary, physical_attacker]
+    why_relevant: "Mega Staraptor: Contrary rende Close Combat senza calo difese; attaccante fisico volante solido."
+  - species: Incineroar
+    role_tags: [intimidate, fake_out, pivot, support]
+    why_relevant: "Quasi un auto-pick: Intimidate, Fake Out e Parting Shot/U-turn; metà del core più usato del formato."
+  - species: Charizard
+    role_tags: [mega, special_attacker, sun]
+    why_relevant: "Mega Charizard X/Y: forte attaccante, Drought (Y) o bulk fisico (X); molto usato."
+  - species: Raichu
+    role_tags: [mega, fast_attacker, speed]
+    why_relevant: "Mega Raichu (nuova in M-B): velocità e pressione elettrica; usage alto."
+  - species: Pelipper
+    role_tags: [rain_setter, support]
+    why_relevant: "Drizzle: setter di pioggia dei core Archaludon/Swampert; abilita gli archetipi rain."
+  - species: Sneasler
+    role_tags: [fast_attacker, fake_out, setup]
+    why_relevant: "Forte pressione offensiva + Fake Out (Unburden); tra i migliori del formato."
+  - species: Archaludon
+    role_tags: [special_attacker, rain_abuser]
+    why_relevant: "Electro Shot sotto pioggia, bulk e coverage; perno del core rain più ripetuto."
   - species: Grimmsnarl
     role_tags: [screens_setter, prankster, support]
-    why_relevant: "Supporto da schermi con Prankster (Reflect/Light Screen), abilita gli archetipi screens offense."
+    why_relevant: "Supporto da schermi con Prankster (Reflect/Light Screen); abilita gli archetipi screens."
+  - species: Sylveon
+    role_tags: [special_attacker, fairy, pixilate]
+    why_relevant: "Pixilate Hyper Voice colpisce entrambi i bersagli; STAB Fairy pervasiva nel meta."
+  - species: Swampert
+    role_tags: [rain_abuser, wallbreaker, mega]
+    why_relevant: "Mega Swampert: Swift Swim sotto pioggia, Wave Crash; chiude il core rain."
+  - species: Metagross
+    role_tags: [steel, coverage, mega]
+    why_relevant: "Mega Metagross: Acciaio veloce con coverage ampia super-efficace."
+  - species: Gholdengo
+    role_tags: [special_attacker, good_as_gold]
+    why_relevant: "Good as Gold blocca le mosse di stato; Make It Rain forte e spam di status-immunity."
 
 common_cores:
-  - members: [Incineroar, Grimmsnarl]
-    archetype: screens_support
-  - members: [Sneasler, Incineroar]
-    archetype: fake_out_offense
+  - members: [Incineroar, Sinistcha]
+    archetype: fake_out_redirection
+  - members: [Archaludon, Pelipper, Swampert]
+    archetype: rain
+  - members: [Grimmsnarl, Sneasler]
+    archetype: screens_offense
 
 speed_benchmarks:
-  - tier: "fast offense (post Life Orb)"
+  - tier: "fast offense (post Life Orb/Tailwind)"
     min_speed_after_items: 100
 
 notes_freeform: |
-  Meta giovanissimo (M-B dal 17 giugno 2026). L'introduzione di Life Orb e Wide Lens favorisce
-  attaccanti potenti ma fragili: attese usage elevate per offensive frette. Lista da aggiornare con
-  le usage stats reali quando disponibili. Fonti consultate:
-  - https://www.pokemon-zone.com/champions/ (metagame & tier list)
-  - https://nintendoeverything.com/pokemon-champions-regulation-m-b-new-pokemon/ (winners/losers)
-  - https://www.sportskeeda.com/pokemon/all-pokemon-tier-list-pokemon-champions-regulation-set-m-b
-  - https://game8.co/games/Pokemon-Champions/archives/605482
+  Usage reali da Pikalytics (Reg M-B, S3 Ranked Battle Data) e ChampionsMeta, ~22 giugno 2026. Il
+  core a due più diffuso è Incineroar + Sinistcha (≈16.5% del campione); il core a tre più ripetuto è
+  Archaludon + Pelipper + Swampert-Mega (rain). Pioggia (Pelipper) e Fairy (Sylveon/Whimsicott) sono
+  assi portanti del meta corrente. Lista da aggiornare a ogni rilettura delle usage. Fonti:
+  - https://pikalytics.com/champions  (Reg M-B, ranked battle data)
+  - https://championsmeta.io/meta     (usage da tornei, fonte Limitless)
+  - https://www.pokemon-zone.com/champions/

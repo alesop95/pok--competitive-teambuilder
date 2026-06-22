@@ -37,9 +37,14 @@ desktop resta alternativa futura non implementata.
 Documentazione tecnica: FATTA in `docs/TECHNICAL.md` (stack, tool open source con licenze, matematica
 del motore con formule e riferimenti percorso:simbolo); linkata dal README.
 
+Meta da usage reali: FATTO. `season_MB_meta.yaml` rigenerato dalle usage stats reali (Pikalytics
+Reg M-B / ChampionsMeta, ~22 giu 2026): 17 top_threats per ranking di usage e common_cores reali
+(Incineroar+Sinistcha, rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler). La
+generazione è ora ancorata ai core realmente giocati.
+
 Stato: l'app è completa rispetto a quanto richiesto. Resta opzionale la Fase 4 (rationale Livello 2
-via API Claude, non selezionata). Da fare a livello di processo: commit dei blocchi accumulati e
-`sync-context` per ri-ancorare le schede a HEAD.
+via API Claude, non selezionata) e i limiti noti di `docs/TECHNICAL.md` §7. Processo: commit del
+blocco meta + (le schede sono già ancorate a 17fdd2a; al prossimo commit rilanciare `sync-context`).
 
 ## Feature: Fase 1 — fondamenta del motore (data layer + tagging ruoli)
 

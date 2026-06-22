@@ -6,6 +6,19 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — Meta M-B da usage stats reali
+
+Commit: (da committare)
+File toccati: `data/seasons/season_MB_meta.yaml`.
+Motivo: sostituita la curatela preliminare del meta con le usage stats reali del formato (Pikalytics
+Reg M-B S3 Ranked Battle Data, ChampionsMeta, ~22 giugno 2026). top_threats ora segue il ranking di
+usage reale (Garchomp, Sinistcha, Basculegion, Whimsicott, Kingambit, Staraptor, Incineroar,
+Charizard, Raichu, Pelipper, Sneasler, Archaludon, Grimmsnarl, Sylveon, Swampert, Metagross,
+Gholdengo — 17 minacce, tutte risolte nella dex). common_cores aggiornati ai core reali: Incineroar
++ Sinistcha (≈16.5% del campo), rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler.
+Verifica: generazione ancorata ai core reali (top proposta "Meta core: rain"); pioggia e Fairy
+emergono come assi del meta. Nota: Raichu è davvero nel meta (Mega Raichu), confermato dalle usage.
+
 ## 2026-06-22 — sync-context: ri-ancoraggio schede a HEAD 17fdd2a
 
 Commit: 17fdd2a
