@@ -43,6 +43,21 @@ vive nel repository MIT di Pokémon Showdown ed è esposta su npm da `@pkmn/mods
 M-B corrente è curata dal progetto sopra i dati della mod, perché non ancora pubblicata dalla
 community (vedi `.claude/memory/decisions.md`, ADR-005 e ADR-007).
 
+### 2.1 Cosa è fonte di verità esterna e cosa è euristica del progetto
+
+La distinzione è la chiave per capire da dove vengono i numeri. Sono fonte di verità esterna,
+ripresi senza reimplementarli, i dati di gioco e il calcolo: le statistiche base, i tipi, le abilità
+e i movepool vengono da `@pkmn/dex` più la mod `champions`; il type chart viene dalla stessa dex; la
+formula del danno viene da `@smogon/calc`; la lista di disponibilità e legalità del formato viene da
+serebii.net; le minacce e i core del meta vengono dalle usage stats reali (Pikalytics, ChampionsMeta).
+Tutte queste fonti sono elencate in `docs/SOURCES.md`.
+
+Sono invece euristiche di progetto, cioè scelte di design nostre con costanti tarate a mano, le
+regole di tagging dei ruoli (§4.2), la stima con cui si sceglie la mossa migliore per una coppia
+(§4.3), e soprattutto i pesi e le soglie di viability e scoring (§4.4-§4.6). Questi numeri non
+provengono da una fonte esterna: sono il modello con cui il progetto traduce i fatti verificati in
+una preferenza di squadra, e sono esplicitati qui proprio perché siano ispezionabili e modificabili.
+
 ## 3. Architettura e flusso
 
 Il motore è una pipeline deterministica in cui ogni stadio ha una responsabilità unica. Il punto di
@@ -107,12 +122,34 @@ per un membro adatto a un team Tailwind.
 
 ### 4.3 Damage calc reale
 
-Il danno è calcolato da `@smogon/calc` su una `Generation` di `@pkmn/data` costruita dalla dex
-moddata `champions` (`src/calc.ts:getChampionsGen`), con un predicato di esistenza permissivo per non
-escludere specie marcate non standard dalla mod. La scelta della mossa con cui un attaccante colpisce
-un bersaglio è un'euristica deterministica: tra le mosse del movepool, escluse quelle poco pratiche
-in doppio (a due turni, con ricarica, differite, sotto l'80 per cento di precisione, o condizionali
-come Focus Punch), si massimizza una stima e si calcola il danno reale solo per la mossa scelta.
+Da dove viene il numero del danno. Il danno non è stimato dal progetto: è calcolato da `@smogon/calc`,
+il motore del calcolatore ufficiale Smogon (`calc.pokemonshowdown.com`), su una `Generation` di
+`@pkmn/data` costruita dalla dex moddata `champions` (`src/calc.ts:getChampionsGen`), con un predicato
+di esistenza permissivo per non escludere specie marcate non standard dalla mod. Quel motore
+implementa la formula canonica del danno delle generazioni Pokémon, la stessa documentata su
+Bulbapedia (vedi `docs/SOURCES.md` §3). Nella forma di Gen 9 la formula è, in sintesi:
+
+```
+danno = ( ( (2·Livello/5 + 2) · Potenza · A/D ) / 50 + 2 ) · M
+  A, D  = Attacco (o Att.Sp.) dell'attaccante e Difesa (o Dif.Sp.) del difensore, con boost/natura
+  M     = prodotto dei modificatori: STAB, efficacia di tipo, bersagli (0.75 in doppio multi-target),
+          meteo, abilità (es. Adaptability, Huge Power, Thick Fat, Multiscale), oggetto, critico,
+          e il roll casuale 0.85–1.00
+```
+
+Il progetto consuma questa formula tramite il pacchetto e non la reimplementa; ciò che è "nostro" è
+solo come impostiamo i due Pokémon e quale mossa scegliamo. Entrambi i contendenti ricevono la loro
+abilità competitiva (`src/setBuilder.ts:pickCompetitiveAbility`), così il calcolo rispetta immunità e
+modificatori reali: una mossa di Terra contro un Pokémon Levitate dà zero, Thick Fat dimezza Fuoco e
+Ghiaccio, Adaptability e Huge Power alzano l'offesa. Restano deliberatamente fuori dalla baseline
+l'oggetto (il difensore del meta ha item ignoto) e il meteo/campo (dipende dal team avversario), e si
+calcola il danno a bersaglio singolo: sono scelte di baseline neutra, non limiti nascosti, ed elencate
+in §7.
+
+La scelta della mossa con cui un attaccante colpisce un bersaglio è invece un'euristica deterministica
+nostra: tra le mosse del movepool, escluse quelle poco pratiche in doppio (a due turni, con ricarica,
+differite, sotto l'80 per cento di precisione, o condizionali come Focus Punch), si massimizza una
+stima e si calcola il danno reale solo per la mossa scelta.
 
 ```
 stima(mossa) = potenzaBase · STAB · efficacia · statOffensiva
@@ -233,13 +270,28 @@ In locale si esegue `npm install` seguito da `npm run dev`, che avvia il server 
 
 ## 7. Limiti noti e direzioni
 
-Il damage calc usa uno spread standard e non modella ancora campo, abilità avversarie o spread move
-del doppio; la scelta delle mosse e del bilanciamento è euristica e migliorabile; il meta M-B è una
-istantanea preliminare, da raffinare con le usage stats reali quando disponibili; le nuove Mega della
-generazione Z-A non sempre sono raggiungibili come forme collegate e potrebbero richiedere una
-gestione dedicata. Il rationale di Livello 2 in prosa naturale via API Claude è previsto ma non
-implementato. Queste direzioni sono tracciate in `.claude/context/current-work.md` e
-`.claude/context/roadmap.md`.
+Il damage calc ora modella le abilità di entrambi i contendenti (immunità, riduttori, boost): è il
+principale guadagno di realismo rispetto alle versioni precedenti. Restano scelte di baseline neutra,
+non difetti nascosti: il calcolo non assume un oggetto sul difensore del meta (item ignoto), non
+assume meteo o campo (dipende dal team avversario) e stima il danno a bersaglio singolo invece del
+modificatore 0.75 dei colpi multi-bersaglio del doppio. La scelta della mossa e il bilanciamento dei
+set sono euristiche con costanti tarate a mano, migliorabili.
+
+Limitazione di dati, non di codice: la mod `champions` del pacchetto npm `@pkmn/mods` (versione
+0.10.11) include 48 Mega evoluzioni, tutte nominate `<Base>-Mega`, e `src/pkmnData.ts:getMegaForme`
+le cattura tutte. Alcune Mega della generazione Z-A elencate su serebii (per esempio Mega Raichu X/Y
+e Mega Clefable) non sono ancora presenti in quei dati e quindi non sono costruibili finché il
+pacchetto non si aggiorna; non è un errore del nostro codice ma un ritardo della fonte a monte.
+
+Il meta M-B è ora basato sulle usage stats reali (vedi `docs/SOURCES.md` §6) e va riallineato a ogni
+rilettura. Il rationale di Livello 2 in prosa naturale via API Claude è previsto ma non implementato.
+Queste direzioni sono tracciate in `.claude/context/current-work.md` e `.claude/context/roadmap.md`.
+
+## 8. Riferimenti
+
+L'inventario completo e categorizzato di tutte le fonti usate dal progetto (pacchetti software con
+licenza, dati di gioco, formule di meccanica, pagine serebii, usage stats, fonti ufficiali e hosting)
+è in `docs/SOURCES.md`.
 
 [^node]: *Node.js* — runtime JavaScript lato server, cross-platform.
 [^showdown]: *Pokémon Showdown* — simulatore di battaglie open source (MIT) da cui derivano i

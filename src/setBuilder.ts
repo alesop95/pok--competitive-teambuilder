@@ -57,7 +57,9 @@ export function isPracticalDoublesMove(m: {
   return true;
 }
 
-function pickAbility(abilities: string[]): string {
+// Sceglie l'abilità competitiva (anche hidden) per preferenza; riusata dal damage calc per rendere
+// i numeri realistici (immunità, riduttori come Thick Fat/Multiscale, boost come Adaptability).
+export function pickCompetitiveAbility(abilities: string[]): string {
   for (const pref of ABILITY_PREFERENCE) {
     const match = abilities.find((a) => toID(a) === pref);
     if (match) return match;
@@ -164,7 +166,7 @@ export async function buildSet(
 
   return {
     species: statsSp.name,
-    ability: isMega ? abilities[0] : pickAbility(abilities),
+    ability: isMega ? abilities[0] : pickCompetitiveAbility(abilities),
     item: megaItem ?? pickItem(tags),
     nature: pickNature(stats, isTR, isSupport),
     statPoints: pickStatPoints(stats, isTR, isSupport),

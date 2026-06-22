@@ -8,7 +8,7 @@ import { calculate, Pokemon, Move } from '@smogon/calc';
 import { Generations, type Generation } from '@pkmn/data';
 import { Dex, type ID, type ModData } from '@pkmn/dex';
 import { getChampionsDex, getDefenseMap } from './pkmnData.js';
-import { isPracticalDoublesMove } from './setBuilder.js';
+import { isPracticalDoublesMove, pickCompetitiveAbility } from './setBuilder.js';
 
 let genPromise: Promise<Generation> | undefined;
 
@@ -88,9 +88,14 @@ async function computeBestDamage(attacker: string, defender: string): Promise<Da
     ? { evs: { atk: 252 }, nature: 'Adamant' }
     : { evs: { spa: 252 }, nature: 'Modest' };
   const defKey = bestCategory === 'Physical' ? 'def' : 'spd';
+  // abilità competitive di entrambi: rendono il calc realistico (immunità tipo Levitate/Flash Fire,
+  // riduttori come Thick Fat/Multiscale, boost come Adaptability/Huge Power). Gli strumenti restano
+  // neutri di proposito: il difensore del meta ha item ignoto, quindi si stima la baseline senza item.
+  const atkAbility = pickCompetitiveAbility(Object.values(atkSp.abilities).filter(Boolean) as string[]);
+  const defAbility = pickCompetitiveAbility(Object.values(defSp.abilities).filter(Boolean) as string[]);
   try {
-    const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread });
-    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: { hp: 252, [defKey]: 252 }, nature: 'Calm' });
+    const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread, ability: atkAbility });
+    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: { hp: 252, [defKey]: 252 }, nature: 'Calm', ability: defAbility });
     const res = calculate(gen, atkMon, defMon, new Move(gen, bestMove));
     const range = res.range();
     const maxHP = defMon.maxHP();

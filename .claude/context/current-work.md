@@ -42,9 +42,14 @@ Reg M-B / ChampionsMeta, ~22 giu 2026): 17 top_threats per ranking di usage e co
 (Incineroar+Sinistcha, rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler). La
 generazione è ora ancorata ai core realmente giocati.
 
-Stato: l'app è completa rispetto a quanto richiesto. Resta opzionale la Fase 4 (rationale Livello 2
-via API Claude, non selezionata) e i limiti noti di `docs/TECHNICAL.md` §7. Processo: commit del
-blocco meta + (le schede sono già ancorate a 17fdd2a; al prossimo commit rilanciare `sync-context`).
+Limiti noti: affrontati. Damage calc ora ability-aware (immunità/riduttori/boost); Mega Z-A confermata
+limitazione dei dati `@pkmn/mods` (non un bug); item/meteo/multi-bersaglio sono baseline neutra
+documentata. Documentazione esaustiva: `docs/TECHNICAL.md` ampliato (formula del danno + provenienza,
+fonte-di-verità vs euristiche) e `docs/SOURCES.md` (tutte le fonti). 
+
+Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzionale la Fase 4
+(rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
+docs), poi `sync-context` per ri-ancorare le schede a HEAD.
 
 ## Feature: Fase 1 — fondamenta del motore (data layer + tagging ruoli)
 

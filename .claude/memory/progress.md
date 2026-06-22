@@ -6,6 +6,23 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — Limiti noti (calc ability-aware) + documentazione esaustiva e fonti
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (abilità di entrambi i contendenti), `src/setBuilder.ts`
+(`pickCompetitiveAbility` esportata), `docs/TECHNICAL.md` (ampliato), `docs/SOURCES.md` (nuovo),
+`README.md`.
+Motivo: affrontati i limiti noti. (1) Damage calc ora ability-aware: attaccante e difensore ricevono
+l'abilità competitiva, quindi il calc rispetta immunità (Levitate), riduttori (Thick Fat verificato:
+dimezza il Fuoco) e boost (Adaptability/Huge Power) — è il maggiore guadagno di realismo. Item, meteo
+e modificatore multi-bersaglio restano baseline neutra, documentati. (2) Mega Z-A: verificato che è
+una limitazione dei dati `@pkmn/mods` (0.10.11 include 48 Mega `<Base>-Mega`, prese tutte da
+getMegaForme; Mega Raichu/Clefable non sono nei dati), non un bug. (3) Documentazione: `TECHNICAL.md`
+ampliato con la formula del danno e la sua provenienza, la distinzione fonte-di-verità vs euristiche
+nostre, l'ability-awareness e le scelte di baseline; creato `docs/SOURCES.md`, inventario completo e
+categorizzato di tutte le fonti (pacchetti+licenze, dati Showdown/mod, formule, pagine serebii, usage
+stats, ufficiali, hosting, tool community). 29/29 test verdi, typecheck pulito.
+
 ## 2026-06-22 — Meta M-B da usage stats reali
 
 Commit: (da committare)
