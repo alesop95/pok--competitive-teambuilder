@@ -4,7 +4,7 @@
 // l'accesso permette di applicare in un solo punto la mod e gli eventuali override di
 // data/champions_overrides.json. Il damage calc reale (@smogon/calc) si aggancia da qui in Fase 3.
 import { Dex, type ID, type ModData } from '@pkmn/dex';
-import { tagRoles, type TaggingInput, type MoveInfo, type RoleTag } from './roleTagging.js';
+import { tagRoles, toID, type TaggingInput, type MoveInfo, type RoleTag } from './roleTagging.js';
 import type { Candidate } from './teamGenerator.js';
 
 // Carica la mod "champions" (Gen 9 + dati/logica di Pokémon Champions). Il cast a ModData è quello
@@ -138,6 +138,31 @@ export async function getMegaForme(baseName: string): Promise<MegaForme | null> 
     }
   }
   return null;
+}
+
+// Meteo impostato da una squadra: se un membro ha un'abilità meteo, l'offesa del team va calcolata
+// sotto quel meteo (pioggia/sole/sabbia/neve). Ritorna undefined se nessuno imposta meteo.
+const WEATHER_BY_ABILITY: Record<string, 'Rain' | 'Sun' | 'Sand' | 'Snow'> = {
+  drizzle: 'Rain',
+  primordialsea: 'Rain',
+  drought: 'Sun',
+  orichalcumpulse: 'Sun',
+  desolateland: 'Sun',
+  sandstream: 'Sand',
+  snowwarning: 'Snow',
+};
+
+export async function teamWeather(members: string[]): Promise<'Rain' | 'Sun' | 'Sand' | 'Snow' | undefined> {
+  const dex = await getChampionsDex();
+  for (const name of members) {
+    const s = dex.species.get(name);
+    if (!s?.exists) continue;
+    for (const ab of Object.values(s.abilities)) {
+      const w = ab ? WEATHER_BY_ABILITY[toID(String(ab))] : undefined;
+      if (w) return w;
+    }
+  }
+  return undefined;
 }
 
 // Tipi delle specie-minaccia del meta, per la coverage difensiva nel team scoring (§4.2).

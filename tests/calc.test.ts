@@ -14,4 +14,18 @@ describe('calc / damage champions', () => {
   it('ritorna null per una specie inesistente', async () => {
     expect(await bestDamagePercent('Notapokemon', 'Amoonguss')).toBeNull();
   }, 30000);
+
+  it('il meteo potenzia: pioggia aumenta il danno di una STAB Acqua', async () => {
+    const dry = await bestDamagePercent('Basculegion', 'Garganacl');
+    const rain = await bestDamagePercent('Basculegion', 'Garganacl', { weather: 'Rain' });
+    expect(dry).not.toBeNull();
+    expect(rain).not.toBeNull();
+    expect(rain!.pctMax).toBeGreaterThan(dry!.pctMax);
+  }, 30000);
+
+  it('immunità da abilità: contro Levitate non sceglie una mossa di Terra', async () => {
+    const r = await bestDamagePercent('Garchomp', 'Hydreigon'); // Hydreigon ha Levitate
+    expect(r).not.toBeNull();
+    expect(['Earthquake', 'Earth Power', 'High Horsepower', 'Bulldoze', 'Stomping Tantrum']).not.toContain(r!.move);
+  }, 30000);
 });

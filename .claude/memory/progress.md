@@ -6,6 +6,22 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — Affinamento motore: meteo nel calc e immunità da abilità
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (opzione meteo via Field + skip mosse immuni per abilità + meteo nella
+stima), `src/pkmnData.ts` (`teamWeather`), `src/engine.ts` (coverage offensiva sotto il meteo del
+team), `tests/calc.test.ts`, `docs/TECHNICAL.md` (§4.3, §7).
+Motivo: su richiesta utente, le casistiche di campo descritte come baseline ora sono offerte come
+possibilità mantenendo il default neutro. (1) Meteo: `bestDamagePercent` accetta `DamageOptions.weather`;
+l'engine rileva il weather setter del team (`teamWeather`: Drizzle→Rain, Drought→Sun, Sand Stream→Sand,
+Snow Warning→Snow) e calcola la coverage offensiva di quel team sotto il proprio meteo. Verificato:
+Basculegion Wave Crash vs Garganacl 104%→156% sotto pioggia. La viability per candidato resta neutra.
+(2) Euristica scelta mossa: salta le mosse a cui il difensore è immune per abilità (Levitate, Flash
+Fire, Water/Volt Absorb, Storm Drain, Lightning Rod, Sap Sipper, Earth Eater, ecc.); verificato:
+Garchomp vs Hydreigon (Levitate) sceglie Outrage, non una mossa Terra. Il meteo entra anche nella
+stima di scelta (Acqua/Fuoco x1.5/0.5). 31/31 test verdi, typecheck pulito.
+
 ## 2026-06-22 — Diagramma Mermaid della pipeline (sorgente + SVG)
 
 Commit: (da committare)
