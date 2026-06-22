@@ -100,15 +100,44 @@ export async function buildCandidates(names: string[]): Promise<Candidate[]> {
     const s = dex.species.get(name);
     if (!s?.exists) continue;
     const input = await getTaggingInput(name);
+    const bst = Object.values(s.baseStats as Record<string, number>).reduce((a, b) => a + b, 0);
     out.push({
       species: s.name,
       dexNum: s.num,
       tags: input ? tagRoles(input) : [],
       types: s.types,
       defense: await getDefenseMap(s.types),
+      baseStats: s.baseStats as Candidate['baseStats'],
+      bst,
+      viability: 0, // riempita dall'engine con damage calc + copertura meta
     });
   }
   return out;
+}
+
+// Mega evoluzione di una specie base, se esiste: nome della forma, Mega Stone richiesta e somma
+// delle statistiche base (per scegliere quale membro far megaevolvere). Esclude le forme regionali
+// (es. -Alola): una Mega ha requiredItem che è una Mega Stone. Nota: le nuove Mega Z-A del formato
+// (es. Mega Raichu X) non sempre sono esposte via otherFormes e qui non vengono catturate.
+export interface MegaForme {
+  forme: string;
+  stone: string;
+  bst: number;
+}
+
+export async function getMegaForme(baseName: string): Promise<MegaForme | null> {
+  const dex = await getChampionsDex();
+  const base = dex.species.get(baseName);
+  if (!base?.exists) return null;
+  for (const formeName of base.otherFormes ?? []) {
+    const forme = dex.species.get(formeName);
+    const stone = forme?.requiredItem ? dex.items.get(forme.requiredItem) : null;
+    if (forme?.exists && stone?.exists && stone.megaStone) {
+      const bst = Object.values(forme.baseStats as Record<string, number>).reduce((a, b) => a + b, 0);
+      return { forme: forme.name, stone: stone.name, bst };
+    }
+  }
+  return null;
 }
 
 // Tipi delle specie-minaccia del meta, per la coverage difensiva nel team scoring (§4.2).

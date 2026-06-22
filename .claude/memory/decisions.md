@@ -77,6 +77,27 @@ Conseguenze: dipendenza npm `@pkmn/mods` (pesante, ~173 MB unpacked: valutare se
 pacchetto o solo la mod champions). La legalità di regolamento è gestita da `championsregma`, ma il
 nome suggerisce Reg M-A: la copertura del Reg M-B è da chiarire (vedi ADR-007).
 
+## ADR-008 — Selezione dei membri guidata da viability competitiva (damage calc)
+
+Data: 2026-06-20
+Stato: accettata
+Contesto: la prima versione del generatore riempiva i team con un greedy che premiava il numero di
+tag di ruolo e la difesa grezza, scegliendo sempre gli stessi Pokémon (Pikachu, Raichu, Slowbro,
+Ariados in tutti e 5 i team) e ignorando la reale forza competitiva. Le fonti dati/calcolo
+(`@pkmn/dex` + mod champions, `@smogon/calc` su `@pkmn/data`) sono best-in-class e corrette: il
+difetto era solo nell'euristica di selezione.
+Decisione: calcolare per ogni candidato una viability [0..1] = 0.5 pressione offensiva sul meta
+(media del miglior danno reale alle top_threats via `@smogon/calc`) + 0.3 copertura difensiva del
+meta + 0.2 livello statistico (BST). La viability domina la scelta del core (miglior tag per
+viability) e del riempimento, con una penalità di diversità per i Pokémon già usati negli altri
+team. I core osservati nel meta (`common_cores`) seedano proposte dedicate.
+Motivazione: ancorare le proposte alla forza reale nel formato usando il calcolatore Smogon, non a
+euristiche di versatilità; diversificare le proposte.
+Conseguenze: i team sono dominati da Pokémon davvero forti e sono diversi tra loro; la generazione
+fa ~200x10 damage calc memoizzati (sotto il secondo a regime). Raffinamenti residui: la viability
+sovrastima attaccanti fragili ad alto danno grezzo (es. Pyroar), da bilanciare con bulk/velocità
+nella rifinitura finale.
+
 ## ADR-007 — Fonte dati del roster di stagione e regolamento target
 
 Data: 2026-06-19

@@ -14,10 +14,12 @@
   },
   "scripts": {
     "dev": "tsx src/server.ts",
+    "start": "tsx src/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "roster": "tsx scripts/fetch_roster.ts",
+    "legality": "tsx scripts/fetch_legality.ts",
     "generate": "tsx scripts/generate.ts"
   },
   "dependencies": {

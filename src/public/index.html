@@ -51,6 +51,7 @@
     <button data-tab="setup" class="active">Setup stagione</button>
     <button data-tab="meta">Editor meta</button>
     <button data-tab="generate">Genera team</button>
+    <button data-tab="storico">Storico</button>
   </nav>
   <main>
     <section id="setup" class="active">
@@ -77,10 +78,20 @@
           <label class="muted" for="topN">Proposte</label>
           <input id="topN" type="number" min="1" max="10" value="5" style="width:64px" />
           <button class="primary" id="genBtn">Genera team</button>
+          <button id="saveBtn" disabled>Salva proposte</button>
         </div>
         <span id="genStatus" class="status"></span>
       </div>
       <div id="teams"></div>
+    </section>
+
+    <section id="storico">
+      <div class="panel row" style="justify-content:space-between">
+        <strong>Team salvati</strong>
+        <button id="refreshStorico">Aggiorna</button>
+      </div>
+      <div id="savedList"></div>
+      <div id="savedView"></div>
     </section>
   </main>
 
@@ -103,6 +114,7 @@
         document.querySelectorAll('main section').forEach((x) => x.classList.remove('active'));
         b.classList.add('active');
         $('#' + b.dataset.tab).classList.add('active');
+        if (b.dataset.tab === 'storico') loadStorico();
       };
     });
 
@@ -181,16 +193,53 @@
       );
     };
 
+    let lastTeams = [];
     $('#genBtn').onclick = async () => {
-      $('#genStatus').textContent = 'Genero (primo run: tagging del roster, ~2s)…';
+      $('#genStatus').textContent = 'Genero (primo run: tagging del roster + damage calc, ~2-5s)…';
       $('#teams').innerHTML = '';
+      $('#saveBtn').disabled = true;
       try {
         const topN = $('#topN').value || 5;
         const { teams } = await api('/api/season/' + currentId + '/generate?topN=' + topN, { method: 'POST' });
+        lastTeams = teams;
         $('#teams').innerHTML = teams.map(teamCard).join('');
         $('#genStatus').textContent = `${teams.length} proposte.`;
+        $('#saveBtn').disabled = teams.length === 0;
       } catch (e) { $('#genStatus').textContent = 'Errore: ' + e.message; }
     };
+
+    $('#saveBtn').onclick = async () => {
+      if (!lastTeams.length) return;
+      const label = prompt('Etichetta per questo salvataggio (opzionale):') || undefined;
+      $('#genStatus').textContent = 'Salvo…';
+      try {
+        const r = await api('/api/season/' + currentId + '/save', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ teams: lastTeams, label }),
+        });
+        $('#genStatus').textContent = r.ok ? `Salvato come ${r.name}.` : ('Errore: ' + r.error);
+      } catch (e) { $('#genStatus').textContent = 'Errore: ' + e.message; }
+    };
+
+    async function loadStorico() {
+      $('#savedView').innerHTML = '';
+      $('#savedList').innerHTML = '<span class="muted">Carico…</span>';
+      try {
+        const { saved } = await api('/api/saved');
+        if (!saved.length) { $('#savedList').innerHTML = '<span class="muted">Nessun team salvato.</span>'; return; }
+        $('#savedList').innerHTML = saved.map((s) =>
+          `<div class="panel row" style="justify-content:space-between"><span>${s.label ? '<strong>'+s.label+'</strong> · ' : ''}${s.name} <span class="muted">· ${s.season_id||'?'} · ${s.count} team</span></span><button onclick="viewSaved('${s.name}')">Apri</button></div>`
+        ).join('');
+      } catch (e) { $('#savedList').innerHTML = 'Errore: ' + e.message; }
+    }
+    window.viewSaved = async (name) => {
+      $('#savedView').innerHTML = '<span class="muted">Carico…</span>';
+      try {
+        const doc = await api('/api/saved/' + name);
+        $('#savedView').innerHTML = `<h3>${name}</h3>` + (doc.teams || []).map(teamCard).join('');
+      } catch (e) { $('#savedView').innerHTML = 'Errore: ' + e.message; }
+    };
+    $('#refreshStorico').onclick = loadStorico;
 
     loadSeasons().catch((e) => { $('#setupBody').textContent = 'Errore: ' + e.message; });
   </script>

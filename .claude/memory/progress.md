@@ -6,6 +6,60 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-22 — Rifinitura motore, prep deploy (Fase 5) e documentazione tecnica
+
+Commit: (da committare)
+File toccati: `src/roleTagging.ts` (speed_control distinto da Trick Room), `src/teamGenerator.ts`
+(baseStats su Candidate, TR nella sinergia), `src/pkmnData.ts` (baseStats nei candidati),
+`src/engine.ts` (viability con stazza, contesto Trick Room ai set), `src/setBuilder.ts` (natura/SP
+da contesto team), `package.json` (`start`), `render.yaml` (nuovo), `docs/TECHNICAL.md` (nuovo),
+`README.md`, schede context.
+Motivo: (1) Rifinitura motore: viability ora include la stazza (PS+Dif+DifSpec) e pesa meno l'offesa
+grezza, così attaccanti fragili (es. Pyroar) non dominano; il tag speed_control non include più
+Trick Room, evitando TR setter nei team Tailwind; natura e Stat Points dei set dipendono dal
+contesto del team (Brave/Quiet solo nei team Trick Room). Verificato: nature TR solo nel team TR,
+diversità realistica. (2) Fase 5: `npm start` + `render.yaml` per deploy web gratuito su Render
+(HOST 0.0.0.0, PORT da env); Tauri desktop resta alternativa futura. (3) Documentazione tecnica
+completa in `docs/TECHNICAL.md`: stack, tool open source con licenze, e la matematica del motore
+(efficacia di tipo, tagging, damage calc, viability, scoring, set, legalità) con riferimenti
+percorso:simbolo. 29/29 test verdi, typecheck pulito.
+
+## 2026-06-22 — Salvataggio/storico team e legalità di formato (cross-check serebii)
+
+Commit: (da committare)
+File toccati: `src/engine.ts` (save/list/load team, loadLegality/validateSet), `src/server.ts`
+(rotte save/saved), `src/public/index.html` (tab Storico, bottone Salva), `scripts/fetch_legality.ts`
+(nuovo), `data/seasons/legal_MB.json` (nuovo), `tests/legality.test.ts`, `package.json` (script
+`legality`). Completate le altre due feature scelte.
+Salvataggio/storico (handoff §2.4/§3.4/§5): POST `/api/season/:id/save` scrive un JSON timestampato
+in data/generated_teams/, `/api/saved` elenca, `/api/saved/:name` apre (nome validato contro path
+traversal); UI con tab Storico e bottone "Salva proposte". Legalità: `scripts/fetch_legality.ts`
+scrappa serebii items+moves in `data/seasons/legal_MB.json` (181 strumenti, 499 mosse); l'engine
+valida i set e sostituisce gli strumenti non disponibili segnalandoli. Scoperta utile: Safety
+Goggles NON è legale in M-B — era usato dai set di redirezione, corretto alla radice (Sitrus Berry)
+con il validatore come rete di sicurezza. Verifica: 28/28 test verdi, typecheck pulito, CLI senza
+item illegali. Restano: rifinitura finale + documentazione tecnica completa (richiesta dall'utente).
+
+## 2026-06-20 — Migliorie set + selezione guidata da viability (qualità)
+
+Commit: (da committare)
+File toccati: `src/setBuilder.ts` (Mega, abilità competitive incl. hidden, filtro mosse poco
+pratiche condiviso), `src/calc.ts` (usa il filtro condiviso), `src/teamGenerator.ts` (viability,
+diversità, common_cores), `src/pkmnData.ts` (`getMegaForme`, bst/viability su Candidate),
+`src/engine.ts` (`computeViability`, mega per team, cores), `src/public/index.html`, test.
+Motivo: (1) tre migliorie set richieste dall'utente: forme Mega (una per team, Mega Stone +
+statline Mega), abilità competitive anche hidden (es. Lightning Rod), filtro mosse impratiche in
+doppio (Focus Punch ecc.) condiviso tra set e calc. (2) Su segnalazione utente (Slowbro/Pikachu in
+ogni team), diagnosticato e corretto il difetto di selezione: confermato che fonti dati e
+calcolatore (`@smogon/calc` ufficiale Smogon, `@pkmn/dex`+mod champions) sono corretti; il problema
+era l'euristica greedy che premiava versatilità e difesa grezza. Introdotta la viability competitiva
+(ADR-008): pressione offensiva reale sul meta via damage calc + copertura difensiva + BST, che guida
+core e riempimento, con penalità di diversità; i common_cores del meta seedano proposte. Risultato:
+prima Pikachu/Raichu/Slowbro/Ariados in 5/5 team; ora team diversi con Sneasler, Incineroar,
+Hydreigon, Kingambit, Corviknight, Skarmory, Volcarona, Staraptor… generazione ~0.8s. 26/26 test
+verdi, typecheck pulito. Restano da fare le altre 2 feature scelte (salvataggio/storico UI, legalità
+M-B cross-check serebii) e la rifinitura finale (viability sovrastima attaccanti fragili).
+
 ## 2026-06-20 — Set competitivi completi (item, abilità, natura, Stat Points, mosse)
 
 Commit: (da committare)

@@ -12,6 +12,9 @@ import {
   saveMetaRaw,
   generateForSeason,
   clearCandidateCache,
+  saveTeams,
+  listSavedTeams,
+  loadSavedTeam,
 } from './engine.js';
 
 // Porta di default non comune per non collidere con altri localhost; sovrascrivibile con PORT.
@@ -62,6 +65,31 @@ export function buildServer() {
   app.post<{ Params: { id: string } }>('/api/season/:id/refresh', async (req) => {
     clearCandidateCache(req.params.id);
     return { ok: true };
+  });
+
+  // salvataggio e storico dei team generati
+  app.post<{ Params: { id: string }; Body: { teams?: unknown[]; label?: string } }>(
+    '/api/season/:id/save',
+    async (req, reply) => {
+      const teams = req.body?.teams ?? [];
+      if (!Array.isArray(teams) || teams.length === 0) {
+        reply.code(400);
+        return { ok: false, error: 'nessun team da salvare' };
+      }
+      const name = await saveTeams(req.params.id, teams, req.body?.label);
+      return { ok: true, name };
+    },
+  );
+
+  app.get('/api/saved', async () => ({ saved: await listSavedTeams() }));
+
+  app.get<{ Params: { name: string } }>('/api/saved/:name', async (req, reply) => {
+    try {
+      return await loadSavedTeam(req.params.name);
+    } catch (err) {
+      reply.code(404);
+      return { error: (err as Error).message };
+    }
   });
 
   return app;

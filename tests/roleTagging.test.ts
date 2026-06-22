@@ -31,10 +31,14 @@ describe('tagRoles §4.1', () => {
     expect(tags).not.toContain('screens_setter');
   });
 
-  it('trick_room_setter e speed_control: spe<=60 + Trick Room', () => {
+  it('trick_room_setter (spe<=60 + Trick Room) ma NON speed_control (TR è distinto da Tailwind)', () => {
     const tags = tagRoles(input({ stats: { spe: 30 }, moves: { 'Trick Room': STATUS } }));
     expect(tags).toContain('trick_room_setter');
-    expect(tags).toContain('speed_control');
+    expect(tags).not.toContain('speed_control');
+  });
+
+  it('speed_control: Tailwind', () => {
+    expect(tagRoles(input({ moves: { Tailwind: STATUS } }))).toContain('speed_control');
   });
 
   it('trick_room_abuser: spe<=60 e atk>=100', () => {

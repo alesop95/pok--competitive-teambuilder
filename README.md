@@ -76,6 +76,11 @@ d'ambiente `PORT`.
 
 [MIT](./LICENSE).
 
+## Documentazione
+
+La documentazione tecnica completa (stack, tool open source, e la matematica del motore: tagging,
+viability, scoring, damage calc) è in [docs/TECHNICAL.md](./docs/TECHNICAL.md).
+
 ## Riferimenti
 
 - Pagina ufficiale gameplay: https://champions.pokemon.com/en-us/gameplay/

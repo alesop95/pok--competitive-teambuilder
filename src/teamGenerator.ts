@@ -5,7 +5,7 @@
 // Pipeline: identifica gli archetipi disponibili incrociando i tag del roster, per ciascuno
 // costruisce un core e riempie gli slot massimizzando la coverage difensiva ed evitando ridondanza,
 // assegna un punteggio e ritorna i migliori N team.
-import type { RoleTag } from './roleTagging.js';
+import type { RoleTag, BaseStats } from './roleTagging.js';
 
 export interface Candidate {
   species: string;
@@ -14,10 +14,20 @@ export interface Candidate {
   types: string[];
   // Moltiplicatore difensivo per tipo attaccante: 1 neutro, 2/4 debole, 0.5/0.25 resiste, 0 immune.
   defense: Record<string, number>;
+  baseStats: BaseStats; // statistiche base, per stazza/velocità nella viability
+  bst: number; // somma statistiche base, come livello di qualità grezzo
+  // Viability competitiva [0..1] calcolata dall'engine: pressione offensiva sul meta (damage calc) +
+  // copertura difensiva del meta + livello statistico. Guida la selezione di core e riempimento.
+  viability: number;
 }
 
 export interface MetaContext {
   topThreats: string[]; // nomi specie; per ora può essere vuoto (meta non ancora curato)
+}
+
+export interface CoreSpec {
+  members: string[]; // nomi specie del core osservato nel meta
+  archetype: string;
 }
 
 export interface TeamProposal {
@@ -93,25 +103,24 @@ function stackedWeaknesses(team: Candidate[], allTypes: string[], threshold = 3)
   return allTypes.filter((t) => team.filter((c) => isWeak(c, t)).length >= threshold);
 }
 
-// Punteggio marginale di aggiungere `cand` alla squadra: premia chi resiste alle debolezze impilate
-// correnti, penalizza chi aggiunge nuove debolezze impilate e la ridondanza di tipo.
-function marginalScore(team: Candidate[], cand: Candidate, allTypes: string[]): number {
-  let score = 0;
+// Punteggio marginale di aggiungere `cand` alla squadra. Domina la viability competitiva (pressione
+// sul meta via damage calc + copertura difensiva del meta + livello statistico), poi la copertura
+// difensiva marginale, meno la ridondanza di tipo e una penalità di diversità per chi è già stato
+// usato in molti team di questa generazione (evita gli stessi Pokémon in ogni proposta).
+function marginalScore(team: Candidate[], cand: Candidate, allTypes: string[], usage: Map<string, number>): number {
+  let score = cand.viability * 4; // peso dominante: qualità competitiva reale
   const currentStacked = stackedWeaknesses(team, allTypes, 3);
-  for (const t of currentStacked) if (resists(cand, t)) score += 1.5;
+  for (const t of currentStacked) if (resists(cand, t)) score += 1.2;
   const afterStacked = stackedWeaknesses([...team, cand], allTypes, 3);
   score -= (afterStacked.length - currentStacked.length) * 1.0;
-  // ridondanza: penalizza tipi già molto presenti
   const typeCounts = new Map<string, number>();
   for (const c of team) for (const ty of c.types) typeCounts.set(ty, (typeCounts.get(ty) ?? 0) + 1);
   for (const ty of cand.types) if ((typeCounts.get(ty) ?? 0) >= 2) score -= 0.75;
-  // tiebreak: a parità, preferisci candidati con più ruoli utili rispetto ai filler senza tag,
-  // così il riempimento non collassa sui primi del roster in ordine alfabetico.
-  score += Math.min(cand.tags.length, 3) * 0.1;
+  score -= (usage.get(cand.species) ?? 0) * 1.5; // diversità tra i team proposti
   return score;
 }
 
-function buildTeam(core: Candidate[], pool: Candidate[], allTypes: string[]): Candidate[] {
+function buildTeam(core: Candidate[], pool: Candidate[], allTypes: string[], usage: Map<string, number>): Candidate[] {
   const team = [...core];
   const usedNums = new Set(team.map((c) => c.dexNum));
   while (team.length < 6) {
@@ -119,7 +128,7 @@ function buildTeam(core: Candidate[], pool: Candidate[], allTypes: string[]): Ca
     let bestScore = -Infinity;
     for (const cand of pool) {
       if (usedNums.has(cand.dexNum)) continue;
-      const s = marginalScore(team, cand, allTypes);
+      const s = marginalScore(team, cand, allTypes, usage);
       if (s > bestScore) {
         bestScore = s;
         best = cand;
@@ -134,7 +143,7 @@ function buildTeam(core: Candidate[], pool: Candidate[], allTypes: string[]): Ca
 
 // Punteggio finale del team: coverage difensiva (meno debolezze impilate è meglio), copertura
 // difensiva delle minacce meta, e penalità per buchi. Pesi espliciti e documentati.
-function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, threatTypes: Map<string, string[]>): { score: number; strengths: string[]; weaknesses: string[]; notes: string[] } {
+function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, threatTypes: Map<string, string[]>, cores: CoreSpec[] = []): { score: number; strengths: string[]; weaknesses: string[]; notes: string[] } {
   const stacked = stackedWeaknesses(team, allTypes, 3);
   const notes: string[] = [];
   const strengths: string[] = [];
@@ -149,7 +158,7 @@ function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, thr
   // sinergia: premia la presenza di ruoli di supporto strutturali (controllo velocità, redirezione,
   // pivot, schermi), che tengono insieme la squadra al di là dei soli attaccanti.
   const teamTags = new Set(team.flatMap((c) => c.tags));
-  const synergyRoles: RoleTag[] = ['speed_control', 'redirection_support', 'pivot', 'screens_setter'];
+  const synergyRoles: RoleTag[] = ['speed_control', 'redirection_support', 'pivot', 'screens_setter', 'trick_room_setter'];
   const synergyPresent = synergyRoles.filter((r) => teamTags.has(r));
   score += synergyPresent.length * 0.3;
   if (synergyPresent.length >= 2) strengths.push(`spina dorsale di supporto: ${synergyPresent.join(', ')}`);
@@ -178,6 +187,16 @@ function scoreTeam(team: Candidate[], allTypes: string[], meta: MetaContext, thr
     strengths.push(`risposte difensive solide a ${solidAnswers}/${meta.topThreats.length} minacce del meta`);
   }
 
+  // qualità competitiva media del team (viability) e bonus se contiene un core osservato nel meta
+  const avgViability = team.reduce((s, c) => s + c.viability, 0) / (team.length || 1);
+  score += avgViability * 3;
+  for (const core of cores) {
+    if (core.members.length >= 2 && core.members.every((m) => team.some((c) => c.species === m))) {
+      score += 1.5;
+      strengths.push(`include il core di meta osservato (${core.archetype})`);
+    }
+  }
+
   return { score: Math.round(score * 100) / 100, strengths, weaknesses: stacked, notes };
 }
 
@@ -185,45 +204,59 @@ export interface GenerateOptions {
   topN?: number;
   meta?: MetaContext;
   threatTypes?: Map<string, string[]>; // tipi delle specie-minaccia, per la coverage offensiva
+  cores?: CoreSpec[]; // core osservati nel meta (season_<id>_meta.yaml)
 }
 
 export function generateTeams(roster: Candidate[], opts: GenerateOptions = {}): TeamProposal[] {
   const topN = opts.topN ?? 5;
   const meta = opts.meta ?? { topThreats: [] };
   const threatTypes = opts.threatTypes ?? new Map();
+  const cores = opts.cores ?? [];
   const allTypes = [...new Set(roster.flatMap((c) => Object.keys(c.defense)))];
 
   const count = (t: RoleTag) => roster.filter((c) => c.tags.includes(t)).length;
   const proposals: TeamProposal[] = [];
+  const usage = new Map<string, number>(); // quante volte ogni specie è già stata usata (diversità)
 
+  const pushTeam = (archetypeName: string, seed: Candidate[]) => {
+    if (seed.length === 0) return;
+    const team = buildTeam(seed, roster, allTypes, usage);
+    if (team.length < 4) return; // sotto la dimensione minima di squadra del regolamento M-B
+    const { score, strengths, weaknesses, notes } = scoreTeam(team, allTypes, meta, threatTypes, cores);
+    proposals.push({ archetype: archetypeName, members: team.map((c) => c.species), score, strengths, weaknesses, notes });
+    for (const c of team) usage.set(c.species, (usage.get(c.species) ?? 0) + 1);
+  };
+
+  // 1. team seedati dai core osservati nel meta: ancorano le proposte al meta reale
+  for (const core of cores) {
+    const seed: Candidate[] = [];
+    const seen = new Set<number>();
+    for (const name of core.members) {
+      const m = roster.find((c) => c.species === name);
+      if (m && !seen.has(m.dexNum)) {
+        seen.add(m.dexNum);
+        seed.push(m);
+      }
+    }
+    if (seed.length >= 2) pushTeam(`Meta core: ${core.archetype}`, seed);
+  }
+
+  // 2. team per archetipo; ogni membro del core è il migliore per viability con quel tag
   for (const arch of ARCHETYPES) {
     if (!arch.available(count)) continue;
-
-    // core: prendi i primi membri che soddisfano i coreTags, senza duplicare il numero Pokédex
     const core: Candidate[] = [];
     const usedNums = new Set<number>();
     for (const tag of arch.coreTags) {
-      const member = roster.find((c) => c.tags.includes(tag) && !usedNums.has(c.dexNum));
+      const member = roster
+        .filter((c) => c.tags.includes(tag) && !usedNums.has(c.dexNum))
+        .sort((a, b) => b.viability - a.viability)[0];
       if (member) {
         core.push(member);
         usedNums.add(member.dexNum);
       }
       if (core.length >= arch.coreSize) break;
     }
-    if (core.length === 0) continue;
-
-    const team = buildTeam(core, roster, allTypes);
-    if (team.length < 4) continue; // sotto la dimensione minima di squadra del regolamento M-B
-
-    const { score, strengths, weaknesses, notes } = scoreTeam(team, allTypes, meta, threatTypes);
-    proposals.push({
-      archetype: arch.name,
-      members: team.map((c) => c.species),
-      score,
-      strengths,
-      weaknesses,
-      notes,
-    });
+    pushTeam(arch.name, core);
   }
 
   return proposals.sort((a, b) => b.score - a.score).slice(0, topN);

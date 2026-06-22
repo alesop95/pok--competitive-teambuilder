@@ -97,9 +97,16 @@ src/roleTagging.ts   §4.1 — assegna tag di ruolo deterministici a ogni Pokém
 src/teamGenerator.ts §4.2 — identifica archetipi, costruisce core, riempie slot, assegna punteggio
 src/rationale.ts     §4.3 — Livello 1 testo deterministico (con coverage offensiva); hook Livello 2 via API Claude
 src/public/index.html SPA frontend servita da Fastify (Fase 2): le 4 pagine §5
+src/engine.ts        orchestrazione: load dati, cache candidati, viability, generazione, salvataggio/storico, legalità
+src/setBuilder.ts    set completo per Pokémon: item, abilità, natura, Stat Points, 4 mosse, forme Mega
 data/champions_overrides.json   eccezioni residue non coperte dalla mod champions (ADR-005)
-data/seasons/                   roster (season_<id>.json) e meta (season_<id>_meta.yaml) per stagione
-data/generated_teams/           storico team generati, un file JSON timestampato per generazione
+data/seasons/season_<id>.json   roster + regolamento (regulation) di stagione
+data/seasons/season_<id>_meta.yaml  meta curato: top_threats, common_cores (curato a mano)
+data/seasons/legal_<id>.json    strumenti e mosse legali nel formato (da scripts/fetch_legality.ts, serebii)
+data/generated_teams/           storico team salvati, un JSON timestampato per salvataggio
+scripts/fetch_roster.ts         scraper roster da serebii -> available_pokemon
+scripts/fetch_legality.ts       scraper items/moves legali da serebii -> legal_<id>.json
+scripts/generate.ts             CLI: genera team e scrive report .md/.json
 scripts/refresh_meta_sets.ts    opzionale: aggiorna riferimento da @smogon/sets
 ```
 

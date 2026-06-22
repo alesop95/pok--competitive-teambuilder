@@ -32,14 +32,26 @@ persistente, quindi i file flat o `better-sqlite3` andrebbero sostituiti con uno
 ```
 npm install     installa le dipendenze e genera package-lock.json
 npm run dev      avvia l'app web Fastify su http://127.0.0.1:5187 (override con PORT)
+npm start        avvia l'app in modo identico a dev (usato anche dal deploy)
 npm run generate genera i team da CLI e scrive report in data/generated_teams/
 npm run roster   ri-scarica il roster di stagione da serebii in data/seasons/
-npm run build    compila TypeScript in dist/ (per un eventuale rilascio)
+npm run legality ri-scarica strumenti/mosse legali da serebii in data/seasons/legal_<id>.json
+npm run build    compila TypeScript in dist/ (typecheck/rilascio; per servire serve copiare public/data)
 npm test         esegue la suite Vitest
 ```
 
 Porta di default 5187 (scelta non comune per non collidere con altri localhost); sovrascrivibile
-con la variabile d'ambiente `PORT`.
+con la variabile d'ambiente `PORT`. Host di default `127.0.0.1`; in deploy va `0.0.0.0` (via `HOST`).
+
+## Deploy web (Render, free tier)
+
+Il file `render.yaml` in radice descrive un servizio web Render gratuito (handoff §2.5): build
+`npm install`, start `npm start` (esegue `tsx src/server.ts`), `HOST=0.0.0.0` e `PORT` fornita da
+Render. Si crea un Blueprint puntando alla repo; il deploy è manuale dell'utente. Caveat: free tier
+si addormenta dopo 15 min (risveglio ~30-50s) e il filesystem non è persistente tra deploy, quindi i
+team salvati a runtime non sopravvivono a un nuovo deploy (per persistenza: storage esterno, §2.5).
+Alternativa desktop non implementata: packaging Tauri (richiede toolchain Rust), valutabile in
+seguito.
 
 ## Variabili d'ambiente e segreti
 

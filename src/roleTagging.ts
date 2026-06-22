@@ -97,8 +97,11 @@ export function tagRoles(input: TaggingInput): RoleTag[] {
   // weather_setter: ability meteo
   if (hasAbility(WEATHER_ABILITIES)) tags.add('weather_setter');
 
-  // speed_control: Tailwind / Icy Wind / Electroweb, oppure trick_room_setter
-  if (has('Tailwind') || has('Icy Wind') || has('Electroweb') || isTrSetter) tags.add('speed_control');
+  // speed_control: controllo velocità "in avanti" (Tailwind / Icy Wind / Electroweb). NON include
+  // Trick Room, che è controllo velocità inverso e ha il suo tag trick_room_setter: così un setter
+  // di Trick Room non viene scambiato per un membro adatto a un team Tailwind.
+  void isTrSetter;
+  if (has('Tailwind') || has('Icy Wind') || has('Electroweb')) tags.add('speed_control');
 
   // wallbreaker: Atk o SpA base >= 110 e recovery affidabile assente (approssima "recovery limitato";
   // l'accesso a Choice item della tabella §4.1 è una scelta di teambuilding, non intrinseca alla specie).

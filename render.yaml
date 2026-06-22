@@ -1,0 +1,21 @@
+# Deploy web gratuito su Render (handoff §2.5). Free tier reale senza carta; il servizio si
+# "addormenta" dopo 15 min di inattività e il primo accesso successivo richiede ~30-50s di risveglio,
+# accettabile per un tool personale. Render legge questo file alla creazione del Blueprint.
+#
+# Lo stack a file (data/seasons, data/generated_teams) funziona perché il repo è clonato sul servizio;
+# nota: il filesystem di Render NON è persistente tra deploy/riavvii, quindi i team salvati a runtime
+# via UI non sopravvivono a un nuovo deploy. Per persistenza reale servirebbe uno storage esterno
+# (vedi handoff §2.5: Cloudflare D1/Turso) — non necessario per l'uso locale.
+services:
+  - type: web
+    name: poke-competitive-teambuilder
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: NODE_VERSION
+        value: "22"
+      # PORT è fornita automaticamente da Render e letta da src/server.ts

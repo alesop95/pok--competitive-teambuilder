@@ -25,6 +25,20 @@ describe('setBuilder', () => {
     expect(typeof set!.nature).toBe('string');
   }, 30000);
 
+  it('Mega: con opts.mega usa la forma Mega, la Mega Stone e la sua abilità', async () => {
+    const set = await buildSet('Venusaur', ['wallbreaker'], { mega: true });
+    expect(set).not.toBeNull();
+    expect(set!.species).toBe('Venusaur-Mega');
+    expect(set!.item).toBe('Venusaurite');
+    expect(set!.ability).toBe('Thick Fat');
+    expect(set!.mega).toBe(true);
+  }, 30000);
+
+  it('niente Focus Punch nei set (mossa poco pratica in doppio)', async () => {
+    const set = await buildSet('Pikachu', ['priority_closer']);
+    expect(set!.moves).not.toContain('Focus Punch');
+  }, 30000);
+
   it('ritorna null per specie inesistente', async () => {
     expect(await buildSet('Notapokemon', [])).toBeNull();
   });

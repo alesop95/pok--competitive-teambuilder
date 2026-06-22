@@ -17,6 +17,30 @@ source-doc: pokemon-champions-team-builder-spec.md
 > La fonte di verità su cosa è fatto resta `memory/index.md` e il work-log, non le spunte di
 > questo file.
 
+## Stato corrente (accumulo feature, rifinitura alla fine)
+
+Fatto in questa fase di accumulo: 3 migliorie set (Mega, abilità competitive incl. hidden, filtro
+mosse impratiche); selezione guidata da viability competitiva via damage calc (ADR-008, risolve il
+bias "stessi Pokémon in ogni team"); uso dei `common_cores` del meta.
+
+Feature scelte: tutte fatte (common_cores, salvataggio/storico UI, legalità M-B cross-check serebii
+con `data/seasons/legal_MB.json` + validatore). Da valutare poi: Fase 4 (rationale Livello 2 via API
+Claude), Fase 5 (packaging/deploy).
+
+Rifinitura finale: FATTA. Viability ora include la stazza (no Pyroar dominante); speed_control
+distinto da Trick Room nel tagging; natura/Stat Points dei set dal contesto del team (Brave/Quiet
+solo nei team Trick Room).
+
+Fase 5 (prep deploy): FATTA. `npm start` + `render.yaml` per deploy web Render gratuito. Tauri
+desktop resta alternativa futura non implementata.
+
+Documentazione tecnica: FATTA in `docs/TECHNICAL.md` (stack, tool open source con licenze, matematica
+del motore con formule e riferimenti percorso:simbolo); linkata dal README.
+
+Stato: l'app è completa rispetto a quanto richiesto. Resta opzionale la Fase 4 (rationale Livello 2
+via API Claude, non selezionata). Da fare a livello di processo: commit dei blocchi accumulati e
+`sync-context` per ri-ancorare le schede a HEAD.
+
 ## Feature: Fase 1 — fondamenta del motore (data layer + tagging ruoli)
 
 Cosa fa: porta i dati di gioco reali nel codice (mod `champions` via `@pkmn/mods` + `@pkmn/dex`),

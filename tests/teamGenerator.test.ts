@@ -8,10 +8,10 @@ const TYPES = ['Fire', 'Water', 'Grass', 'Fairy', 'Ground'];
 
 // Fabbrica di candidati: defense come overrides su una base neutra (1x su tutti i tipi).
 let nextNum = 1;
-function cand(species: string, tags: RoleTag[], types: string[], defense: Partial<Record<string, number>> = {}): Candidate {
+function cand(species: string, tags: RoleTag[], types: string[], defense: Partial<Record<string, number>> = {}, viability = 0.5): Candidate {
   const full: Record<string, number> = {};
   for (const t of TYPES) full[t] = defense[t] ?? 1;
-  return { species, dexNum: nextNum++, tags, types, defense: full };
+  return { species, dexNum: nextNum++, tags, types, defense: full, baseStats: { hp: 80, atk: 80, def: 80, spa: 80, spd: 80, spe: 80 }, bst: 500, viability };
 }
 
 function roster(): Candidate[] {

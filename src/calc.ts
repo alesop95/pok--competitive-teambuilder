@@ -8,6 +8,7 @@ import { calculate, Pokemon, Move } from '@smogon/calc';
 import { Generations, type Generation } from '@pkmn/data';
 import { Dex, type ID, type ModData } from '@pkmn/dex';
 import { getChampionsDex, getDefenseMap } from './pkmnData.js';
+import { isPracticalDoublesMove } from './setBuilder.js';
 
 let genPromise: Promise<Generation> | undefined;
 
@@ -62,11 +63,9 @@ async function computeBestDamage(attacker: string, defender: string): Promise<Da
   for (const moveId of Object.keys(learnset?.learnset ?? {})) {
     const m = dex.moves.get(moveId);
     if (!m?.exists || m.category === 'Status' || m.basePower <= 0) continue;
-    // scarta mosse poco pratiche per la stima della minaccia: due turni/ricarica/differite e bassa
-    // precisione (l'accuratezza può essere `true` per le mosse che non mancano mai).
-    const flags = m.flags as Record<string, unknown> | undefined;
-    if (flags?.charge || flags?.recharge || flags?.futuremove) continue;
-    if (typeof m.accuracy === 'number' && m.accuracy < 80) continue;
+    // scarta mosse poco pratiche in doppio (due turni/ricarica/differite, bassa precisione,
+    // condizionali come Focus Punch): stesso filtro usato dai set, così le stime sono coerenti.
+    if (!isPracticalDoublesMove({ id: m.id, flags: m.flags, accuracy: m.accuracy })) continue;
     const stab = atkSp.types.includes(m.type) ? 1.5 : 1;
     const eff = defenseMap[m.type] ?? 1; // moltiplicatore difensivo del difensore vs il tipo mossa
     // pesa la stat offensiva reale: una mossa speciale ad alto BP su un attaccante fisico rende
