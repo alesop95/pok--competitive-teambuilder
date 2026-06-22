@@ -133,7 +133,7 @@
       $('#seasonInfo').textContent = `${season.format} · ${reg.name || currentId} · ${roster} forme · ${(meta.top_threats||[]).length} minacce meta`;
       $('#setupBody').innerHTML = `
         <h3 style="margin-top:0">Stagione ${season.season_id}</h3>
-        <p><strong>Formato:</strong> ${season.format} &nbsp; <strong>Regolamento:</strong> ${reg.name || '—'}</p>
+        <p><strong>Formato:</strong> ${season.format} &nbsp; <strong>Regolamento:</strong> ${reg.name || '-'}</p>
         <p class="muted">${reg.restricted_note || ''}</p>
         <p><strong>Squadra:</strong> porta ${reg.team?.bring_min}-${reg.team?.bring_max}, ne giochi ${reg.team?.pick} · ${reg.team?.level_rule || ''}</p>
         <p><strong>Roster disponibile:</strong> ${roster} forme · <strong>Minacce meta:</strong> ${(meta.top_threats||[]).length}</p>

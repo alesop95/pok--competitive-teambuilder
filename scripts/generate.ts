@@ -19,7 +19,7 @@ async function main() {
   console.log(`Stagione ${seasonId} (${season.format}). Tagging e generazione...`);
   const teams = await generateForSeason(seasonId, 5);
 
-  const md: string[] = [`# Proposte di team — Stagione ${seasonId} (${season.format})`, ''];
+  const md: string[] = [`# Proposte di team - Stagione ${seasonId} (${season.format})`, ''];
   md.push(
     `Regolamento: ${season.regulation?.name ?? seasonId}. Minacce meta considerate: ${(meta.top_threats ?? []).length || 'nessuna (meta non curato)'}.`,
     '',

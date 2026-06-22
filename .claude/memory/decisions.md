@@ -6,7 +6,7 @@
 > superare la precedente e ne cita il numero. Le inferenze non confermate si marcano come da
 > verificare e si promuovono a decisione solo quando una fonte le conferma.
 
-## ADR-001 — Adozione del sistema di progetto portabile
+## ADR-001 - Adozione del sistema di progetto portabile
 
 Data: 2026-06-19
 Stato: accettata
@@ -19,7 +19,7 @@ umano sul versionamento.
 Conseguenze: ogni passo significativo aggiorna schede, `last-verified-commit`, snapshot e
 work-log; commit e push restano manuali.
 
-## ADR-002 — Stack Node.js/TypeScript invece di Python
+## ADR-002 - Stack Node.js/TypeScript invece di Python
 
 Data: 2026-06-19
 Stato: accettata (pivot rispetto alla decisione iniziale Python)
@@ -33,7 +33,7 @@ e ci si allinea allo standard de facto per backend web leggeri (obiettivo "event
 Conseguenze: gestione dipendenze via npm con `package.json` (avvio identico su Windows e Linux,
 niente più `run.sh`/`run.bat`); `package-lock.json` tracciato per build riproducibili.
 
-## ADR-003 — Nessun database per l'MVP: storage a file JSON/YAML
+## ADR-003 - Nessun database per l'MVP: storage a file JSON/YAML
 
 Data: 2026-06-19
 Stato: accettata
@@ -45,7 +45,7 @@ serviranno query sullo storico che i file flat non supportano bene.
 Motivazione: semplicità, leggibilità nei diff git, zero dipendenze di runtime extra.
 Conseguenze: i dati curati restano tracciati come conoscenza che evolve stagione per stagione.
 
-## ADR-004 — Repository GitHub pubblico, LICENSE MIT
+## ADR-004 - Repository GitHub pubblico, LICENSE MIT
 
 Data: 2026-06-19
 Stato: accettata
@@ -57,7 +57,7 @@ l'ecosistema MIT da cui il progetto dipende.
 Conseguenze: README pubblico in radice; nessun segreto va mai committato (la chiave API Claude del
 rationale Livello 2 resta in `.env` ignorato).
 
-## ADR-005 — Mod "champions" di Showdown come layer dati primario del formato
+## ADR-005 - Mod "champions" di Showdown come layer dati primario del formato
 
 Data: 2026-06-19
 Stato: accettata (verificata il 2026-06-19)
@@ -77,7 +77,7 @@ Conseguenze: dipendenza npm `@pkmn/mods` (pesante, ~173 MB unpacked: valutare se
 pacchetto o solo la mod champions). La legalità di regolamento è gestita da `championsregma`, ma il
 nome suggerisce Reg M-A: la copertura del Reg M-B è da chiarire (vedi ADR-007).
 
-## ADR-008 — Selezione dei membri guidata da viability competitiva (damage calc)
+## ADR-008 - Selezione dei membri guidata da viability competitiva (damage calc)
 
 Data: 2026-06-20
 Stato: accettata
@@ -98,7 +98,7 @@ fa ~200x10 damage calc memoizzati (sotto il secondo a regime). Raffinamenti resi
 sovrastima attaccanti fragili ad alto danno grezzo (es. Pyroar), da bilanciare con bulk/velocità
 nella rifinitura finale.
 
-## ADR-007 — Fonte dati del roster di stagione e regolamento target
+## ADR-007 - Fonte dati del roster di stagione e regolamento target
 
 Data: 2026-06-19
 Stato: accettata (decisa con l'utente il 2026-06-20)
@@ -117,7 +117,7 @@ curatela), arricchita a runtime con i dati della mod. Workflow stagionale §8 in
 stagione si rilegge serebii e si aggiorna il file. Da chiarire in seguito se/quando `championsregma`
 o una nuova mod coprirà M-B, per agganciarla.
 
-## ADR-006 — Fonti dati di stagione: serebii.net
+## ADR-006 - Fonti dati di stagione: serebii.net
 
 Data: 2026-06-19
 Stato: accettata

@@ -11,7 +11,7 @@ import type { RoleTag } from './roleTagging.js';
 import type { PokemonSet } from './setBuilder.js';
 
 const formatSP = (sp: PokemonSet['statPoints']): string =>
-  Object.entries(sp).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(' / ') || '—';
+  Object.entries(sp).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(' / ') || '-';
 
 export type RationaleLevel = 1 | 2;
 
@@ -48,7 +48,7 @@ export function buildRationaleL1(
   sets: PokemonSet[] = [],
 ): string {
   const lines: string[] = [];
-  lines.push(`### ${team.archetype} — punteggio ${team.score}`);
+  lines.push(`### ${team.archetype} - punteggio ${team.score}`);
   lines.push('');
   lines.push('Composizione e ruoli:');
   for (const m of team.members) lines.push(`- ${m}: ${describeRoles(perMemberTags[m] ?? [])}`);
@@ -71,7 +71,7 @@ export function buildRationaleL1(
 
   if (team.weaknesses.length) {
     lines.push(
-      `Debolezze strutturali: tipi a cui almeno tre membri sono deboli — ${team.weaknesses.join(', ')}.`,
+      `Debolezze strutturali: tipi a cui almeno tre membri sono deboli - ${team.weaknesses.join(', ')}.`,
     );
   } else {
     lines.push('Debolezze strutturali: nessun tipo impilato su tre o più membri.');
@@ -80,7 +80,7 @@ export function buildRationaleL1(
 
   if (offensive.length) {
     const answered = offensive.filter((o) => o.answered).length;
-    lines.push(`Coverage offensiva contro le minacce meta (danno reale, @smogon/calc) — ${answered}/${offensive.length} con risposta solida:`);
+    lines.push(`Coverage offensiva contro le minacce meta (danno reale, @smogon/calc) - ${answered}/${offensive.length} con risposta solida:`);
     for (const o of offensive) {
       const mark = o.answered ? 'OK' : 'debole';
       lines.push(`- ${o.threat}: ${o.by} con ${o.move} fa fino al ${o.pctMax}% (${mark})`);

@@ -49,7 +49,7 @@ enhancement, non requisiti dell'MVP.
 
 Accessibilità della mod `champions` via `@pkmn/mods` rispetto al recupero diretto dal repository
 Showdown (ADR-005, da verificare). Dettaglio esatto del preview/pick di squadra in game (box ~30
-slot, squadra giocabile 6 con 4 in campo in doppio) — non bloccante per l'architettura.
+slot, squadra giocabile 6 con 4 in campo in doppio) - non bloccante per l'architettura.
 
 Import su Pokémon Home da app di terze parti: esplorare se sia possibile creare/preparare Pokémon
 con un tool esterno e portarli su Pokémon Home, per chiudere il ciclo dal team proposto al team

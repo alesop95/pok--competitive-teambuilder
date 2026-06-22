@@ -63,12 +63,12 @@ d'ambiente `PORT`.
 
 ## Stato
 
-- [x] Fase 0 — inizializzazione e scaffold del progetto
-- [ ] Fase 1 — motore offline da CLI (tagging ruoli + generazione team)
-- [ ] Fase 2 — UI web minima (MVP)
-- [ ] Fase 3 — raffinamento scoring e damage calc reale
-- [ ] Fase 4 — rationale Livello 2 via API Claude
-- [ ] Fase 5 — packaging desktop o deploy web (opzionale)
+- [x] Fase 0 - inizializzazione e scaffold del progetto
+- [ ] Fase 1 - motore offline da CLI (tagging ruoli + generazione team)
+- [ ] Fase 2 - UI web minima (MVP)
+- [ ] Fase 3 - raffinamento scoring e damage calc reale
+- [ ] Fase 4 - rationale Livello 2 via API Claude
+- [ ] Fase 5 - packaging desktop o deploy web (opzionale)
 
 ---
 

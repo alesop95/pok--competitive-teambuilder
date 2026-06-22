@@ -12,7 +12,7 @@ season_<id>_meta.yaml    meta corrente: top_threats, common_cores, speed_benchma
 
 Lo schema di `season_<id>.json` e di `season_<id>_meta.yaml` è descritto nell'handoff §3.2 e §3.3.
 
-## Fonti dati di stagione (serebii.net) — da rileggere a ogni aggiornamento del roster
+## Fonti dati di stagione (serebii.net) - da rileggere a ogni aggiornamento del roster
 
 Queste pagine sono la fonte autorevole da cui si compila il roster, le mosse e gli strumenti
 disponibili nella stagione corrente. Vanno riconsultate ogni volta che la stagione cambia, prima di

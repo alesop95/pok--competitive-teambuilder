@@ -5,7 +5,7 @@
 # Lo stack a file (data/seasons, data/generated_teams) funziona perché il repo è clonato sul servizio;
 # nota: il filesystem di Render NON è persistente tra deploy/riavvii, quindi i team salvati a runtime
 # via UI non sopravvivono a un nuovo deploy. Per persistenza reale servirebbe uno storage esterno
-# (vedi handoff §2.5: Cloudflare D1/Turso) — non necessario per l'uso locale.
+# (vedi handoff §2.5: Cloudflare D1/Turso) - non necessario per l'uso locale.
 services:
   - type: web
     name: poke-competitive-teambuilder

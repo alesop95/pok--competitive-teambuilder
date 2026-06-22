@@ -51,7 +51,7 @@ Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzion
 (rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
 docs), poi `sync-context` per ri-ancorare le schede a HEAD.
 
-## Feature: Fase 1 — fondamenta del motore (data layer + tagging ruoli)
+## Feature: Fase 1 - fondamenta del motore (data layer + tagging ruoli)
 
 Cosa fa: porta i dati di gioco reali nel codice (mod `champions` via `@pkmn/mods` + `@pkmn/dex`),
 costruisce il roster M-B e implementa il tagging dei ruoli deterministico (§4.1), primo mattone
@@ -102,7 +102,7 @@ agganciata al posto della curatela manuale della legalità. Da monitorare.
 Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il
 pacchetto va tenuto intero. Non bloccante.
 
-## Feature: Fase 3 — damage calc reale e raffinamento (handoff §7)
+## Feature: Fase 3 - damage calc reale e raffinamento (handoff §7)
 
 Cosa fa: porta numeri di danno verificati nel motore e affina lo scoring. `src/calc.ts` usa
 `@smogon/calc` su una `Generation` `@pkmn/data` costruita sulla mod champions; l'engine calcola la
@@ -123,7 +123,7 @@ Limiti noti: scelte di set euristiche (talvolta mosse subottimali, abilità non 
 utile è hidden); la scelta mossa del calc resta euristica (1 calc per coppia, spread standard, niente
 field/abilità avversarie); Mega via strumento non auto-evolve in calc; il meta è preliminare.
 
-## Feature: Fase 2 — UI web minima (handoff §5)
+## Feature: Fase 2 - UI web minima (handoff §5)
 
 Cosa fa: espone il motore via browser. Engine condiviso `src/engine.ts` (cache candidati), server
 Fastify `src/server.ts` con API REST + static, SPA `src/public/index.html` con le 4 pagine §5.

@@ -1,4 +1,4 @@
-# Documentazione tecnica — Pokémon Champions Team Builder
+# Documentazione tecnica - Pokémon Champions Team Builder
 
 > Documento tracciato, destinato a un lettore tecnico. Spiega lo stack, i tool open source e la matematica del motore di generazione dei team. I riferimenti al codice sono nella forma`percorso:simbolo`. La fonte di verità resta il codice; questo documento lo descrive allo stato attuale e va aggiornato quando il motore cambia.
 
@@ -112,7 +112,7 @@ danno = ( ( (2·Livello/5 + 2) · Potenza · A/D ) / 50 + 2 ) · M
   A, D  = Attacco (o Att.Sp.) dell'attaccante e Difesa (o Dif.Sp.) del difensore, con boost/natura
   M     = prodotto dei modificatori: STAB, efficacia di tipo, bersagli (0.75 in doppio multi-target),
           meteo, abilità (es. Adaptability, Huge Power, Thick Fat, Multiscale), oggetto, critico,
-          e il roll casuale 0.85–1.00
+          e il roll casuale 0.85-1.00
 ```
 
 Il progetto consuma questa formula tramite il pacchetto e non la reimplementa; ciò che è "nostro" è solo come impostiamo i due Pokémon e quale mossa scegliamo. Entrambi i contendenti ricevono la loro abilità competitiva (`src/setBuilder.ts:pickCompetitiveAbility`), così il calcolo rispetta immunità e
@@ -213,5 +213,5 @@ Il meta M-B è ora basato sulle usage stats reali (vedi `docs/SOURCES.md` §6) e
 
 L'inventario completo e categorizzato di tutte le fonti usate dal progetto (pacchetti software con licenza, dati di gioco, formule di meccanica, pagine serebii, usage stats, fonti ufficiali e hosting) è in `docs/SOURCES.md`.
 
-[^node]: *Node.js* — runtime JavaScript lato server, cross-platform.
-[^showdown]: *Pokémon Showdown* — simulatore di battaglie open source (MIT) da cui derivano i pacchetti `@pkmn` e `@smogon` usati qui.
+[^node]: *Node.js* - runtime JavaScript lato server, cross-platform.
+[^showdown]: *Pokémon Showdown* - simulatore di battaglie open source (MIT) da cui derivano i pacchetti `@pkmn` e `@smogon` usati qui.

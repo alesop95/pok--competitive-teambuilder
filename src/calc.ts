@@ -12,11 +12,13 @@ import { isPracticalDoublesMove, pickCompetitiveAbility } from './setBuilder.js'
 import { toID } from './roleTagging.js';
 
 export type Weather = 'Rain' | 'Sun' | 'Sand' | 'Snow';
+export type Terrain = 'Electric' | 'Grassy' | 'Psychic' | 'Misty';
 
-// Opzioni di campo per il calcolo: di default nessuna (baseline neutra). Il meteo si usa quando il
-// team ha un weather setter, così l'offesa di quel team riflette il proprio meteo.
+// Opzioni di campo per il calcolo: di default nessuna (baseline neutra). Meteo e terreno si usano
+// quando il team li imposta (weather/terrain setter), così l'offesa di quel team li riflette.
 export interface DamageOptions {
   weather?: Weather;
+  terrain?: Terrain;
 }
 
 // Immunità di tipo concesse da un'abilità: una mossa di quel tipo contro quell'abilità fa 0, quindi
@@ -40,6 +42,16 @@ const ABILITY_TYPE_IMMUNITY: Record<string, string> = {
 function weatherMult(weather: Weather | undefined, moveType: string): number {
   if (weather === 'Rain') return moveType === 'Water' ? 1.5 : moveType === 'Fire' ? 0.5 : 1;
   if (weather === 'Sun') return moveType === 'Fire' ? 1.5 : moveType === 'Water' ? 0.5 : 1;
+  return 1;
+}
+
+// Moltiplicatore terreno sulla potenza (approssimazione che ignora il "grounded", affinata dal calc
+// reale): i terreni potenziano il proprio tipo, il Misty dimezza il Dragon.
+function terrainMult(terrain: Terrain | undefined, moveType: string): number {
+  if (terrain === 'Electric') return moveType === 'Electric' ? 1.3 : 1;
+  if (terrain === 'Grassy') return moveType === 'Grass' ? 1.3 : 1;
+  if (terrain === 'Psychic') return moveType === 'Psychic' ? 1.3 : 1;
+  if (terrain === 'Misty') return moveType === 'Dragon' ? 0.5 : 1;
   return 1;
 }
 
@@ -78,7 +90,7 @@ export async function bestDamagePercent(
   defender: string,
   opts: DamageOptions = {},
 ): Promise<DamageResult | null> {
-  const key = `${attacker}>${defender}>${opts.weather ?? ''}`;
+  const key = `${attacker}>${defender}>${opts.weather ?? ''}>${opts.terrain ?? ''}`;
   if (damageCache.has(key)) return damageCache.get(key)!;
   const result = await computeBestDamage(attacker, defender, opts);
   damageCache.set(key, result);
@@ -115,7 +127,7 @@ async function computeBestDamage(attacker: string, defender: string, opts: Damag
     // pesa la stat offensiva reale: una mossa speciale ad alto BP su un attaccante fisico rende
     // poco, quindi la stima usa Attacco per le fisiche e Att. Speciale per le speciali.
     const offStat = m.category === 'Physical' ? atkSp.baseStats.atk : atkSp.baseStats.spa;
-    const estimate = m.basePower * stab * eff * offStat * weatherMult(opts.weather, m.type);
+    const estimate = m.basePower * stab * eff * offStat * weatherMult(opts.weather, m.type) * terrainMult(opts.terrain, m.type);
     if (estimate > bestEstimate) {
       bestEstimate = estimate;
       bestMove = m.name;
@@ -135,7 +147,7 @@ async function computeBestDamage(attacker: string, defender: string, opts: Damag
   // abilità competitive di entrambi: rendono il calc realistico (immunità tipo Levitate/Flash Fire,
   // riduttori come Thick Fat/Multiscale, boost come Adaptability/Huge Power). Gli strumenti restano
   // neutri di proposito; il meteo si applica solo se passato (contesto del team), altrimenti baseline.
-  const field = opts.weather ? new Field({ weather: opts.weather }) : undefined;
+  const field = opts.weather || opts.terrain ? new Field({ weather: opts.weather, terrain: opts.terrain }) : undefined;
   try {
     const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread, ability: atkAbility });
     const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: { hp: 252, [defKey]: 252 }, nature: 'Calm', ability: defAbility });

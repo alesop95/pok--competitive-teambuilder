@@ -6,7 +6,20 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
-## 2026-06-22 — Affinamento motore: meteo nel calc e immunità da abilità
+## 2026-06-22 - Pulizia trattini lunghi + terreno nel damage calc
+
+Commit: (da committare)
+File toccati: 14 file del progetto (docs, schede memory/context, README, render.yaml, .gitignore,
+src/public/index.html, src/rationale.ts, scripts/generate.ts, data/seasons/README.md) per la pulizia
+trattini; `src/calc.ts`, `src/pkmnData.ts` (`teamTerrain`), `src/engine.ts` per il terreno.
+Motivo: (1) Rimossi 76 trattini lunghi (em-dash ed en-dash) sostituiti con trattini brevi nei soli
+file prodotti per il progetto, coerente con `rules/interaction-style.md`; esclusi handoff e bundle
+dello standard portabile. (2) Aggiunto il terreno come opzione di campo del damage calc
+(`DamageOptions.terrain`: Electric/Grassy/Psychic/Misty), con auto-rilevamento del terrain setter del
+team (`teamTerrain`) accanto al meteo; verificato: Raichu Volt Tackle vs Pelipper 167-201% -> 218-258%
+sotto Electric Terrain. 31/31 test verdi, typecheck pulito.
+
+## 2026-06-22 - Affinamento motore: meteo nel calc e immunità da abilità
 
 Commit: (da committare)
 File toccati: `src/calc.ts` (opzione meteo via Field + skip mosse immuni per abilità + meteo nella
@@ -22,7 +35,7 @@ Fire, Water/Volt Absorb, Storm Drain, Lightning Rod, Sap Sipper, Earth Eater, ec
 Garchomp vs Hydreigon (Levitate) sceglie Outrage, non una mossa Terra. Il meteo entra anche nella
 stima di scelta (Acqua/Fuoco x1.5/0.5). 31/31 test verdi, typecheck pulito.
 
-## 2026-06-22 — Diagramma Mermaid della pipeline (sorgente + SVG)
+## 2026-06-22 - Diagramma Mermaid della pipeline (sorgente + SVG)
 
 Commit: (da committare)
 File toccati: `.claude/context/diagrams/pipeline.mmd` (nuovo), `.claude/context/diagrams/pipeline.svg`
@@ -34,7 +47,7 @@ brevi per leggibilità; verificato l'SVG (1264x1328, box dimensionati sul testo,
 nessuna sovrapposizione). Registrato in `design-and-security.md` (corrispondenza uno a uno coi
 moduli) e referenziato da `docs/TECHNICAL.md` §3 (blocco ```mermaid``` reso da GitHub + embed SVG).
 
-## 2026-06-22 — Limiti noti (calc ability-aware) + documentazione esaustiva e fonti
+## 2026-06-22 - Limiti noti (calc ability-aware) + documentazione esaustiva e fonti
 
 Commit: (da committare)
 File toccati: `src/calc.ts` (abilità di entrambi i contendenti), `src/setBuilder.ts`
@@ -42,7 +55,7 @@ File toccati: `src/calc.ts` (abilità di entrambi i contendenti), `src/setBuilde
 `README.md`.
 Motivo: affrontati i limiti noti. (1) Damage calc ora ability-aware: attaccante e difensore ricevono
 l'abilità competitiva, quindi il calc rispetta immunità (Levitate), riduttori (Thick Fat verificato:
-dimezza il Fuoco) e boost (Adaptability/Huge Power) — è il maggiore guadagno di realismo. Item, meteo
+dimezza il Fuoco) e boost (Adaptability/Huge Power) - è il maggiore guadagno di realismo. Item, meteo
 e modificatore multi-bersaglio restano baseline neutra, documentati. (2) Mega Z-A: verificato che è
 una limitazione dei dati `@pkmn/mods` (0.10.11 include 48 Mega `<Base>-Mega`, prese tutte da
 getMegaForme; Mega Raichu/Clefable non sono nei dati), non un bug. (3) Documentazione: `TECHNICAL.md`
@@ -51,7 +64,7 @@ nostre, l'ability-awareness e le scelte di baseline; creato `docs/SOURCES.md`, i
 categorizzato di tutte le fonti (pacchetti+licenze, dati Showdown/mod, formule, pagine serebii, usage
 stats, ufficiali, hosting, tool community). 29/29 test verdi, typecheck pulito.
 
-## 2026-06-22 — Meta M-B da usage stats reali
+## 2026-06-22 - Meta M-B da usage stats reali
 
 Commit: (da committare)
 File toccati: `data/seasons/season_MB_meta.yaml`.
@@ -59,12 +72,12 @@ Motivo: sostituita la curatela preliminare del meta con le usage stats reali del
 Reg M-B S3 Ranked Battle Data, ChampionsMeta, ~22 giugno 2026). top_threats ora segue il ranking di
 usage reale (Garchomp, Sinistcha, Basculegion, Whimsicott, Kingambit, Staraptor, Incineroar,
 Charizard, Raichu, Pelipper, Sneasler, Archaludon, Grimmsnarl, Sylveon, Swampert, Metagross,
-Gholdengo — 17 minacce, tutte risolte nella dex). common_cores aggiornati ai core reali: Incineroar
+Gholdengo - 17 minacce, tutte risolte nella dex). common_cores aggiornati ai core reali: Incineroar
 + Sinistcha (≈16.5% del campo), rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler.
 Verifica: generazione ancorata ai core reali (top proposta "Meta core: rain"); pioggia e Fairy
 emergono come assi del meta. Nota: Raichu è davvero nel meta (Mega Raichu), confermato dalle usage.
 
-## 2026-06-22 — sync-context: ri-ancoraggio schede a HEAD 17fdd2a
+## 2026-06-22 - sync-context: ri-ancoraggio schede a HEAD 17fdd2a
 
 Commit: 17fdd2a
 File toccati: le 6 schede di `context/` (frontmatter `last-verified-commit` → 17fdd2a),
@@ -76,7 +89,7 @@ del `last-verified`. Le schede `design-and-security` e `dev-testing` erano indie
 un delta update mirato (pipeline con viability/damage calc/legalità; suite reale a 29 test su 6
 file). Snapshot di `index.md` portato a 17fdd2a.
 
-## 2026-06-22 — Rifinitura motore, prep deploy (Fase 5) e documentazione tecnica
+## 2026-06-22 - Rifinitura motore, prep deploy (Fase 5) e documentazione tecnica
 
 Commit: (da committare)
 File toccati: `src/roleTagging.ts` (speed_control distinto da Trick Room), `src/teamGenerator.ts`
@@ -94,7 +107,7 @@ completa in `docs/TECHNICAL.md`: stack, tool open source con licenze, e la matem
 (efficacia di tipo, tagging, damage calc, viability, scoring, set, legalità) con riferimenti
 percorso:simbolo. 29/29 test verdi, typecheck pulito.
 
-## 2026-06-22 — Salvataggio/storico team e legalità di formato (cross-check serebii)
+## 2026-06-22 - Salvataggio/storico team e legalità di formato (cross-check serebii)
 
 Commit: (da committare)
 File toccati: `src/engine.ts` (save/list/load team, loadLegality/validateSet), `src/server.ts`
@@ -106,11 +119,11 @@ in data/generated_teams/, `/api/saved` elenca, `/api/saved/:name` apre (nome val
 traversal); UI con tab Storico e bottone "Salva proposte". Legalità: `scripts/fetch_legality.ts`
 scrappa serebii items+moves in `data/seasons/legal_MB.json` (181 strumenti, 499 mosse); l'engine
 valida i set e sostituisce gli strumenti non disponibili segnalandoli. Scoperta utile: Safety
-Goggles NON è legale in M-B — era usato dai set di redirezione, corretto alla radice (Sitrus Berry)
+Goggles NON è legale in M-B - era usato dai set di redirezione, corretto alla radice (Sitrus Berry)
 con il validatore come rete di sicurezza. Verifica: 28/28 test verdi, typecheck pulito, CLI senza
 item illegali. Restano: rifinitura finale + documentazione tecnica completa (richiesta dall'utente).
 
-## 2026-06-20 — Migliorie set + selezione guidata da viability (qualità)
+## 2026-06-20 - Migliorie set + selezione guidata da viability (qualità)
 
 Commit: (da committare)
 File toccati: `src/setBuilder.ts` (Mega, abilità competitive incl. hidden, filtro mosse poco
@@ -130,7 +143,7 @@ Hydreigon, Kingambit, Corviknight, Skarmory, Volcarona, Staraptor… generazione
 verdi, typecheck pulito. Restano da fare le altre 2 feature scelte (salvataggio/storico UI, legalità
 M-B cross-check serebii) e la rifinitura finale (viability sovrastima attaccanti fragili).
 
-## 2026-06-20 — Set competitivi completi (item, abilità, natura, Stat Points, mosse)
+## 2026-06-20 - Set competitivi completi (item, abilità, natura, Stat Points, mosse)
 
 Commit: (da committare)
 File toccati: `src/setBuilder.ts` (nuovo), `src/engine.ts` (sets per membro), `src/rationale.ts`
@@ -147,7 +160,7 @@ export testuale). Verifica: typecheck pulito, 24/24 test verdi, CLI e API mostra
 Limiti: scelte euristiche (talvolta mosse subottimali come Focus Punch in doppio, abilità non
 ideale se l'unica utile è hidden); raffinabili. Resa UI da verificare con screenshot.
 
-## 2026-06-20 — Fase 3: damage calc reale e raffinamento motore
+## 2026-06-20 - Fase 3: damage calc reale e raffinamento motore
 
 Commit: (da committare)
 File toccati: `src/calc.ts` (nuovo), `src/engine.ts` (post-pass coverage offensiva),
@@ -168,7 +181,7 @@ sezione coverage offensiva (resa da verificare con screenshot). Nota: durante il
 ho dovuto terminare il processo node rimasto appeso sulla 5187 (TaskStop non uccide il nipote);
 la 3000 dell'utente non è stata toccata.
 
-## 2026-06-20 — Fase 2: UI web Fastify (le 4 pagine §5)
+## 2026-06-20 - Fase 2: UI web Fastify (le 4 pagine §5)
 
 Commit: (da committare)
 File toccati: `src/engine.ts` (nuovo, orchestrazione condivisa + cache candidati + meta raw),
@@ -187,7 +200,7 @@ visiva della UI da verificare con screenshot dell'utente (regola manual-screensh
 Nota operativa: durante il collaudo ho erroneamente terminato un processo sulla porta 3000 che
 serviva un'altra app dell'utente; corretto spostando la nostra app su 5187 e lasciando libera la 3000.
 
-## 2026-06-20 — Meta M-B curato (preliminare) e scoring differenziante
+## 2026-06-20 - Meta M-B curato (preliminare) e scoring differenziante
 
 Commit: (da committare)
 File toccati: `data/seasons/season_MB_meta.yaml`, `src/teamGenerator.ts`,
@@ -201,7 +214,7 @@ solide" alle minacce (resiste a una STAB e non debole all'altra) come contributo
 per minacce senza risposta. Validato: i punteggi ora differenziano i team (18/18/17.5/17.5/17), meta
 risolto su 10/10 specie. Test 19/19 verdi. Il damage calc reale resta Fase 3.
 
-## 2026-06-20 — Fase 1 completata: generazione team, rationale L1 e CLI
+## 2026-06-20 - Fase 1 completata: generazione team, rationale L1 e CLI
 
 Commit: (da committare)
 File toccati: `src/teamGenerator.ts`, `src/rationale.ts`, `src/pkmnData.ts` (+`buildCandidates`,
@@ -217,7 +230,7 @@ fixture + integrazione reale), typecheck pulito. Limiti noti documentati in `cur
 (scoring piatto senza meta curato, no damage calc reale: Fase 3). Prossimo: Fase 2 (UI web minima)
 o curatela di `season_MB_meta.yaml` per alzare la qualità dello scoring.
 
-## 2026-06-20 — Fase 1: regolamento M-B, roster e tagging dei ruoli
+## 2026-06-20 - Fase 1: regolamento M-B, roster e tagging dei ruoli
 
 Commit: (da committare)
 File toccati: `data/seasons/season_MB.json`, `scripts/fetch_roster.ts`, `src/roleTagging.ts`,
@@ -234,7 +247,7 @@ wrapper `getTaggingInput`/`tagSpecies` in `pkmnData.ts` che legge movepool e met
 dex champions. Test: 14/14 verdi (10 unit su fixture + integrazione reale Grimmsnarl=screens_setter,
 Amoonguss=redirection_support), typecheck pulito. Prossimo: `teamGenerator.ts` (§4.2).
 
-## 2026-06-20 — Fase 1: integrazione data layer (mod champions) verificata
+## 2026-06-20 - Fase 1: integrazione data layer (mod champions) verificata
 
 Commit: (da committare)
 File toccati: `package.json` (+`@pkmn/mods`), `src/pkmnData.ts`, `src/pkmn-mods.d.ts`,
@@ -251,17 +264,17 @@ test Vitest (`tests/pkmnData.test.ts`, 3 casi verdi). Typecheck pulito, suite 4/
 Prossimo: generare `data/seasons/season_MB.json` (lista M-B da serebii) e implementare il tagging
 dei ruoli §4.1.
 
-## 2026-06-19 — Primo ancoraggio post-init (sync-context)
+## 2026-06-19 - Primo ancoraggio post-init (sync-context)
 
 Commit: 373419b
 File toccati: le 6 schede di `context/` (`STACK`, `design-and-security`, `deployment`,
 `dev-testing`, `current-work`, `roadmap`), `memory/index.md`, `memory/progress.md`.
-Motivo: eseguito il primo commit manuale (`373419b — Initial commit: sistema di progetto +
+Motivo: eseguito il primo commit manuale (`373419b - Initial commit: sistema di progetto +
 scaffold Fase 0`). La skill `sync-context` ha sostituito il segnaposto `PENDING-FIRST-COMMIT` con
 l'hash di HEAD in `generated-from-commit` e `last-verified-commit` di tutte le schede e nel commit
 di riferimento di `memory/index.md`. Da qui in poi il drift si misura normalmente rispetto a HEAD.
 
-## 2026-06-19 — Avvio Fase 0 dell'handoff: scaffold Node/TS
+## 2026-06-19 - Avvio Fase 0 dell'handoff: scaffold Node/TS
 
 Commit: 373419b
 File toccati: `LICENSE`, `package.json`, `tsconfig.json`, `src/**`, `tests/**`, `data/**`,
@@ -272,7 +285,7 @@ analisi (`pkmnData`, `roleTagging`, `teamGenerator`, `rationale`) e struttura da
 (`data/seasons`, `data/generated_teams`). Schema dati e link open source documentati in
 `context/STACK.md`. Dettagli fini della logica rinviati alla Fase 1.
 
-## 2026-06-19 — Inizializzazione del sistema di progetto
+## 2026-06-19 - Inizializzazione del sistema di progetto
 
 Commit: 373419b
 File toccati: anatomia di `.claude` (`settings.json`, `memory/`, `context/`, `skills/`,

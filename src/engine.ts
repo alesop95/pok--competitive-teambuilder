@@ -6,7 +6,7 @@ import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import yaml from 'js-yaml';
-import { buildCandidates, getThreatTypes, getMegaForme, teamWeather } from './pkmnData.js';
+import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain } from './pkmnData.js';
 import { generateTeams, type Candidate, type MetaContext, type TeamProposal, type CoreSpec } from './teamGenerator.js';
 import { buildRationale } from './rationale.js';
 import { bestDamagePercent } from './calc.js';
@@ -245,11 +245,12 @@ export async function generateForSeason(id: string, topN = 5): Promise<EnrichedT
     // Se il team imposta un meteo (weather setter tra i membri), l'offesa è calcolata sotto quel
     // meteo: così un team pioggia vede i suoi attacchi Acqua potenziati. Default neutro altrimenti.
     const weather = await teamWeather(t.members);
+    const terrain = await teamTerrain(t.members);
     const offensive: OffensiveAnswer[] = [];
     for (const threat of meta.topThreats) {
       let best: OffensiveAnswer | null = null;
       for (const m of t.members) {
-        const d = await bestDamagePercent(m, threat, { weather });
+        const d = await bestDamagePercent(m, threat, { weather, terrain });
         if (d && (!best || d.pctMax > best.pctMax)) {
           best = { threat, by: m, move: d.move, pctMax: d.pctMax, answered: d.pctMax >= 50 };
         }

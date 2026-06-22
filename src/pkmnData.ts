@@ -165,6 +165,29 @@ export async function teamWeather(members: string[]): Promise<'Rain' | 'Sun' | '
   return undefined;
 }
 
+// Terreno impostato da una squadra: se un membro ha un'abilità che imposta un terreno, l'offesa del
+// team va calcolata sotto quel terreno. Ritorna undefined se nessuno lo imposta.
+const TERRAIN_BY_ABILITY: Record<string, 'Electric' | 'Grassy' | 'Psychic' | 'Misty'> = {
+  electricsurge: 'Electric',
+  hadronengine: 'Electric',
+  grassysurge: 'Grassy',
+  psychicsurge: 'Psychic',
+  mistysurge: 'Misty',
+};
+
+export async function teamTerrain(members: string[]): Promise<'Electric' | 'Grassy' | 'Psychic' | 'Misty' | undefined> {
+  const dex = await getChampionsDex();
+  for (const name of members) {
+    const s = dex.species.get(name);
+    if (!s?.exists) continue;
+    for (const ab of Object.values(s.abilities)) {
+      const t = ab ? TERRAIN_BY_ABILITY[toID(String(ab))] : undefined;
+      if (t) return t;
+    }
+  }
+  return undefined;
+}
+
 // Tipi delle specie-minaccia del meta, per la coverage difensiva nel team scoring (§4.2).
 export async function getThreatTypes(names: string[]): Promise<Map<string, string[]>> {
   const dex = await getChampionsDex();

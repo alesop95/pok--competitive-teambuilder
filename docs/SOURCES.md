@@ -35,7 +35,7 @@ ufficiale Smogon. La mod specifica del formato e il motore del danno vengono da 
 | Pokémon Showdown (server) | https://github.com/smogon/pokemon-showdown | MIT | Origine di tutti i pacchetti `@pkmn`/`@smogon` |
 | Mod `champions` | https://github.com/smogon/pokemon-showdown/tree/master/data/mods/champions | MIT | Dati e regole di Pokémon Champions (via `@pkmn/mods`) |
 | Mod `championsregma` | https://github.com/smogon/pokemon-showdown/tree/master/data/mods/championsregma | MIT | Restrizioni Regulation M-A (non M-B; vedi ADR-007) |
-| Calcolatore ufficiale Smogon | https://calc.pokemonshowdown.com/ | — | Verifica manuale dei numeri di danno |
+| Calcolatore ufficiale Smogon | https://calc.pokemonshowdown.com/ | - | Verifica manuale dei numeri di danno |
 | `@pkmn/dmg` (alternativa non usata) | https://github.com/pkmn/dmg | MIT | Damage calc alternativo, valutato e non adottato |
 | Showdown client (NON usato) | https://github.com/smogon/pokemon-showdown-client | AGPLv3 | Citato solo per chiarezza di licenza: non usiamo la loro UI |
 
@@ -71,12 +71,12 @@ Fonti consultate per definire le regole della Regulation M-B e l'analisi inizial
 
 | Fonte | Link |
 |---|---|
-| Pokémon Zone — Regolamenti | https://www.pokemon-zone.com/champions/regulations/ |
-| Pokémon Zone — Tier list / metagame | https://www.pokemon-zone.com/champions/ |
-| Game8 — Regulation M-B roster e regole | https://game8.co/games/Pokemon-Champions/archives/605482 |
-| Sportskeeda — Pokémon ammessi M-B | https://www.sportskeeda.com/pokemon/all-pokemon-allowed-pokemon-champions-regulation-set-m-b |
-| Bulbagarden — annuncio ruleset M-A/M-B | https://bulbagarden.net/threads/pokemon-champions-launches-new-ruleset-for-competitive-vgc-regulation-set-m-a-runs-until-june-17th-2026.310333/ |
-| Nintendo Everything — winners/losers M-B | https://nintendoeverything.com/pokemon-champions-regulation-m-b-new-pokemon/ |
+| Pokémon Zone - Regolamenti | https://www.pokemon-zone.com/champions/regulations/ |
+| Pokémon Zone - Tier list / metagame | https://www.pokemon-zone.com/champions/ |
+| Game8 - Regulation M-B roster e regole | https://game8.co/games/Pokemon-Champions/archives/605482 |
+| Sportskeeda - Pokémon ammessi M-B | https://www.sportskeeda.com/pokemon/all-pokemon-allowed-pokemon-champions-regulation-set-m-b |
+| Bulbagarden - annuncio ruleset M-A/M-B | https://bulbagarden.net/threads/pokemon-champions-launches-new-ruleset-for-competitive-vgc-regulation-set-m-a-runs-until-june-17th-2026.310333/ |
+| Nintendo Everything - winners/losers M-B | https://nintendoeverything.com/pokemon-champions-regulation-m-b-new-pokemon/ |
 
 ## 6. Usage stats reali (meta corrente)
 
@@ -84,9 +84,9 @@ Fonti delle usage stats che alimentano `season_MB_meta.yaml` (top_threats e comm
 
 | Fonte | Link |
 |---|---|
-| Pikalytics — Champions Reg M-B | https://pikalytics.com/champions |
-| ChampionsMeta — usage rankings (fonte Limitless) | https://championsmeta.io/meta |
-| Showdown Tier — tier list e win rate M-B | https://showdowntier.com/formats/dmb/index.html |
+| Pikalytics - Champions Reg M-B | https://pikalytics.com/champions |
+| ChampionsMeta - usage rankings (fonte Limitless) | https://championsmeta.io/meta |
+| Showdown Tier - tier list e win rate M-B | https://showdowntier.com/formats/dmb/index.html |
 
 ## 7. Fonti ufficiali
 
@@ -98,7 +98,7 @@ Fonti delle usage stats che alimentano `season_MB_meta.yaml` (top_threats e comm
 
 | Argomento | Link |
 |---|---|
-| Render — free tier reale 2026 | https://render.com/articles/platforms-with-a-real-free-tier-for-developers-in-2026 |
+| Render - free tier reale 2026 | https://render.com/articles/platforms-with-a-real-free-tier-for-developers-in-2026 |
 | Piani GitHub (Pages/Actions) | https://docs.github.com/get-started/learning-about-github/githubs-products |
 | Limiti GitHub Pages | https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits |
 
@@ -108,11 +108,11 @@ Strumenti gratuiti consultati come confronto o ispirazione; non fanno parte del 
 
 | Tool | Link |
 |---|---|
-| Pikalytics — Team Builder | https://www.pikalytics.com/team |
+| Pikalytics - Team Builder | https://www.pikalytics.com/team |
 | ChampTeams.gg | https://champteams.gg/ |
 | VGC.tools | https://vgc.tools/ |
 | Champions Builder | https://www.championsbuilder.com/ |
 | Champions Lab | https://championslab.xyz/team-builder |
-| PokéBase — Team Builder Champions | https://pokebase.app/pokemon-champions/team-builder |
-| Game8 — Builder / Damage Calc | https://game8.co/games/Pokemon-Champions/archives/Builder |
+| PokéBase - Team Builder Champions | https://pokebase.app/pokemon-champions/team-builder |
+| Game8 - Builder / Damage Calc | https://game8.co/games/Pokemon-Champions/archives/Builder |
 | VGC Multi Calc | https://vgcmulticalc.com/ |
