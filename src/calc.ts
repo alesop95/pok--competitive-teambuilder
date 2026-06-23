@@ -19,6 +19,10 @@ export type Terrain = 'Electric' | 'Grassy' | 'Psychic' | 'Misty';
 export interface DamageOptions {
   weather?: Weather;
   terrain?: Terrain;
+  // Override dello spread/natura del DIFENSORE: serve a valutare il danno in arrivo sulla stazza
+  // reale del set (Stat Points convertiti in EV) invece della baseline difensiva piena 252/252.
+  defenderEVs?: Partial<Record<'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe', number>>;
+  defenderNature?: string;
 }
 
 // Immunità di tipo concesse da un'abilità: una mossa di quel tipo contro quell'abilità fa 0, quindi
@@ -91,7 +95,7 @@ export async function bestDamagePercent(
   defender: string,
   opts: DamageOptions = {},
 ): Promise<DamageResult | null> {
-  const key = `${attacker}>${defender}>${opts.weather ?? ''}>${opts.terrain ?? ''}`;
+  const key = `${attacker}>${defender}>${opts.weather ?? ''}>${opts.terrain ?? ''}>${opts.defenderNature ?? ''}>${opts.defenderEVs ? JSON.stringify(opts.defenderEVs) : ''}`;
   if (damageCache.has(key)) return damageCache.get(key)!;
   const result = await computeBestDamage(attacker, defender, opts);
   damageCache.set(key, result);
@@ -151,7 +155,8 @@ async function computeBestDamage(attacker: string, defender: string, opts: Damag
   const field = opts.weather || opts.terrain ? new Field({ weather: opts.weather, terrain: opts.terrain }) : undefined;
   try {
     const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread, ability: atkAbility });
-    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: { hp: 252, [defKey]: 252 }, nature: 'Calm', ability: defAbility });
+    const defEvs = opts.defenderEVs ?? { hp: 252, [defKey]: 252 };
+    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: defEvs, nature: opts.defenderNature ?? 'Calm', ability: defAbility });
     const res = calculate(gen, atkMon, defMon, new Move(gen, bestMove), field);
     const range = res.range();
     const maxHP = defMon.maxHP();

@@ -189,6 +189,9 @@ export function validateSet(set: PokemonSet, legality: Legality): string[] {
   return warnings;
 }
 
+// Pesi della viability, in un punto solo per tuning e documentazione (somma 1.0). Vedi TECHNICAL §4.4.
+const VIABILITY_WEIGHTS = { offense: 0.4, defense: 0.2, bulk: 0.18, bst: 0.12, speed: 0.1 };
+
 // Calcola la viability competitiva [0..1] di ogni candidato rispetto al meta corrente.
 // Offensiva: media del miglior danno reale sulle minacce (damage calc). Difensiva: frazione di
 // minacce a cui resiste in modo solido. Più un livello statistico grezzo. I calc sono memoizzati.
@@ -212,13 +215,22 @@ async function computeViability(candidates: Candidate[], threats: string[], thre
     const bulkNorm = Math.min((c.baseStats.hp + c.baseStats.def + c.baseStats.spd) / 320, 1);
     // la velocità conta: a parità, un attaccante più veloce colpisce prima ed è più prezioso.
     const speedNorm = Math.min(c.baseStats.spe / 130, 1);
-    c.viability = 0.4 * metaOffense + 0.2 * metaDefense + 0.18 * bulkNorm + 0.12 * bstNorm + 0.1 * speedNorm;
+    const w = VIABILITY_WEIGHTS;
+    c.viability = w.offense * metaOffense + w.defense * metaDefense + w.bulk * bulkNorm + w.bst * bstNorm + w.speed * speedNorm;
   }
 }
 
 export interface FieldOverride {
   weather?: Weather | 'none';
   terrain?: Terrain | 'none';
+}
+
+// Converte gli Stat Points di Champions del set in EV per il damage calc: 32 SP (il massimo) ~ 252
+// EV, in proporzione. Permette di valutare il danno in arrivo sulla stazza reale del set (§4.8).
+function spToEvs(sp: PokemonSet['statPoints']): Record<string, number> {
+  const evs: Record<string, number> = {};
+  for (const [k, v] of Object.entries(sp)) evs[k] = Math.min(252, (v ?? 0) * 8);
+  return evs;
 }
 
 export async function generateForSeason(id: string, topN = 5, override: FieldOverride = {}): Promise<EnrichedTeam[]> {
@@ -299,25 +311,27 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
     const DEFENSIVE_ROLES: RoleTag[] = ['screens_setter', 'redirection_support', 'pivot', 'trick_room_setter', 'weather_setter'];
 
     const sets: PokemonSet[] = [];
+    let worstVuln = { pct: 0, species: '', by: '' };
     for (const m of t.members) {
       const memberRoles = roles[m] ?? [];
       const s = await buildSet(m, memberRoles, { mega: m === megaMember, trickRoom, coverageValue });
       if (!s) continue;
       sets.push(s);
 
-      // Vulnerabilità strutturale (refinement 2, documentato in TECHNICAL §4.8): il danno in arrivo è
-      // valutato con il bersaglio a investimento difensivo pieno (la baseline da torneo del calc). Se
-      // una minaccia del meta mette comunque OHKO un membro DIFENSIVO (che dovrebbe reggere), è una
-      // debolezza strutturale che nessuno spread corregge, e si segnala. Niente riallocazione di SP.
+      // Vulnerabilità strutturale (TECHNICAL §4.8): il danno in arrivo è valutato sulla STAZZA REALE
+      // del set (Stat Points convertiti in EV), non più sul 252 fisso, così la sopravvivenza è
+      // misurata sul set vero. Si considerano i membri di ruolo difensivo (che dovrebbero reggere) e
+      // si tiene solo la vulnerabilità peggiore della squadra, segnalata con una singola nota.
       if (memberRoles.some((r) => DEFENSIVE_ROLES.includes(r))) {
-        let worst = 0;
-        let by = '';
+        const defenderEVs = spToEvs(s.statPoints);
         for (const threat of meta.topThreats) {
-          const d = await bestDamagePercent(threat, s.species, { weather, terrain });
-          if (d && d.pctMax > worst) { worst = d.pctMax; by = threat; }
+          const d = await bestDamagePercent(threat, s.species, { weather, terrain, defenderEVs, defenderNature: s.nature });
+          if (d && d.pctMax > worstVuln.pct) worstVuln = { pct: d.pctMax, species: s.species, by: threat };
         }
-        if (worst > 100) notes.push(`${s.species} (ruolo difensivo) e OHKO da ${by} (circa ${Math.round(worst)}%) anche a difesa piena: debolezza strutturale`);
       }
+    }
+    if (worstVuln.pct > 100) {
+      notes.push(`debolezza strutturale: ${worstVuln.species} (ruolo difensivo) e OHKO da ${worstVuln.by} (circa ${Math.round(worstVuln.pct)}%) con lo spread del set`);
     }
 
     // validazione di legalità del formato (corregge strumenti non disponibili, segnala mosse fuori lista)

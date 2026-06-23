@@ -6,6 +6,21 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-23 - Affinamenti A/B/C: SP->EV nel calc, nota vulnerabilità unica, viability tunabile
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (override defenderEVs/defenderNature + memo key + category gia presente),
+`src/engine.ts` (`spToEvs`, vulnerabilità sulla stazza reale, una nota peggiore per team,
+`VIABILITY_WEIGHTS`), `docs/TECHNICAL.md` (§4.8 aggiornata).
+Motivo: i tre affinamenti nell'ordine concordato. (A) Rifusione SP->EV: il damage calc accetta lo
+spread/natura del difensore; il controllo di vulnerabilità ora usa la stazza REALE del set
+(`spToEvs`: 32 SP = 252 EV in proporzione) invece del 252/252 fisso, così la sopravvivenza è
+misurata sul set vero (es. Volcarona OHKO da Basculegion 348% col suo spread offensivo). L'attaccante
+minaccia resta alla baseline standard. (B) Rumore note ridotto: una sola nota di vulnerabilità per
+team, la peggiore (prima fino a 14, ora 1/team). (C) Pesi di viability estratti in
+`VIABILITY_WEIGHTS` (offense .4, defense .2, bulk .18, bst .12, speed .1) per tuning/doc in un punto
+solo; composizione team validata sensata. 31/31 test verdi, typecheck pulito.
+
 ## 2026-06-23 - Logica sopravvivenza chiarita (vulnerabilità strutturale) + check dati M-B
 
 Commit: (da committare)
