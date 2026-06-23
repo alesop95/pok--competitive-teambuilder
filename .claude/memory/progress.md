@@ -6,6 +6,16 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-23 - sync-context: ri-ancoraggio schede a 7bd1616
+
+Commit: 7bd1616
+File toccati: le 6 schede di `context/` (`last-verified-commit` -> 7bd1616), `dev-testing.md` (29 ->
+31 test), `memory/index.md`.
+Motivo: dopo i commit fino a 7bd1616 (meta usage, doc, pulizia trattini, terreno, affinamenti motore)
+eseguito `sync-context`. Le schede mantenute durante la sessione erano allineate nel contenuto: solo
+bump del `last-verified`. Unico delta di contenuto: `dev-testing.md` (conteggio test 29 -> 31, con i
+casi calc per meteo e immunità). Snapshot `index.md` portato a 7bd1616.
+
 ## 2026-06-23 - Affinamenti motore: campo in UI, survival SP, coverage di squadra, viability+velocità
 
 Commit: (da committare)

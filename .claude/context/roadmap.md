@@ -3,7 +3,7 @@ generated-from-commit: 373419b
 generated-from-branch: main
 generated-date: 2026-06-19
 covers-paths: []
-last-verified-commit: 17fdd2a
+last-verified-commit: 7bd1616
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 

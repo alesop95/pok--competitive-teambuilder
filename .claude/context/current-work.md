@@ -7,7 +7,7 @@ covers-paths:
   - src/teamGenerator.ts
   - data/**
   - scripts/**
-last-verified-commit: 17fdd2a
+last-verified-commit: 7bd1616
 stato: in corso
 source-doc: pokemon-champions-team-builder-spec.md
 ---

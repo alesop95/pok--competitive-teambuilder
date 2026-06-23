@@ -5,7 +5,7 @@ generated-date: 2026-06-19
 covers-paths:
   - tests/**
   - package.json
-last-verified-commit: 17fdd2a
+last-verified-commit: 7bd1616
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -17,7 +17,7 @@ source-doc: pokemon-champions-team-builder-spec.md
 ## Test runner e comandi
 
 Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). I test stanno sotto `tests/`
-e sono 29 su sei file: `roleTagging.test.ts` (regole §4.1 su fixture), `pkmnData.test.ts` (mod
+e sono 31 su sei file (inclusi i casi calc per meteo e immunità da abilità): `roleTagging.test.ts` (regole §4.1 su fixture), `pkmnData.test.ts` (mod
 champions: specie reali e tagging), `teamGenerator.test.ts` (archetipi, Species Clause, ordinamento,
 integrazione), `calc.test.ts` (damage calc reale su matchup noti), `setBuilder.test.ts` (set, Mega,
 filtro mosse, Stat Points), `legality.test.ts` (validazione legalità formato). I test unitari usano

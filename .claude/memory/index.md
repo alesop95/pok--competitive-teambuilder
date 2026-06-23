@@ -8,20 +8,20 @@
 
 ```
 Branch attivo:         main
-Commit di riferimento: 17fdd2a
-Data snapshot:         2026-06-22
+Commit di riferimento: 7bd1616
+Data snapshot:         2026-06-23
 ```
 
 ## Stato di verifica delle schede
 
 | Scheda | last-verified | Stato |
 |---|---|---|
-| STACK.md | 17fdd2a | aggiornata |
-| design-and-security.md | 17fdd2a | aggiornata |
-| deployment.md | 17fdd2a | aggiornata |
-| dev-testing.md | 17fdd2a | aggiornata |
-| current-work.md | 17fdd2a | aggiornata |
-| roadmap.md | 17fdd2a | aggiornata |
+| STACK.md | 7bd1616 | aggiornata |
+| design-and-security.md | 7bd1616 | aggiornata |
+| deployment.md | 7bd1616 | aggiornata |
+| dev-testing.md | 7bd1616 | aggiornata |
+| current-work.md | 7bd1616 | aggiornata |
+| roadmap.md | 7bd1616 | aggiornata |
 
 ## Stato sintetico (2026-06-22)
 
