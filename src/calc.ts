@@ -77,6 +77,7 @@ export interface DamageResult {
   move: string;
   pctMin: number;
   pctMax: number;
+  category: 'Physical' | 'Special';
 }
 
 // Percentuale di danno della mossa migliore dell'attaccante contro il difensore, a Lv50 con spread
@@ -158,6 +159,7 @@ async function computeBestDamage(attacker: string, defender: string, opts: Damag
       move: bestMove,
       pctMin: Math.round((range[0] / maxHP) * 1000) / 10,
       pctMax: Math.round((range[1] / maxHP) * 1000) / 10,
+      category: bestCategory,
     };
   } catch {
     return null;

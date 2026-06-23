@@ -6,10 +6,10 @@ import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import yaml from 'js-yaml';
-import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain } from './pkmnData.js';
+import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain, getDefenseMap } from './pkmnData.js';
 import { generateTeams, type Candidate, type MetaContext, type TeamProposal, type CoreSpec } from './teamGenerator.js';
 import { buildRationale } from './rationale.js';
-import { bestDamagePercent } from './calc.js';
+import { bestDamagePercent, type Weather, type Terrain } from './calc.js';
 import { buildSet, type PokemonSet } from './setBuilder.js';
 import { toID, type RoleTag } from './roleTagging.js';
 
@@ -210,11 +210,18 @@ async function computeViability(candidates: Candidate[], threats: string[], thre
     // stazza: un attaccante fragile (es. Pyroar) non deve battere mostri solidi solo per il danno
     // grezzo. La sopravvivenza pesa accanto a offesa, difesa di tipo e livello statistico.
     const bulkNorm = Math.min((c.baseStats.hp + c.baseStats.def + c.baseStats.spd) / 320, 1);
-    c.viability = 0.4 * metaOffense + 0.25 * metaDefense + 0.2 * bulkNorm + 0.15 * bstNorm;
+    // la velocità conta: a parità, un attaccante più veloce colpisce prima ed è più prezioso.
+    const speedNorm = Math.min(c.baseStats.spe / 130, 1);
+    c.viability = 0.4 * metaOffense + 0.2 * metaDefense + 0.18 * bulkNorm + 0.12 * bstNorm + 0.1 * speedNorm;
   }
 }
 
-export async function generateForSeason(id: string, topN = 5): Promise<EnrichedTeam[]> {
+export interface FieldOverride {
+  weather?: Weather | 'none';
+  terrain?: Terrain | 'none';
+}
+
+export async function generateForSeason(id: string, topN = 5, override: FieldOverride = {}): Promise<EnrichedTeam[]> {
   const season = await loadSeason(id);
   const metaFile = await loadMeta(id);
   const candidates = await getCandidates(id, season);
@@ -223,6 +230,16 @@ export async function generateForSeason(id: string, topN = 5): Promise<EnrichedT
   const threatTypes = await getThreatTypes(meta.topThreats);
   const cores: CoreSpec[] = (metaFile.common_cores ?? []).map((c) => ({ members: c.members, archetype: c.archetype }));
   const legality = await loadLegality(id);
+
+  // valore di coverage per tipo: quante minacce del meta un attacco di quel tipo colpisce in modo
+  // super-efficace. Guida la scelta della mossa di coverage dei set verso il meta reale (refinement 3).
+  const coverageValue: Record<string, number> = {};
+  for (const threat of meta.topThreats) {
+    const tt = threatTypes.get(threat);
+    if (!tt) continue;
+    const dm = await getDefenseMap(tt);
+    for (const [atkType, mult] of Object.entries(dm)) if (mult > 1) coverageValue[atkType] = (coverageValue[atkType] ?? 0) + 1;
+  }
 
   // Viability competitiva per candidato: pressione offensiva reale sul meta (damage calc), copertura
   // difensiva del meta e livello statistico. Guida la selezione, così i set proposti sono dominati da
@@ -244,8 +261,10 @@ export async function generateForSeason(id: string, topN = 5): Promise<EnrichedT
     // coverage offensiva: per ogni minaccia meta, la risposta migliore (danno massimo) del team.
     // Se il team imposta un meteo (weather setter tra i membri), l'offesa è calcolata sotto quel
     // meteo: così un team pioggia vede i suoi attacchi Acqua potenziati. Default neutro altrimenti.
-    const weather = await teamWeather(t.members);
-    const terrain = await teamTerrain(t.members);
+    // meteo/terreno: override manuale dalla UI se presente ('none' forza neutro), altrimenti il
+    // meteo/terreno impostato dal team stesso (auto). Default neutro.
+    const weather = override.weather !== undefined ? (override.weather === 'none' ? undefined : override.weather) : await teamWeather(t.members);
+    const terrain = override.terrain !== undefined ? (override.terrain === 'none' ? undefined : override.terrain) : await teamTerrain(t.members);
     const offensive: OffensiveAnswer[] = [];
     for (const threat of meta.topThreats) {
       let best: OffensiveAnswer | null = null;
@@ -277,12 +296,30 @@ export async function generateForSeason(id: string, topN = 5): Promise<EnrichedT
     const trickRoom = t.archetype.includes('Trick Room');
     const sets: PokemonSet[] = [];
     for (const m of t.members) {
-      const s = await buildSet(m, roles[m] ?? [], { mega: m === megaMember, trickRoom });
+      const s = await buildSet(m, roles[m] ?? [], { mega: m === megaMember, trickRoom, coverageValue });
       if (s) sets.push(s);
     }
 
-    // validazione di legalità del formato (corregge strumenti non disponibili, segnala mosse fuori lista)
     const notes = [...t.notes];
+
+    // sopravvivenza (refinement 2): se una minaccia del meta OHKO un set con lo spread offensivo
+    // standard (32/32/2 con Velocità), si spostano gli SP dalla Velocità ai PS (bulky offense) per
+    // reggere il colpo mantenendo l'offesa. Salta i set già difensivi o Trick Room.
+    for (const s of sets) {
+      if (s.statPoints.spe !== 32) continue;
+      let worst = 0;
+      for (const threat of meta.topThreats) {
+        const d = await bestDamagePercent(threat, s.species, { weather, terrain });
+        if (d && d.pctMax > worst) worst = d.pctMax;
+      }
+      if (worst > 100) {
+        const off: 'atk' | 'spa' = s.statPoints.atk ? 'atk' : 'spa';
+        s.statPoints = { hp: 32, [off]: 32, def: 2 };
+        notes.push(`${s.species}: investe PS al posto della Velocità per reggere il colpo più forte del meta (circa ${Math.round(worst)}% in arrivo)`);
+      }
+    }
+
+    // validazione di legalità del formato (corregge strumenti non disponibili, segnala mosse fuori lista)
     if (legality) for (const s of sets) notes.push(...validateSet(s, legality));
 
     const enrichedTeam: EnrichedTeam = {

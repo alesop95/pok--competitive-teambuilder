@@ -137,13 +137,14 @@ Il calcolo usa il livello 50 e uno spread standard, massimo investimento nella s
 Il difetto della prima versione era selezionare i membri premiando la versatilità dei tag e la difesa grezza, ignorando la forza reale: ne uscivano sempre gli stessi Pokémon, anche deboli. La correzione (ADR-008) introduce una *viability* in `[0,1]` calcolata in `src/engine.ts:computeViability`, che àncora la scelta al danno reale e alla solidità.
 
 ```
-viability = 0.40 · metaOffense + 0.25 · metaDefense + 0.20 · bulk + 0.15 · bst
+viability = 0.40 · metaOffense + 0.20 · metaDefense + 0.18 · bulk + 0.12 · bst + 0.10 · velocita
 
   metaOffense = min( media_su_minacce( min(dannoMax%, 150) ) / 100 , 1 )
   metaDefense = frazione di minacce a cui il candidato resiste in modo solido
                 (resiste ad almeno una STAB della minaccia e non è debole a nessuna)
   bulk        = min( (PS + Dif + DifSpec) / 320 , 1 )
   bst         = min( sommaStatisticheBase / 700 , 1 )
+  velocita    = min( Velocita base / 130 , 1 )
 ```
 
 Il termine `metaOffense` viene dal damage calc reale contro le minacce del meta, quindi un Pokémon è giudicato forte se colpisce davvero il meta corrente; il termine `bulk` impedisce che un attaccante fragile ad alto danno grezzo scavalchi mostri più solidi.

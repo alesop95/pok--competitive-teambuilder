@@ -77,6 +77,10 @@
         <div class="row">
           <label class="muted" for="topN">Proposte</label>
           <input id="topN" type="number" min="1" max="10" value="5" style="width:64px" />
+          <label class="muted" for="weather">Meteo</label>
+          <select id="weather"><option value="auto">Auto (team)</option><option value="none">Nessuno</option><option>Rain</option><option>Sun</option><option>Sand</option><option>Snow</option></select>
+          <label class="muted" for="terrain">Terreno</label>
+          <select id="terrain"><option value="auto">Auto (team)</option><option value="none">Nessuno</option><option>Electric</option><option>Grassy</option><option>Psychic</option><option>Misty</option></select>
           <button class="primary" id="genBtn">Genera team</button>
           <button id="saveBtn" disabled>Salva proposte</button>
         </div>
@@ -200,7 +204,10 @@
       $('#saveBtn').disabled = true;
       try {
         const topN = $('#topN').value || 5;
-        const { teams } = await api('/api/season/' + currentId + '/generate?topN=' + topN, { method: 'POST' });
+        let q = '?topN=' + topN;
+        if ($('#weather').value !== 'auto') q += '&weather=' + $('#weather').value;
+        if ($('#terrain').value !== 'auto') q += '&terrain=' + $('#terrain').value;
+        const { teams } = await api('/api/season/' + currentId + '/generate' + q, { method: 'POST' });
         lastTeams = teams;
         $('#teams').innerHTML = teams.map(teamCard).join('');
         $('#genStatus').textContent = `${teams.length} proposte.`;

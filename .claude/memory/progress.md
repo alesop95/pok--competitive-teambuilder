@@ -6,6 +6,21 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-23 - Affinamenti motore: campo in UI, survival SP, coverage di squadra, viability+velocità
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (category in DamageResult), `src/setBuilder.ts` (coverage move per meta),
+`src/engine.ts` (override campo, coverageValue, survival spread, viability+velocità),
+`src/server.ts` (query weather/terrain), `src/public/index.html` (select Meteo/Terreno).
+Motivo: i quattro affinamenti richiesti. (1) Controlli di campo in UI: la rotta /generate accetta
+weather/terrain come override (auto=team, none=neutro, valore=forzato); select Meteo/Terreno nella
+tab Genera; verificato Rain vs Sun cambia la risposta a Incineroar (Swampert Wave Crash 151% vs
+Garchomp Earthquake 93%). (2) Survival spread: se una minaccia OHKO un set offensivo standard, sposta
+gli SP dalla Velocità ai PS (bulky offense) e lo annota (es. Incineroar ~135% in arrivo); soglia
+OHKO, tunabile. (3) Mosse di coverage scelte per colpire super-efficace più minacce del meta
+(coverageValue calcolato dai tipi delle top_threats). (4) Viability con termine di velocità
+(0.4 offesa, 0.2 difesa, 0.18 stazza, 0.12 BST, 0.10 velocità). 31/31 test verdi, typecheck pulito.
+
 ## 2026-06-22 - Pulizia trattini lunghi + terreno nel damage calc
 
 Commit: (da committare)

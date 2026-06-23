@@ -88,7 +88,7 @@ function pickItem(tags: RoleTag[]): string {
   return 'Sitrus Berry';
 }
 
-function pickMoves(tags: RoleTag[], types: readonly string[], damaging: MoveMeta[], available: Set<string>): string[] {
+function pickMoves(tags: RoleTag[], types: readonly string[], damaging: MoveMeta[], available: Set<string>, coverageValue?: Record<string, number>): string[] {
   const chosen: string[] = [];
   const add = (name?: string) => {
     if (name && !chosen.includes(name) && chosen.length < 4) chosen.push(name);
@@ -98,7 +98,14 @@ function pickMoves(tags: RoleTag[], types: readonly string[], damaging: MoveMeta
   const stab = damaging.find((m) => types.includes(m.type));
   add(stab?.name);
   const firstType = chosen.length ? damaging.find((m) => m.name === chosen[0])?.type : undefined;
-  add(damaging.find((m) => m.type !== firstType)?.name);
+  // mossa di coverage: tra i tipi diversi dalla prima, preferisci quello che colpisce in modo
+  // super-efficace più minacce del meta (coverageValue); a parità resta l'ordine per danno stimato.
+  const coverageCandidates = damaging.filter((m) => m.type !== firstType);
+  const coverage = coverageValue
+    ? coverageCandidates.reduce<MoveMeta | undefined>((best, m) =>
+        !best || (coverageValue[m.type] ?? 0) > (coverageValue[best.type] ?? 0) ? m : best, undefined)
+    : coverageCandidates[0];
+  add(coverage?.name);
 
   const roleMove = (): string | undefined => {
     if (tags.includes('screens_setter')) return hasMove('Reflect') ? 'Reflect' : hasMove('Light Screen') ? 'Light Screen' : undefined;
@@ -118,7 +125,7 @@ function pickMoves(tags: RoleTag[], types: readonly string[], damaging: MoveMeta
 export async function buildSet(
   species: string,
   tags: RoleTag[],
-  opts: { mega?: boolean; trickRoom?: boolean } = {},
+  opts: { mega?: boolean; trickRoom?: boolean; coverageValue?: Record<string, number> } = {},
 ): Promise<PokemonSet | null> {
   const dex = await getChampionsDex();
   const base = dex.species.get(species);
@@ -170,7 +177,7 @@ export async function buildSet(
     item: megaItem ?? pickItem(tags),
     nature: pickNature(stats, isTR, isSupport),
     statPoints: pickStatPoints(stats, isTR, isSupport),
-    moves: pickMoves(tags, statsSp.types, movePool, available),
+    moves: pickMoves(tags, statsSp.types, movePool, available, opts.coverageValue),
     mega: isMega,
   };
 }

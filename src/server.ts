@@ -15,6 +15,7 @@ import {
   saveTeams,
   listSavedTeams,
   loadSavedTeam,
+  type FieldOverride,
 } from './engine.js';
 
 // Porta di default non comune per non collidere con altri localhost; sovrascrivibile con PORT.
@@ -52,11 +53,15 @@ export function buildServer() {
     }
   });
 
-  app.post<{ Params: { id: string }; Querystring: { topN?: string } }>(
+  app.post<{ Params: { id: string }; Querystring: { topN?: string; weather?: string; terrain?: string } }>(
     '/api/season/:id/generate',
     async (req) => {
       const topN = req.query.topN ? Number(req.query.topN) : 5;
-      const teams = await generateForSeason(req.params.id, topN);
+      // meteo/terreno opzionali: override manuale del campo (auto = non inviato; none = neutro forzato)
+      const override: FieldOverride = {};
+      if (req.query.weather) override.weather = req.query.weather as FieldOverride['weather'];
+      if (req.query.terrain) override.terrain = req.query.terrain as FieldOverride['terrain'];
+      const teams = await generateForSeason(req.params.id, topN, override);
       return { teams };
     },
   );
