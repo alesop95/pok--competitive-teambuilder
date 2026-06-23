@@ -181,11 +181,17 @@ Su questo, l'engine aggiunge la copertura offensiva verificata col damage calc: 
 
 ### 4.7 Costruzione del set
 
-Per ogni membro si costruisce un set completo (`src/setBuilder.ts:buildSet`). L'abilità si sceglie per preferenza competitiva, considerando anche quella nascosta; lo strumento dipende dal ruolo e resta entro gli strumenti legali nel formato; le mosse combinano la migliore STAB, una mossa di copertura di tipo diverso, la mossa di ruolo (schermi, redirezione, Trick Room, controllo velocità o setup) e Protect, staple del doppio. La natura e il bilanciamento dipendono dal contesto della squadra: un attaccante lento riceve natura potenziante con velocità minima solo dentro un team Trick Room, non dentro un team Tailwind.
+Per ogni membro si costruisce un set completo (`src/setBuilder.ts:buildSet`). L'abilità si sceglie per preferenza competitiva, considerando anche quella nascosta; lo strumento dipende dal ruolo e resta entro gli strumenti legali nel formato; le mosse combinano la migliore STAB, una mossa di copertura scelta per colpire super-efficace il maggior numero di minacce del meta (il valore di coverage per tipo è calcolato in `src/engine.ts` dai tipi delle top_threats), la mossa di ruolo (schermi, redirezione, Trick Room, controllo velocità o setup) e Protect, staple del doppio. La natura e il bilanciamento dipendono dal contesto della squadra: un attaccante lento riceve natura potenziante con velocità minima solo dentro un team Trick Room, non dentro un team Tailwind.
 
 Le statistiche non usano gli EV/IV tradizionali ma gli *Stat Points* di Champions: 66 punti totali, massimo 32 per statistica (§0.5 dell'handoff). Lo spread tipico investe 32 in due statistiche più 2 di resto, secondo il ruolo. Quando un membro dispone di una Mega evoluzione, una sola per squadra (la Mega con somma statistiche più alta) riceve la Mega Stone e adotta statistiche, tipi e abilità della forma Mega (`src/pkmnData.ts:getMegaForme`).
 
-### 4.8 Legalità di formato
+### 4.8 Modello degli spread e vulnerabilità strutturale
+
+Il damage calc lavora nel modello EV tradizionale di Smogon: nel calcolo ogni Pokémon ha investimento massimo (252) nella statistica rilevante, sia in attacco sia in difesa. È la baseline con cui si confrontano i calc da torneo. Gli *Stat Points* di Champions del set (66 totali, due statistiche a 32) sono la rappresentazione in-game parallela e non vengono rifusi nel calcolo: i numeri di danno sono quindi quelli di un bersaglio a difesa piena. Reintegrare gli Stat Points reali nel calcolo (mappando 32 SP verso 252 EV) resta un affinamento futuro.
+
+Da qui la regola di vulnerabilità strutturale (`src/engine.ts`): per ogni membro con un ruolo difensivo (schermi, redirezione, pivot, Trick Room setter, weather setter), che per ruolo deve reggere i colpi, si calcola il colpo più forte in arrivo dalle minacce del meta. Se una minaccia mette OHKO il membro nonostante l'investimento difensivo pieno (danno massimo oltre il 100 per cento dei PS), è una debolezza strutturale che nessuno spread può correggere, e viene annotata nel team. Gli attaccanti, fragili per ruolo, non vengono segnalati: un loro OHKO è atteso. La soglia è dunque l'OHKO a difesa piena, e l'esito è una nota di avviso, non una modifica dello spread.
+
+### 4.9 Legalità di formato
 
 Gli strumenti e le mosse legali nel formato sono estratti da serebii.net in `data/seasons/legal_<id>.json`
 (`scripts/fetch_legality.ts`). Dopo la costruzione, ogni set è validato (`src/engine.ts:validateSet`):

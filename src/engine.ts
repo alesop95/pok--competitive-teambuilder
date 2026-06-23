@@ -294,28 +294,29 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
     // set competitivo completo per ogni membro (item, abilità, natura, Stat Points, mosse).
     // Il contesto Trick Room del team determina nature/spread (lento+Brave/Quiet solo in team TR).
     const trickRoom = t.archetype.includes('Trick Room');
+    const notes = [...t.notes];
+    // ruoli che devono reggere i colpi; un attaccante fragile OHKO è atteso per ruolo e non si segnala.
+    const DEFENSIVE_ROLES: RoleTag[] = ['screens_setter', 'redirection_support', 'pivot', 'trick_room_setter', 'weather_setter'];
+
     const sets: PokemonSet[] = [];
     for (const m of t.members) {
-      const s = await buildSet(m, roles[m] ?? [], { mega: m === megaMember, trickRoom, coverageValue });
-      if (s) sets.push(s);
-    }
+      const memberRoles = roles[m] ?? [];
+      const s = await buildSet(m, memberRoles, { mega: m === megaMember, trickRoom, coverageValue });
+      if (!s) continue;
+      sets.push(s);
 
-    const notes = [...t.notes];
-
-    // sopravvivenza (refinement 2): se una minaccia del meta OHKO un set con lo spread offensivo
-    // standard (32/32/2 con Velocità), si spostano gli SP dalla Velocità ai PS (bulky offense) per
-    // reggere il colpo mantenendo l'offesa. Salta i set già difensivi o Trick Room.
-    for (const s of sets) {
-      if (s.statPoints.spe !== 32) continue;
-      let worst = 0;
-      for (const threat of meta.topThreats) {
-        const d = await bestDamagePercent(threat, s.species, { weather, terrain });
-        if (d && d.pctMax > worst) worst = d.pctMax;
-      }
-      if (worst > 100) {
-        const off: 'atk' | 'spa' = s.statPoints.atk ? 'atk' : 'spa';
-        s.statPoints = { hp: 32, [off]: 32, def: 2 };
-        notes.push(`${s.species}: investe PS al posto della Velocità per reggere il colpo più forte del meta (circa ${Math.round(worst)}% in arrivo)`);
+      // Vulnerabilità strutturale (refinement 2, documentato in TECHNICAL §4.8): il danno in arrivo è
+      // valutato con il bersaglio a investimento difensivo pieno (la baseline da torneo del calc). Se
+      // una minaccia del meta mette comunque OHKO un membro DIFENSIVO (che dovrebbe reggere), è una
+      // debolezza strutturale che nessuno spread corregge, e si segnala. Niente riallocazione di SP.
+      if (memberRoles.some((r) => DEFENSIVE_ROLES.includes(r))) {
+        let worst = 0;
+        let by = '';
+        for (const threat of meta.topThreats) {
+          const d = await bestDamagePercent(threat, s.species, { weather, terrain });
+          if (d && d.pctMax > worst) { worst = d.pctMax; by = threat; }
+        }
+        if (worst > 100) notes.push(`${s.species} (ruolo difensivo) e OHKO da ${by} (circa ${Math.round(worst)}%) anche a difesa piena: debolezza strutturale`);
       }
     }
 

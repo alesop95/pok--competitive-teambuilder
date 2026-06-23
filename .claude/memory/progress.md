@@ -6,6 +6,23 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-23 - Logica sopravvivenza chiarita (vulnerabilità strutturale) + check dati M-B
+
+Commit: (da committare)
+File toccati: `src/engine.ts` (logica sopravvivenza riscritta), `docs/TECHNICAL.md` (§4.7 coverage,
+nuova §4.8 modello spread e vulnerabilità, §4.9 legalità rinumerata).
+Motivo: (1) Verifica aggiornamento M-B lato fonte: `@pkmn/mods` installato è già l'ultima npm
+(0.10.11) e il repo Showdown master ha solo `champions` e `championsregma` (Reg M-A), nessun
+`championsregmb` ne le Mega Z-A (Mega Raichu/Clefable assenti). L'aggiornamento completo a M-B NON è
+ancora disponibile a monte; si riprenderà con `npm update @pkmn/mods` quando esce. (2) Logica di
+sopravvivenza chiarita e corretta: il damage calc valuta il bersaglio a investimento difensivo pieno
+(252, baseline EV da torneo), quindi la vecchia riallocazione di SP "per sopravvivere" era
+fuorviante (il tetto di stazza è già assunto). Sostituita da una segnalazione di VULNERABILITÀ
+STRUTTURALE: un membro di ruolo difensivo OHKO da una minaccia anche a difesa piena viene annotato;
+gli attaccanti fragili per ruolo no. Soglia = OHKO (>100%) a difesa piena. Documentata in TECHNICAL
+§4.8, con la nota che la rifusione SP->EV nel calcolo resta un affinamento futuro. Typecheck pulito,
+test verdi.
+
 ## 2026-06-23 - sync-context: ri-ancoraggio schede a 7bd1616
 
 Commit: 7bd1616
