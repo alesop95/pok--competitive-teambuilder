@@ -6,6 +6,18 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-23 - Spread bulky per i ruoli di supporto/pivot
+
+Commit: (da committare)
+File toccati: `src/setBuilder.ts` (regola isSupport ampliata).
+Motivo: i membri che per ruolo devono tankare ora ricevono lo spread bulky (HP + difese), non più
+solo screens/redirezione a bassa offesa. Regola: bulky se schermi OR redirezione OR weather setter
+OR (pivot e non autonomous_sweeper); rimossa la condizione stats<100 (un pivot di supporto come
+Incineroar, atk 115, si costruisce comunque tank). Verificato: Incineroar ora Impish hp32/def17/spd17.
+Effetto: la nota di vulnerabilità (una per team) ora misura la stazza bulky reale; restano segnalati
+i buchi genuini (4x debolezze, supporti fragili). 31/31 test verdi, typecheck pulito. NB: sync-context
+rimandato a fine di tutti gli affinamenti su richiesta utente.
+
 ## 2026-06-23 - Affinamenti A/B/C: SP->EV nel calc, nota vulnerabilità unica, viability tunabile
 
 Commit: (da committare)

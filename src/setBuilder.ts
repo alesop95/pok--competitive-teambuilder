@@ -149,7 +149,14 @@ export async function buildSet(
   // la natura/spread dipendono dal CONTESTO del team (Trick Room sì/no), non solo dai tag del singolo:
   // così un attaccante lento non riceve natura Brave/Quiet dentro un team Tailwind.
   const isTR = opts.trickRoom ?? false;
-  const isSupport = (tags.includes('screens_setter') || tags.includes('redirection_support')) && stats.atk < 100 && stats.spa < 100;
+  // build bulky per i ruoli che devono reggere i colpi: schermi, redirezione, weather setter e i
+  // pivot non votati allo sweep. Anche con Attacco alto (es. Incineroar) un pivot di supporto si
+  // costruisce tank, non offensivo. Gli attaccanti puri restano sullo spread offensivo.
+  const isSupport =
+    tags.includes('screens_setter') ||
+    tags.includes('redirection_support') ||
+    tags.includes('weather_setter') ||
+    (tags.includes('pivot') && !tags.includes('autonomous_sweeper'));
   const physical = stats.atk >= stats.spa;
 
   const learnset = await dex.learnsets.get(base.id); // le Mega condividono il movepool della base
