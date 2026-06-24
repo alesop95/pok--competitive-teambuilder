@@ -23,6 +23,10 @@ export interface DamageOptions {
   // reale del set (Stat Points convertiti in EV) invece della baseline difensiva piena 252/252.
   defenderEVs?: Partial<Record<'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe', number>>;
   defenderNature?: string;
+  // Strumenti reali dei due lati, per riflettere il loro effetto nel calcolo (Life Orb, Choice,
+  // Assault Vest, ecc.). Se non passati, nessun oggetto (baseline neutra).
+  attackerItem?: string;
+  defenderItem?: string;
 }
 
 // Immunità di tipo concesse da un'abilità: una mossa di quel tipo contro quell'abilità fa 0, quindi
@@ -95,7 +99,7 @@ export async function bestDamagePercent(
   defender: string,
   opts: DamageOptions = {},
 ): Promise<DamageResult | null> {
-  const key = `${attacker}>${defender}>${opts.weather ?? ''}>${opts.terrain ?? ''}>${opts.defenderNature ?? ''}>${opts.defenderEVs ? JSON.stringify(opts.defenderEVs) : ''}`;
+  const key = `${attacker}>${defender}>${opts.weather ?? ''}>${opts.terrain ?? ''}>${opts.defenderNature ?? ''}>${opts.defenderEVs ? JSON.stringify(opts.defenderEVs) : ''}>${opts.attackerItem ?? ''}>${opts.defenderItem ?? ''}`;
   if (damageCache.has(key)) return damageCache.get(key)!;
   const result = await computeBestDamage(attacker, defender, opts);
   damageCache.set(key, result);
@@ -154,9 +158,9 @@ async function computeBestDamage(attacker: string, defender: string, opts: Damag
   // neutri di proposito; il meteo si applica solo se passato (contesto del team), altrimenti baseline.
   const field = opts.weather || opts.terrain ? new Field({ weather: opts.weather, terrain: opts.terrain }) : undefined;
   try {
-    const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread, ability: atkAbility });
+    const atkMon = new Pokemon(gen, atkSp.name, { level: 50, ...atkSpread, ability: atkAbility, item: opts.attackerItem });
     const defEvs = opts.defenderEVs ?? { hp: 252, [defKey]: 252 };
-    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: defEvs, nature: opts.defenderNature ?? 'Calm', ability: defAbility });
+    const defMon = new Pokemon(gen, defSp.name, { level: 50, evs: defEvs, nature: opts.defenderNature ?? 'Calm', ability: defAbility, item: opts.defenderItem });
     const res = calculate(gen, atkMon, defMon, new Move(gen, bestMove), field);
     const range = res.range();
     const maxHP = defMon.maxHP();

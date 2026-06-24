@@ -270,72 +270,75 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
     const roles: Record<string, RoleTag[]> = {};
     for (const m of t.members) roles[m] = tagsBySpecies[m] ?? [];
 
-    // coverage offensiva: per ogni minaccia meta, la risposta migliore (danno massimo) del team.
-    // Se il team imposta un meteo (weather setter tra i membri), l'offesa è calcolata sotto quel
-    // meteo: così un team pioggia vede i suoi attacchi Acqua potenziati. Default neutro altrimenti.
-    // meteo/terreno: override manuale dalla UI se presente ('none' forza neutro), altrimenti il
-    // meteo/terreno impostato dal team stesso (auto). Default neutro.
-    const weather = override.weather !== undefined ? (override.weather === 'none' ? undefined : override.weather) : await teamWeather(t.members);
-    const terrain = override.terrain !== undefined ? (override.terrain === 'none' ? undefined : override.terrain) : await teamTerrain(t.members);
-    const offensive: OffensiveAnswer[] = [];
-    for (const threat of meta.topThreats) {
-      let best: OffensiveAnswer | null = null;
-      for (const m of t.members) {
-        const d = await bestDamagePercent(m, threat, { weather, terrain });
-        if (d && (!best || d.pctMax > best.pctMax)) {
-          best = { threat, by: m, move: d.move, pctMax: d.pctMax, answered: d.pctMax >= 50 };
-        }
-      }
-      if (best) offensive.push(best);
-    }
-    const answered = offensive.filter((o) => o.answered).length;
-    const finalScore = Math.round((t.score + answered * 0.5) * 100) / 100;
-
-    // scegli UN solo membro da far megaevolvere (in M-B si megaevolve un solo Pokémon per battaglia):
-    // la Mega con la somma statistiche più alta tra i membri che ne hanno una.
+    // una sola Mega per battaglia: la Mega con la somma statistiche più alta tra i membri.
     let megaMember: string | null = null;
     let bestMegaBst = -1;
     for (const m of t.members) {
       const mf = await getMegaForme(m);
-      if (mf && mf.bst > bestMegaBst) {
-        bestMegaBst = mf.bst;
-        megaMember = m;
-      }
+      if (mf && mf.bst > bestMegaBst) { bestMegaBst = mf.bst; megaMember = m; }
     }
 
-    // set competitivo completo per ogni membro (item, abilità, natura, Stat Points, mosse).
-    // Il contesto Trick Room del team determina nature/spread (lento+Brave/Quiet solo in team TR).
     const trickRoom = t.archetype.includes('Trick Room');
+    const autoWeather = await teamWeather(t.members);
+    const autoTerrain = await teamTerrain(t.members);
     const notes = [...t.notes];
-    // ruoli che devono reggere i colpi; un attaccante fragile OHKO è atteso per ruolo e non si segnala.
     const DEFENSIVE_ROLES: RoleTag[] = ['screens_setter', 'redirection_support', 'pivot', 'trick_room_setter', 'weather_setter'];
 
-    const sets: PokemonSet[] = [];
-    let worstVuln = { pct: 0, species: '', by: '' };
+    // Costruisci i set e validane subito la legalità, così lo strumento è legale prima di usarlo nel
+    // calcolo. Si tiene anche il ruolo di ciascun membro per le valutazioni successive.
+    const built: { roles: RoleTag[]; set: PokemonSet }[] = [];
     for (const m of t.members) {
       const memberRoles = roles[m] ?? [];
       const s = await buildSet(m, memberRoles, { mega: m === megaMember, trickRoom, coverageValue });
       if (!s) continue;
-      sets.push(s);
+      if (legality) notes.push(...validateSet(s, legality));
+      built.push({ roles: memberRoles, set: s });
+    }
+    const sets = built.map((b) => b.set);
 
-      // Vulnerabilità strutturale (TECHNICAL §4.8): il danno in arrivo è valutato sulla STAZZA REALE
-      // del set (Stat Points convertiti in EV), non più sul 252 fisso, così la sopravvivenza è
-      // misurata sul set vero. Si considerano i membri di ruolo difensivo (che dovrebbero reggere) e
-      // si tiene solo la vulnerabilità peggiore della squadra, segnalata con una singola nota.
-      if (memberRoles.some((r) => DEFENSIVE_ROLES.includes(r))) {
-        const defenderEVs = spToEvs(s.statPoints);
-        for (const threat of meta.topThreats) {
-          const d = await bestDamagePercent(threat, s.species, { weather, terrain, defenderEVs, defenderNature: s.nature });
-          if (d && d.pctMax > worstVuln.pct) worstVuln = { pct: d.pctMax, species: s.species, by: threat };
+    // Coverage offensiva per il PUNTEGGIO, sotto il campo reale del team (auto). Ogni attaccante usa
+    // il proprio set: specie (forma Mega inclusa) e strumento reale, così i numeri riflettono Life
+    // Orb/Choice. L'override manuale è solo una LENTE di visualizzazione e non cambia ordinamento.
+    const computeOffensive = async (w?: Weather, tr?: Terrain): Promise<OffensiveAnswer[]> => {
+      const out: OffensiveAnswer[] = [];
+      for (const threat of meta.topThreats) {
+        let best: OffensiveAnswer | null = null;
+        for (const b of built) {
+          const d = await bestDamagePercent(b.set.species, threat, { weather: w, terrain: tr, attackerItem: b.set.item });
+          if (d && (!best || d.pctMax > best.pctMax)) best = { threat, by: b.set.species, move: d.move, pctMax: d.pctMax, answered: d.pctMax >= 50 };
         }
+        if (best) out.push(best);
       }
-    }
-    if (worstVuln.pct > 100) {
-      notes.push(`debolezza strutturale: ${worstVuln.species} (ruolo difensivo) e OHKO da ${worstVuln.by} (circa ${Math.round(worstVuln.pct)}%) con lo spread del set`);
-    }
+      return out;
+    };
+    const offensiveAuto = await computeOffensive(autoWeather, autoTerrain);
+    const answered = offensiveAuto.filter((o) => o.answered).length;
+    const finalScore = Math.round((t.score + answered * 0.5) * 100) / 100;
+    const hasOverride = override.weather !== undefined || override.terrain !== undefined;
+    const lensWeather = override.weather !== undefined ? (override.weather === 'none' ? undefined : override.weather) : autoWeather;
+    const lensTerrain = override.terrain !== undefined ? (override.terrain === 'none' ? undefined : override.terrain) : autoTerrain;
+    const offensive = hasOverride ? await computeOffensive(lensWeather, lensTerrain) : offensiveAuto;
 
-    // validazione di legalità del formato (corregge strumenti non disponibili, segnala mosse fuori lista)
-    if (legality) for (const s of sets) notes.push(...validateSet(s, legality));
+    // Vulnerabilità strutturale (TECHNICAL §4.8) + spread difensivo mirato (refinement 2): il danno in
+    // arrivo è valutato sul DIFENSORE reale (Stat Points -> EV, natura, strumento). Per i supporti con
+    // spread bulky di default si concentra la difesa nella categoria colpita dalla minaccia peggiore
+    // (invece dello split). Si segnala la vulnerabilità peggiore della squadra con una sola nota.
+    let worstVuln = { pct: 0, species: '', by: '' };
+    for (const b of built) {
+      if (!b.roles.some((r) => DEFENSIVE_ROLES.includes(r))) continue;
+      const defenderEVs = spToEvs(b.set.statPoints);
+      let mw = { pct: 0, by: '', cat: 'Physical' as 'Physical' | 'Special' };
+      for (const threat of meta.topThreats) {
+        const d = await bestDamagePercent(threat, b.set.species, { weather: autoWeather, terrain: autoTerrain, defenderEVs, defenderNature: b.set.nature, defenderItem: b.set.item });
+        if (d && d.pctMax > mw.pct) mw = { pct: d.pctMax, by: threat, cat: d.category };
+      }
+      if (b.set.statPoints.hp === 32 && b.set.statPoints.def === 17 && mw.pct > 0) {
+        b.set.statPoints = mw.cat === 'Physical' ? { hp: 32, def: 32, spd: 2 } : { hp: 32, spd: 32, def: 2 };
+      }
+      if (mw.pct > worstVuln.pct) worstVuln = { pct: mw.pct, species: b.set.species, by: mw.by };
+    }
+    if (worstVuln.pct > 100) notes.push(`debolezza strutturale: ${worstVuln.species} (ruolo difensivo) e OHKO da ${worstVuln.by} (circa ${Math.round(worstVuln.pct)}%) con lo spread del set`);
+    if (hasOverride) notes.push(`coverage mostrata sotto campo forzato (meteo: ${lensWeather ?? 'nessuno'}, terreno: ${lensTerrain ?? 'nessuno'}); il punteggio resta sul campo reale del team (meteo: ${autoWeather ?? 'nessuno'})`);
 
     const enrichedTeam: EnrichedTeam = {
       ...t,

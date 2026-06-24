@@ -6,6 +6,38 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-24 - Affinamenti #3 item nel calc, #2 spread difensivo mirato (+ ristrutturazione ciclo)
+
+Commit: (da committare)
+File toccati: `src/calc.ts` (attackerItem/defenderItem nel calc + memo key), `src/setBuilder.ts`
+(pickItem su pool legale M-B), `src/engine.ts` (ciclo ristrutturato: set+validazione prima,
+coverage con item reale dell'attaccante, vulnerabilità con difensore reale EV+item, spread difensivo
+mirato), `docs/TECHNICAL.md` (§4.3).
+Motivo: (#3) gli strumenti entrano nel damage calc: l'attaccante usa lo strumento reale del set nella
+coverage (Life Orb +30% verificato), il difensore il proprio nella vulnerabilità. Scoperta: il pool
+item di M-B è ristretto (Choice Band/Specs, Rocky Helmet, Assault Vest NON legali; legali Light Clay,
+Life Orb, Leftovers, Sitrus, Focus Sash, Choice Scarf, Wide Lens, ...), quindi pickItem sceglie dal
+pool legale (breaker/sweeper -> Life Orb, supporti/tank -> Leftovers, schermi -> Light Clay, default
+Sitrus); il validatore resta come rete (0 sostituzioni ora). (#2) Spread difensivo mirato: per i
+supporti con spread bulky di default, la difesa si concentra nella categoria (fisica/speciale)
+colpita dalla minaccia peggiore invece dello split 17/17 (verificato: Sinistcha hp32/spd32, Volcarona
+hp32/def32). Ristrutturato il ciclo (`built[]`) per avere i set pronti prima della coverage.
+31/31 test verdi, typecheck pulito.
+#4 (pesi viability): già estratti in VIABILITY_WEIGHTS, composizione team validata sensata, nessun
+ritocco necessario. #1 (spread minaccia da usage): tenuto il baseline conservativo (minaccia a max
+investimento) invece di scraping per-mostro fragile; documentato come scelta.
+
+## 2026-06-24 - Fix bug meteo (verificato): punteggio sul campo reale, override = lente
+
+Commit: (da committare)
+File toccati: `src/engine.ts`.
+Motivo: forzando "Rain" dalla UI un team senza weather setter saliva in cima, perché l'override
+alimentava la coverage usata per il punteggio. Corretto: punteggio e ordinamento usano sempre il
+meteo/terreno che il team imposta da solo (auto); l'override manuale è solo una lente di
+visualizzazione della coverage mostrata, con nota di trasparenza. Anche la vulnerabilità usa il campo
+reale. Verificato: forzare Rain non riordina più (punteggi identici auto vs forzato); il team rain
+resta riconosciuto come setter. Typecheck pulito, 31/31 test.
+
 ## 2026-06-23 - Spread bulky per i ruoli di supporto/pivot
 
 Commit: (da committare)

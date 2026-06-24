@@ -81,9 +81,11 @@ function pickStatPoints(stats: Record<StatKey, number>, isTR: boolean, isSupport
   return { [physical ? 'atk' : 'spa']: 32, spe: 32, hp: 2 } as Partial<Record<StatKey, number>>;
 }
 
-function pickItem(tags: RoleTag[]): string {
-  // Solo strumenti disponibili nel formato (verificato su serebii M-B: Safety Goggles NON è legale).
+function pickItem(tags: RoleTag[], _physical: boolean, isSupport: boolean): string {
+  // Strumenti dal pool LEGALE di M-B (Choice Band/Specs, Rocky Helmet, Assault Vest non disponibili;
+  // legali: Light Clay, Life Orb, Leftovers, Sitrus, Focus Sash, Choice Scarf, Wide Lens, ...).
   if (tags.includes('screens_setter')) return 'Light Clay';
+  if (isSupport) return 'Leftovers'; // tank/pivot: longevità
   if (tags.includes('wallbreaker') || tags.includes('autonomous_sweeper') || tags.includes('priority_closer')) return 'Life Orb';
   return 'Sitrus Berry';
 }
@@ -181,7 +183,7 @@ export async function buildSet(
   return {
     species: statsSp.name,
     ability: isMega ? abilities[0] : pickCompetitiveAbility(abilities),
-    item: megaItem ?? pickItem(tags),
+    item: megaItem ?? pickItem(tags, physical, isSupport),
     nature: pickNature(stats, isTR, isSupport),
     statPoints: pickStatPoints(stats, isTR, isSupport),
     moves: pickMoves(tags, statsSp.types, movePool, available, opts.coverageValue),
