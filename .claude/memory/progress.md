@@ -6,6 +6,15 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-24 - sync-context: ri-ancoraggio schede a ce14c8e
+
+Commit: ce14c8e
+File toccati: le 6 schede di `context/` (`last-verified-commit` -> ce14c8e), `memory/index.md`.
+Motivo: dopo i commit fino a ce14c8e (survival/vulnerabilità, SP->EV, spread bulky, fix campo, item
+nel calc, spread difensivo mirato) eseguito `sync-context`. Le `covers-paths` src erano cambiate ma
+il contenuto delle schede è stato mantenuto allineato durante la sessione: solo bump del
+`last-verified`. Snapshot `index.md` portato a ce14c8e. Nessun delta di contenuto richiesto.
+
 ## 2026-06-24 - Affinamenti #3 item nel calc, #2 spread difensivo mirato (+ ristrutturazione ciclo)
 
 Commit: (da committare)

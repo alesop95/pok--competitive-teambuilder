@@ -5,7 +5,7 @@ generated-date: 2026-06-19
 covers-paths:
   - tests/**
   - package.json
-last-verified-commit: 7bd1616
+last-verified-commit: ce14c8e
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 

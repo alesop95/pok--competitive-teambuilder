@@ -8,20 +8,20 @@
 
 ```
 Branch attivo:         main
-Commit di riferimento: 7bd1616
-Data snapshot:         2026-06-23
+Commit di riferimento: ce14c8e
+Data snapshot:         2026-06-24
 ```
 
 ## Stato di verifica delle schede
 
 | Scheda | last-verified | Stato |
 |---|---|---|
-| STACK.md | 7bd1616 | aggiornata |
-| design-and-security.md | 7bd1616 | aggiornata |
-| deployment.md | 7bd1616 | aggiornata |
-| dev-testing.md | 7bd1616 | aggiornata |
-| current-work.md | 7bd1616 | aggiornata |
-| roadmap.md | 7bd1616 | aggiornata |
+| STACK.md | ce14c8e | aggiornata |
+| design-and-security.md | ce14c8e | aggiornata |
+| deployment.md | ce14c8e | aggiornata |
+| dev-testing.md | ce14c8e | aggiornata |
+| current-work.md | ce14c8e | aggiornata |
+| roadmap.md | ce14c8e | aggiornata |
 
 ## Stato sintetico (2026-06-22)
 
