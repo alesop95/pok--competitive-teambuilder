@@ -6,6 +6,32 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-24 - Decisione architettura per il deploy gratuito (ADR-009) + walkthrough salvato
+
+Commit: (da committare)
+File toccati: `docs/WALKTHROUGH.md` (nuovo, spiegazione pipeline stadio per stadio salvata su richiesta
+utente), `README.md` (link), `.claude/memory/decisions.md` (ADR-009).
+Motivo: l'utente vuole frontend più robusto + persistenza con vincolo "gratis per sempre" e ha
+delegato la scelta. Misurati i dati: mod champions ~9.8 MB JS; engine usa node:fs. Decisa (ADR-009)
+una SPA statica con motore CLIENT-SIDE (React+Vite), persistenza IndexedDB, hosting statico gratuito
+(Cloudflare/GitHub Pages), niente backend; fallback Render free se il bundle è troppo pesante.
+Piano a fasi: (1) astrarre l'accesso dati dell'engine dietro un'interfaccia DataSource (fs per Node,
+fetch per browser) mantenendo verde la suite; (2) spike: bundlare l'engine per browser e misurare il
+peso; (3) scaffold React+Vite che importa l'engine e fa generazione client-side; (4) porting delle 4
+pagine UI + IndexedDB per salva/storico; (5) config hosting statico. Prossimo passo: fase 1 (DataSource).
+
+## 2026-06-24 - Giro di test completo + script check aggiornamento M-B
+
+Commit: (da committare)
+File toccati: `scripts/check_mb_update.ts` (nuovo), `package.json` (script `check-mb`).
+Motivo: eseguito un giro di test completo (31/31 verdi su 6 file: tagging §4.1, legalità, generazione
+§4.2, set builder, pkmnData/mod champions, calc) + una generazione live end-to-end commentata stadio
+per stadio (data layer, tagging, damage calc con effetto item Life Orb +30%, generazione, coverage,
+set, vulnerabilità, legalità). Creato `scripts/check_mb_update.ts` (npm run check-mb): confronta la
+versione @pkmn/mods installata con l'ultima npm e verifica le Mega Z-A (Raichu/Clefable) come
+indicatore di freschezza; oggi conferma 0.10.11 = ultima, nessun aggiornamento M-B a monte. È il
+meccanismo per ricontrollare e, quando esce, aggiornare (npm update + npm run roster/legality).
+
 ## 2026-06-24 - sync-context: ri-ancoraggio schede a ce14c8e
 
 Commit: ce14c8e

@@ -80,8 +80,9 @@ d'ambiente `PORT`.
 
 La documentazione tecnica completa (stack, tool open source, e la matematica del motore: tagging,
 viability, scoring, damage calc con la formula e la sua provenienza) è in
-[docs/TECHNICAL.md](./docs/TECHNICAL.md). L'inventario di tutte le fonti usate dal progetto è in
-[docs/SOURCES.md](./docs/SOURCES.md).
+[docs/TECHNICAL.md](./docs/TECHNICAL.md). La spiegazione discorsiva della pipeline stadio per stadio
+è in [docs/WALKTHROUGH.md](./docs/WALKTHROUGH.md). L'inventario di tutte le fonti usate dal progetto è
+in [docs/SOURCES.md](./docs/SOURCES.md).
 
 ## Riferimenti
 

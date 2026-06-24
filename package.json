@@ -20,6 +20,7 @@
     "test": "vitest run",
     "roster": "tsx scripts/fetch_roster.ts",
     "legality": "tsx scripts/fetch_legality.ts",
+    "check-mb": "tsx scripts/check_mb_update.ts",
     "generate": "tsx scripts/generate.ts"
   },
   "dependencies": {

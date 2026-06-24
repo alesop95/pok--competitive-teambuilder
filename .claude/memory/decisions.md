@@ -77,6 +77,28 @@ Conseguenze: dipendenza npm `@pkmn/mods` (pesante, ~173 MB unpacked: valutare se
 pacchetto o solo la mod champions). La legalità di regolamento è gestita da `championsregma`, ma il
 nome suggerisce Reg M-A: la copertura del Reg M-B è da chiarire (vedi ADR-007).
 
+## ADR-009 - Architettura per il deploy gratuito: SPA statica con motore client-side
+
+Data: 2026-06-24
+Stato: proposta (scelta delegata dall'utente; da confermare con uno spike di fattibilità del bundle)
+Contesto: l'utente vuole un frontend più robusto (React/Vite) e una persistenza, con il vincolo che
+l'app viva gratuitamente da qualche parte. Fatti rilevanti: `@pkmn/dex`, `@pkmn/mods`, `@smogon/calc`,
+`@pkmn/data` sono compatibili col browser (sono gli stessi del calcolatore web Smogon); la mod
+champions pesa però ~9.8 MB di JS; l'engine attuale legge i file di stagione da `node:fs`, quindi non
+gira in un browser così com'è.
+Decisione: puntare a una SPA statica con il MOTORE ESEGUITO CLIENT-SIDE (niente backend), così l'app
+si ospita gratis e per sempre su hosting statico (Cloudflare Pages o GitHub Pages, repo pubblico già
+disponibile), senza cold-start nè server. Stack React + Vite. Persistenza team via IndexedDB/local
+Storage (non SQLite, non un DB server). I file dati (season/legal/meta) diventano asset statici via
+fetch; gli scraper restano script Node di build. Fallback se il bundle client-side è troppo pesante o
+fragile: SPA su Pages + backend Node/Fastify su Render free (cold-start accettato).
+Motivazione: massimizza il "gratis per sempre" eliminando il server; i ~10 MB sono un download una
+tantum cache-ato, accettabile per un tool di nicchia.
+Conseguenze: astrarre l'accesso ai dati dell'engine dietro un'interfaccia DataSource (fs per Node,
+fetch per browser), spostare i file dati tra gli asset statici, bundlare l'engine con Vite.
+Migrazione a più fasi (vedi `current-work.md`). Da verificare per primo con uno spike il peso e la
+fattibilità del bundle dell'engine nel browser.
+
 ## ADR-008 - Selezione dei membri guidata da viability competitiva (damage calc)
 
 Data: 2026-06-20
