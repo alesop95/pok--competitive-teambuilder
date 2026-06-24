@@ -2,9 +2,6 @@
 // Riusato sia dalla CLI (scripts/generate.ts) sia dal server Fastify (Fase 2). Legge i file dati
 // sotto data/seasons/ e mantiene una cache in memoria dei candidati per stagione, così il tagging
 // delle ~200 specie avviene una sola volta per processo.
-import { readFile, writeFile, readdir } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import yaml from 'js-yaml';
 import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain, getDefenseMap } from './pkmnData.js';
 import { generateTeams, type Candidate, type MetaContext, type TeamProposal, type CoreSpec } from './teamGenerator.js';
@@ -12,10 +9,19 @@ import { buildRationale } from './rationale.js';
 import { bestDamagePercent, type Weather, type Terrain } from './calc.js';
 import { buildSet, type PokemonSet } from './setBuilder.js';
 import { toID, type RoleTag } from './roleTagging.js';
+import type { DataSource } from './dataSource.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const seasonsDir = join(ROOT, 'data', 'seasons');
-const generatedDir = join(ROOT, 'data', 'generated_teams');
+// Accesso ai dati iniettato (ADR-009): Node inietta NodeDataSource (fs), il browser fetch/IndexedDB.
+// L'engine non dipende dal filesystem, così è bundlabile per il browser. I percorsi sono relativi
+// alla radice dei dati ("seasons/...", "generated_teams/...").
+let ds: DataSource | undefined;
+export function setDataSource(d: DataSource): void {
+  ds = d;
+}
+function source(): DataSource {
+  if (!ds) throw new Error('DataSource non configurato: chiamare setDataSource() prima di usare l\'engine');
+  return ds;
+}
 
 export interface SeasonFile {
   season_id: string;
@@ -48,19 +54,19 @@ export interface EnrichedTeam extends TeamProposal {
 const candidateCache = new Map<string, Candidate[]>();
 
 export async function listSeasons(): Promise<string[]> {
-  const files = await readdir(seasonsDir);
+  const files = await source().list('seasons');
   return files
     .filter((f) => /^season_.+\.json$/.test(f))
     .map((f) => f.replace(/^season_(.+)\.json$/, '$1'));
 }
 
 export async function loadSeason(id: string): Promise<SeasonFile> {
-  return JSON.parse(await readFile(join(seasonsDir, `season_${id}.json`), 'utf8'));
+  return JSON.parse(await source().readText(`seasons/season_${id}.json`));
 }
 
 export async function loadMeta(id: string): Promise<MetaFile> {
   try {
-    return (yaml.load(await readFile(join(seasonsDir, `season_${id}_meta.yaml`), 'utf8')) as MetaFile) ?? {};
+    return (yaml.load(await source().readText(`seasons/season_${id}_meta.yaml`)) as MetaFile) ?? {};
   } catch {
     return {};
   }
@@ -69,14 +75,14 @@ export async function loadMeta(id: string): Promise<MetaFile> {
 // Salva il meta come YAML. Usato dall'editor meta della UI (handoff §5, pagina 2).
 export async function saveMeta(id: string, meta: MetaFile): Promise<void> {
   const doc = yaml.dump({ season_id: id, ...meta }, { lineWidth: 100 });
-  await writeFile(join(seasonsDir, `season_${id}_meta.yaml`), doc, 'utf8');
+  await source().writeText(`seasons/season_${id}_meta.yaml`, doc);
 }
 
 // Editor YAML grezzo del meta (handoff §5: "editor testo grezzo del YAML"). loadMetaRaw ritorna il
 // testo del file; saveMetaRaw lo valida (parse) prima di scrivere e invalida la cache candidati.
 export async function loadMetaRaw(id: string): Promise<string> {
   try {
-    return await readFile(join(seasonsDir, `season_${id}_meta.yaml`), 'utf8');
+    return await source().readText(`seasons/season_${id}_meta.yaml`);
   } catch {
     return `season_id: ${id}\ntop_threats: []\ncommon_cores: []\n`;
   }
@@ -84,7 +90,7 @@ export async function loadMetaRaw(id: string): Promise<string> {
 
 export async function saveMetaRaw(id: string, text: string): Promise<void> {
   yaml.load(text); // valida: lancia se YAML non valido
-  await writeFile(join(seasonsDir, `season_${id}_meta.yaml`), text, 'utf8');
+  await source().writeText(`seasons/season_${id}_meta.yaml`, text);
 }
 
 async function getCandidates(id: string, season: SeasonFile): Promise<Candidate[]> {
@@ -120,14 +126,14 @@ export async function saveTeams(seasonId: string, teams: unknown[], label?: stri
   const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
   const slug = label ? '_' + label.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) : '';
   const name = `${stamp}${slug}`;
-  await writeFile(join(generatedDir, `${name}.json`), JSON.stringify({ season_id: seasonId, generated_at: now.toISOString(), label, teams }, null, 2) + '\n', 'utf8');
+  await source().writeText(`generated_teams/${name}.json`, JSON.stringify({ season_id: seasonId, generated_at: now.toISOString(), label, teams }, null, 2) + '\n');
   return name;
 }
 
 export async function listSavedTeams(): Promise<SavedSummary[]> {
   let files: string[] = [];
   try {
-    files = (await readdir(generatedDir)).filter((f) => f.endsWith('.json'));
+    files = (await source().list('generated_teams')).filter((f) => f.endsWith('.json'));
   } catch {
     return [];
   }
@@ -135,7 +141,7 @@ export async function listSavedTeams(): Promise<SavedSummary[]> {
   for (const f of files) {
     const name = f.replace(/\.json$/, '');
     try {
-      const doc = JSON.parse(await readFile(join(generatedDir, f), 'utf8'));
+      const doc = JSON.parse(await source().readText(`generated_teams/${f}`));
       out.push({ name, season_id: doc.season_id, generated_at: doc.generated_at, label: doc.label, count: (doc.teams ?? []).length });
     } catch {
       out.push({ name, count: 0 });
@@ -146,7 +152,7 @@ export async function listSavedTeams(): Promise<SavedSummary[]> {
 
 export async function loadSavedTeam(name: string): Promise<unknown> {
   if (!SAFE_NAME.test(name)) throw new Error('nome non valido');
-  return JSON.parse(await readFile(join(generatedDir, `${name}.json`), 'utf8'));
+  return JSON.parse(await source().readText(`generated_teams/${name}.json`));
 }
 
 // --- Legalità di formato (data/seasons/legal_<id>.json da scripts/fetch_legality.ts) ---
@@ -162,7 +168,7 @@ export async function loadLegality(id: string): Promise<Legality | null> {
   if (legalityCache.has(id)) return legalityCache.get(id)!;
   let legality: Legality | null = null;
   try {
-    const doc = JSON.parse(await readFile(join(seasonsDir, `legal_${id}.json`), 'utf8'));
+    const doc = JSON.parse(await source().readText(`seasons/legal_${id}.json`));
     legality = {
       items: new Set<string>((doc.items ?? []).map(toID)),
       moves: new Set<string>((doc.moves ?? []).map(toID)),

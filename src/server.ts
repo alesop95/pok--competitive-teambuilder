@@ -15,13 +15,18 @@ import {
   saveTeams,
   listSavedTeams,
   loadSavedTeam,
+  setDataSource,
   type FieldOverride,
 } from './engine.js';
+import { NodeDataSource } from './nodeDataSource.js';
 
 // Porta di default non comune per non collidere con altri localhost; sovrascrivibile con PORT.
 const PORT = Number(process.env.PORT ?? 5187);
 const HOST = process.env.HOST ?? '127.0.0.1';
-const publicDir = join(dirname(fileURLToPath(import.meta.url)), 'public');
+const here = dirname(fileURLToPath(import.meta.url));
+const publicDir = join(here, 'public');
+// Su Node l'engine legge i dati dal filesystem (ADR-009): radice dati = <progetto>/data.
+setDataSource(new NodeDataSource(join(here, '..', 'data')));
 
 export function buildServer() {
   const app = Fastify({ logger: true });

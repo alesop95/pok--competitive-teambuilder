@@ -6,6 +6,22 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-24 - Stack: doc DEPLOY + Fase 1 migrazione (DataSource, engine fs-free)
+
+Commit: (da committare)
+File toccati: `docs/DEPLOY.md` (nuovo, spiegazione stack/deploy/Render/bundle/spike nello stile
+progetto), `README.md` (link), `src/dataSource.ts` (nuovo, interfaccia), `src/nodeDataSource.ts`
+(nuovo, impl fs), `src/engine.ts` (rimossi import node:fs/path; accesso dati via DataSource iniettato
++ setDataSource), `src/server.ts` e `scripts/generate.ts` e `tests/legality.test.ts` (iniettano
+NodeDataSource).
+Motivo: (a) Spiegazione dello stack di pubblicazione richiesta dall'utente, salvata in docs/DEPLOY.md:
+deploy su hosting statico (Cloudflare/GitHub Pages), Render è solo fallback (backend), e glossario di
+bundle/spike/scaffolding. (b) Fase 1 della migrazione ADR-009: l'accesso ai dati dell'engine è
+astratto dietro l'interfaccia `DataSource`; Node inietta `NodeDataSource` (fs), il browser userà
+fetch/IndexedDB. L'engine non importa più node:fs/path: è ora bundlabile per il browser. Verificato:
+typecheck pulito, 31/31 test verdi, CLI e server funzionanti con il DataSource Node. Prossimo:
+Fase 2 (spike bundle browser + peso).
+
 ## 2026-06-24 - Decisione architettura per il deploy gratuito (ADR-009) + walkthrough salvato
 
 Commit: (da committare)

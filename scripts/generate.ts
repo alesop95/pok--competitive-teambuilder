@@ -6,9 +6,12 @@
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
-import { generateForSeason, loadSeason, loadMeta } from '../src/engine.js';
+import { generateForSeason, loadSeason, loadMeta, setDataSource } from '../src/engine.js';
+import { NodeDataSource } from '../src/nodeDataSource.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+// Su Node l'engine legge i dati dal filesystem (ADR-009).
+setDataSource(new NodeDataSource(join(root, 'data')));
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 

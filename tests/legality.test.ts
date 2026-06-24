@@ -1,8 +1,13 @@
 // Verifica la validazione di legalità di formato (cross-check serebii, data/seasons/legal_MB.json):
 // gli strumenti non disponibili nel formato vengono sostituiti e segnalati.
 import { describe, it, expect } from 'vitest';
-import { loadLegality, validateSet } from '../src/engine.js';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { loadLegality, validateSet, setDataSource } from '../src/engine.js';
+import { NodeDataSource } from '../src/nodeDataSource.js';
 import type { PokemonSet } from '../src/setBuilder.js';
+
+setDataSource(new NodeDataSource(join(dirname(fileURLToPath(import.meta.url)), '..', 'data')));
 
 describe('legalità formato M-B', () => {
   it('il manifesto si carica e contiene strumenti e mosse', async () => {
