@@ -39,8 +39,10 @@ fastify       MIT  web server leggero (Fase 2+)
 ```
 
 DevDependencies: TypeScript (compilatore Apache 2.0), Vitest (MIT,
-https://www.npmjs.com/package/vitest) come test runner, e tsx (MIT) per eseguire TS senza build
-in sviluppo.
+https://www.npmjs.com/package/vitest) come test runner, tsx (MIT) per eseguire TS senza build
+in sviluppo, e Vite (MIT, https://www.npmjs.com/package/vite) per impacchettare la SPA client-side
+(ADR-009/ADR-011): build con `npm run build:web`, sviluppo con `npm run dev:web`, anteprima con
+`npm run preview:web`.
 
 Installati in aggiunta (Fase 1-3): `@pkmn/mods` (MIT, espone la mod `champions` - ADR-005),
 `@pkmn/data` (MIT, costruisce la `Generation` per `@smogon/calc` dalla dex moddata - Fase 3),
@@ -89,7 +91,14 @@ La struttura sorgente segue §6 dell'handoff. In Fase 0 i moduli sono stub comme
 arriva in Fase 1+.
 
 ```
-src/server.ts        entrypoint Fastify + @fastify/static; API REST (seasons/season/meta/generate)
+src/dataSource.ts    interfaccia di accesso ai dati (ADR-009): readText/writeText/list, niente Node
+src/nodeDataSource.ts impl filesystem per CLI e server Fastify (node:fs)
+src/browserDataSource.ts impl browser: lettura via fetch degli asset statici, storico/override su IndexedDB
+web/index.html       SPA statica client-side (Vite): stesso markup della pagina Fastify, script in modulo
+web/main.ts          glue UI client-side: chiama l'engine come modulo (no API REST); BASE_URL per Pages
+vite.config.ts       build della SPA (root web/, dati come asset statici, base per GitHub Pages)
+vitest.config.ts     config dei test separata da vite.config (root di progetto, tests/**)
+src/server.ts        entrypoint Fastify + @fastify/static; API REST (uso locale come server; ADR-011)
 src/engine.ts        orchestrazione condivisa CLI+server: load dati, cache candidati, post-pass coverage offensiva
 src/pkmnData.ts      wrapper su @pkmn/dex + mod champions; specie, movepool, tagging, mappa difensiva
 src/calc.ts          damage calc reale (@smogon/calc + @pkmn/data sulla mod champions); bestDamagePercent

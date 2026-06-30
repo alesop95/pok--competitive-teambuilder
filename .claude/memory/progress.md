@@ -6,6 +6,59 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-30 - Migrazione ADR-009 fasi 3-5: porting SPA a Vite + hosting GitHub Pages
+
+Commit: (da committare)
+File toccati: nuovi `web/index.html`, `web/main.ts` (porting reale), `vitest.config.ts`,
+`.github/workflows/deploy.yml`, `data/seasons/_manifest.json`; modificati `src/browserDataSource.ts`
+(modello a override IndexedDB + fallback fetch), `vite.config.ts` (base GitHub Pages, config function),
+`tsconfig.json` (+lib DOM/DOM.Iterable), `package.json` (script dev:web/build:web/preview:web),
+`docs/MIGRAZIONE-CLIENT-SIDE.md` (sezione pubblicazione), `README.md`, `.claude/context/*` e memoria.
+Motivo: chiuse le fasi 3 e 4 (porting UI) e 5 (hosting) della migrazione client-side. (3-4) Portata la
+SPA vanilla sopra lo scaffold Vite: `web/index.html` riusa il markup esistente cambiando solo lo script
+in modulo; `web/main.ts` chiama direttamente le funzioni dell'engine al posto dell'API REST (dettaglio
+stagione, generazione che replica prepareImport+generateForSeason, salvataggio via saveTeams).
+`src/browserDataSource.ts` riscritto con un unico store IndexedDB indicizzato per percorso: in lettura
+controlla l'override locale poi scarica l'asset statico via fetch, così funzionano sia lo storico sia
+l'editor meta (salvato nel browser sopra il file di sola lettura). Aggiunto `data/seasons/_manifest.json`
+perché un host statico non espone l'elenco dei file e listSeasons ne ha bisogno. Due effetti collaterali
+gestiti: aggiunta la lib DOM al typecheck (l'engine ora compila anche per il browser) e creato
+`vitest.config.ts` (senza, Vitest ereditava il root web/ da vite.config e non trovava i test).
+(5) Pubblicazione: `vite.config.ts` imposta `base` al sottopercorso del repo in build (sito di progetto
+GitHub Pages), `web/main.ts` legge la radice dati da import.meta.env.BASE_URL; workflow
+`.github/workflows/deploy.yml` builda e pubblica `web/dist` su Pages a ogni push su main (azioni
+ufficiali). Passo manuale una tantum: Settings > Pages > Source = GitHub Actions. Verifiche: typecheck
+pulito, 40/40 test verdi, build di produzione OK, preview sotto il sottopercorso serve app + dati
+(200), e riscontro nel browser confermato dall'utente (setup, generazione, vincoli iniziali con Ditto
+bloccato e completamento a 6, export Showdown). Decisione di UI in ADR-011, ratio in
+`docs/MIGRAZIONE-CLIENT-SIDE.md`. Prossimo (concordato con l'utente): nuova modalità Costruisci, builder
+manuale interattivo ispirato a champteams.gg/builder (coverage, speed tier, damage calc live, share),
+riusando l'engine esistente.
+
+## 2026-06-30 - Migrazione ADR-009: spike client-side OK + scelta UI (ADR-011) + altri creator
+
+Commit: (da committare)
+File toccati: nuovi `src/browserDataSource.ts`, `web/index.html`, `web/main.ts`, `vite.config.ts`,
+`docs/MIGRAZIONE-CLIENT-SIDE.md`; modificati `package.json`/`package-lock.json` (+`vite` devDep),
+`data/references/creators.json` (+WolfeyVGC, CybertronVGC, aDrive), `.claude/memory/decisions.md`
+(ADR-011), `.claude/memory/progress.md`.
+Motivo: (1) Altri canali nel watcher: risolti e versionati i channel_id di WolfeyVGC
+(UC9OZkS1Mhl5UvKSiPrYqsxg), CybertronVGC (UCYoTO-akZCsiusTe4rBxfhA) e aDrive
+(UCTrRj46ZQfPQoVREvCMmhwQ); James Baek scartato perché il canale risolto (@jamesbaek) ha il feed RSS
+vuoto, in attesa dell'URL giusto dall'utente. Verificato `npm run creators` su tutti e quattro.
+(2) Migrazione ADR-009, fase 2 (spike): aggiunto `src/browserDataSource.ts` (DataSource per browser:
+lettura via fetch dei dati statici, storico su IndexedDB) e lo scaffold Vite in `web/` con un entry
+che gira l'engine client-side. `npx vite build` riuscito: il motore completo (mod champions + dex +
+@smogon/calc + @pkmn/*) si impacchetta per il browser. Pesi: chunk principale 6.7 MB / 1.0 MB gzip,
+learnsets (code-split) 3.2 MB / 0.4 MB gzip, resto < 1 MB gzip; totale ~1.9 MB gzip (~12 MB grezzi,
+cache una tantum), in linea con ADR-009. Runtime confermato dall'utente via screenshot: tre team
+generati in ~650 ms interamente nel browser, dati letti via fetch, nessun backend. (3) Scelta UI
+(ADR-011): si porta la SPA vanilla esistente a Vite invece di riscrivere in React, perché l'app è
+piccola e già completa, il porting è a basso rischio/ore e dopo il build entrambe le strade sono la
+stessa SPA statica (deploy e costi identici); React resta opzione futura reversibile sopra lo stesso
+scaffold. Ratio formativa estesa in `docs/MIGRAZIONE-CLIENT-SIDE.md`. Prossimo: porting delle 4 pagine
+(`web/`) collegate all'engine + IndexedDB, poi config hosting statico (fase 5).
+
 ## 2026-06-30 - Vincoli iniziali + I/O Showdown, watcher creator JoeUX9, refresh dati M-B
 
 Commit: 61690d5

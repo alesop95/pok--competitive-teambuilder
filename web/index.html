@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pokémon Champions Team Builder</title>
+  <style>
+    :root { --bg:#0f1216; --panel:#171c23; --line:#2a323d; --txt:#e6eaf0; --muted:#97a3b4; --accent:#5aa9e6; --good:#5fd08a; --warn:#e6c15a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--txt); }
+    header { padding:16px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+    h1 { font-size:18px; margin:0; }
+    select, button, input { font:inherit; color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:7px 11px; }
+    button { cursor:pointer; }
+    button.primary { background:var(--accent); color:#06121f; border-color:var(--accent); font-weight:600; }
+    button:hover { border-color:var(--accent); }
+    nav { display:flex; gap:8px; padding:12px 20px; border-bottom:1px solid var(--line); }
+    nav button.active { background:var(--accent); color:#06121f; border-color:var(--accent); }
+    main { padding:20px; max-width:1000px; margin:0 auto; }
+    section { display:none; }
+    section.active { display:block; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
+    .muted { color:var(--muted); }
+    textarea { width:100%; min-height:340px; font-family:ui-monospace,Consolas,monospace; font-size:13px; color:var(--txt); background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:12px; }
+    .card { border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; background:var(--panel); }
+    .card h3 { margin:0 0 4px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .score { color:var(--accent); font-variant-numeric:tabular-nums; }
+    .members { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+    .mon { background:#0c0f13; border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:13px; }
+    .mon small { color:var(--muted); }
+    .tag-good { color:var(--good); }
+    .tag-warn { color:var(--warn); }
+    ul { margin:6px 0; padding-left:18px; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .status { font-size:13px; color:var(--muted); }
+    pre.export { white-space:pre-wrap; background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px; }
+    .sets { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; margin:8px 0 12px; }
+    .set { background:#0c0f13; border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; line-height:1.45; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pokémon Champions Team Builder</h1>
+    <div class="row">
+      <label class="muted" for="season">Stagione</label>
+      <select id="season"></select>
+    </div>
+    <span id="seasonInfo" class="status"></span>
+  </header>
+  <nav>
+    <button data-tab="setup" class="active">Setup stagione</button>
+    <button data-tab="meta">Editor meta</button>
+    <button data-tab="generate">Genera team</button>
+    <button data-tab="storico">Storico</button>
+  </nav>
+  <main>
+    <section id="setup" class="active">
+      <div class="panel" id="setupBody"><span class="muted">Carico…</span></div>
+    </section>
+
+    <section id="meta">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <strong>season_&lt;id&gt;_meta.yaml</strong>
+          <div class="row">
+            <button class="primary" id="metaSave">Salva meta</button>
+            <span id="metaStatus" class="status"></span>
+          </div>
+        </div>
+        <p class="muted">Editor YAML grezzo di <code>top_threats</code> e <code>common_cores</code>. Salvando, le proposte useranno il nuovo meta. La modifica è salvata nel browser (IndexedDB) sopra il file di stagione.</p>
+        <textarea id="metaText" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <section id="generate">
+      <div class="panel row" style="justify-content:space-between">
+        <div class="row">
+          <label class="muted" for="topN">Proposte</label>
+          <input id="topN" type="number" min="1" max="10" value="5" style="width:64px" />
+          <label class="muted" for="weather">Meteo</label>
+          <select id="weather"><option value="auto">Auto (team)</option><option value="none">Nessuno</option><option>Rain</option><option>Sun</option><option>Sand</option><option>Snow</option></select>
+          <label class="muted" for="terrain">Terreno</label>
+          <select id="terrain"><option value="auto">Auto (team)</option><option value="none">Nessuno</option><option>Electric</option><option>Grassy</option><option>Psychic</option><option>Misty</option></select>
+          <button class="primary" id="genBtn">Genera team</button>
+          <button id="saveBtn" disabled>Salva proposte</button>
+        </div>
+        <span id="genStatus" class="status"></span>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <strong>Vincoli iniziali (opzionale)</strong>
+          <button id="clearImport">Pulisci</button>
+        </div>
+        <p class="muted">Incolla un team in formato Pokémon Showdown, anche parziale: i membri riconosciuti vengono bloccati e ogni proposta li completa fino a 6. Stesso formato di Smogon e calc.pokemonshowdown.com.</p>
+        <textarea id="importText" spellcheck="false" style="min-height:160px" placeholder="Incineroar @ Sitrus Berry&#10;Ability: Intimidate&#10;Level: 50&#10;EVs: 252 HP / 4 Atk / 252 SpD&#10;Careful Nature&#10;- Fake Out&#10;- Knock Off&#10;- Parting Shot&#10;- Protect"></textarea>
+        <div id="importInfo" class="status" style="margin-top:8px"></div>
+      </div>
+      <div id="teams"></div>
+    </section>
+
+    <section id="storico">
+      <div class="panel row" style="justify-content:space-between">
+        <strong>Team salvati</strong>
+        <button id="refreshStorico">Aggiorna</button>
+      </div>
+      <div id="savedList"></div>
+      <div id="savedView"></div>
+    </section>
+  </main>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

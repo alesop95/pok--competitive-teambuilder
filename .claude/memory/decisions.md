@@ -166,6 +166,32 @@ Points: gli EV si ri-quantizzano a multipli di 8 (i 252 principali restano esatt
 diventa 8), conseguenza inerente al modello SP di Champions. Quando uscirà a monte un mod Reg M-B lo
 si aggancerà al posto della curatela serebii (ADR-007 invariata).
 
+## ADR-011 - UI client-side: porting della SPA vanilla a Vite, React rinviato
+
+Data: 2026-06-30
+Stato: accettata
+Contesto: lo spike di ADR-009 (commit successivo) ha confermato che il motore completo, mod
+`champions` inclusa, si impacchetta per il browser e gira client-side (tre team in ~650 ms, bundle
+~1.9 MB compressi, una tantum in cache). Resta da scegliere lo strumento dell'interfaccia per le fasi
+3 e 4: portare la pagina vanilla esistente (`src/public/index.html`) sopra lo scaffold Vite, oppure
+riscrivere l'interfaccia in React come il testo originale di ADR-009 ipotizzava. La ratio completa,
+con la spiegazione dei concetti, è in `docs/MIGRAZIONE-CLIENT-SIDE.md`.
+Decisione: portare la SPA vanilla a Vite, collegandola al motore importato come modulo e spostando lo
+storico dei team su IndexedDB; React resta una evoluzione opzionale futura, da introdurre sopra lo
+stesso scaffold solo se l'interfaccia cresce o se diventa un obiettivo formativo esplicito.
+Motivazione: l'app è piccola (quattro pagine, un solo file) e già completa di feature; il porting è
+lavoro di ore e a rischio di regressione basso perché non riscrive la logica di interfaccia, mentre la
+riscrittura React costerebbe giorni e imporrebbe di riportare a mano ogni feature con rischio di
+perderne i dettagli. L'obiettivo architetturale di ADR-009 (SPA statica, motore client-side,
+persistenza IndexedDB, hosting statico gratuito) è indipendente dal framework: dopo il build entrambe
+le strade producono la stessa SPA statica, quindi deploy e costi non cambiano. La scelta è reversibile
+perché lo scaffold Vite è la stessa base su cui girerebbe React.
+Conseguenze: l'interfaccia vive in `web/` (scaffold Vite dello spike) e chiama direttamente le
+funzioni dell'engine invece dell'API REST; le rotte Fastify restano per l'uso locale come server, ma
+non sono necessarie alla versione pubblicata. I dati di stagione diventano asset statici letti via
+`fetch` (BrowserDataSource), lo storico va su IndexedDB. React non viene aggiunto ora: nessuna nuova
+dipendenza UI. ADR-009 resta valida nell'architettura; questa voce ne fissa solo lo strumento di UI.
+
 ## ADR-006 - Fonti dati di stagione: serebii.net
 
 Data: 2026-06-19

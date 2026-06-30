@@ -8,6 +8,8 @@ covers-paths:
   - data/**
   - scripts/**
   - src/showdown.ts
+  - src/browserDataSource.ts
+  - web/**
 last-verified-commit: 61690d5
 stato: in corso
 source-doc: pokemon-champions-team-builder-spec.md
@@ -51,6 +53,34 @@ fonte-di-verità vs euristiche) e `docs/SOURCES.md` (tutte le fonti).
 Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzionale la Fase 4
 (rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
 docs), poi `sync-context` per ri-ancorare le schede a HEAD.
+
+## Feature: migrazione client-side (ADR-009/ADR-011), fasi 1-5 (da committare)
+
+Cosa fa: porta l'app da backend Fastify + motore server a SPA statica con motore eseguito nel browser,
+ospitabile gratis su GitHub Pages senza backend. Dati di stagione come asset statici via fetch, storico
+e override del meta su IndexedDB. La spiegazione formativa completa (cos'è una SPA statica, perché non
+cambia deploy/costi, come funziona il bundle e la cache) è in `docs/MIGRAZIONE-CLIENT-SIDE.md`.
+
+Stato per fase: (1) DataSource astratto - fatto (`src/dataSource.ts`, `nodeDataSource.ts`,
+`browserDataSource.ts`). (2) Spike di bundling - fatto: build per browser OK, ~1.9 MB gzip (~12 MB
+grezzi, cache una tantum), 3 team in ~650 ms client-side. (3-4) Porting UI - fatto: `web/index.html`
+(markup riusato, script in modulo) e `web/main.ts` (chiamate dirette all'engine al posto dell'API REST);
+storico/meta su IndexedDB; riscontro browser confermato dall'utente. (5) Hosting - configurato:
+`vite.config.ts` con `base` per Pages, fetch dati via `import.meta.env.BASE_URL`, workflow
+`.github/workflows/deploy.yml`. Scelta UI: porting vanilla, React rinviato (ADR-011).
+
+Definition of done:
+
+- [x] engine bundlabile e funzionante nel browser (spike), peso misurato e accettato
+- [x] `src/browserDataSource.ts`: lettura via fetch + override/storico su IndexedDB
+- [x] `web/` (Vite): le 4 pagine collegate all'engine, parità di feature con la SPA Fastify
+- [x] `vitest.config.ts` per non ereditare il root web/ da vite.config; lib DOM nel typecheck
+- [x] build di produzione con `base` Pages + workflow GitHub Actions; verificato in preview
+- [x] 40/40 test verdi, typecheck pulito, riscontro browser dell'utente
+- [ ] passo manuale utente: Settings > Pages > Source = GitHub Actions, poi push su main
+
+Prossimo (concordato): modalità Costruisci, builder manuale interattivo ispirato a champteams.gg/builder
+(coverage, speed tier, damage calc live, share), riusando l'engine esistente.
 
 ## Feature: vincoli iniziali + I/O Showdown, watcher creator (commit 61690d5)
 

@@ -17,6 +17,9 @@
     "start": "tsx src/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
+    "dev:web": "vite",
+    "build:web": "vite build",
+    "preview:web": "vite preview",
     "test": "vitest run",
     "roster": "tsx scripts/fetch_roster.ts",
     "legality": "tsx scripts/fetch_legality.ts",
@@ -39,6 +42,7 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.8.0",
+    "vite": "^5.4.21",
     "vitest": "^2.0.0"
   }
 }

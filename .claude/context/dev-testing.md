@@ -16,7 +16,9 @@ source-doc: pokemon-champions-team-builder-spec.md
 
 ## Test runner e comandi
 
-Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). I test stanno sotto `tests/`
+Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). La config dei test sta in
+`vitest.config.ts`, separata da `vite.config.ts` (che ha root in `web/` per la build della SPA): senza
+quella separazione Vitest erediterebbe il root `web/` e non troverebbe i test. I test stanno sotto `tests/`
 e sono 40 su sette file (inclusi i casi calc per meteo e immunità da abilità): `roleTagging.test.ts`
 (regole §4.1 su fixture), `pkmnData.test.ts` (mod champions: specie reali e tagging),
 `teamGenerator.test.ts` (archetipi, Species Clause, ordinamento, vincoli iniziali `locked`,

@@ -83,7 +83,10 @@ viability, scoring, damage calc con la formula e la sua provenienza) è in
 [docs/TECHNICAL.md](./docs/TECHNICAL.md). La spiegazione discorsiva della pipeline stadio per stadio
 è in [docs/WALKTHROUGH.md](./docs/WALKTHROUGH.md). Dove e come l'app viene pubblicata (deploy, bundle,
 ruolo di Render) è spiegato in [docs/DEPLOY.md](./docs/DEPLOY.md). L'inventario di tutte le fonti
-usate dal progetto è in [docs/SOURCES.md](./docs/SOURCES.md).
+usate dal progetto è in [docs/SOURCES.md](./docs/SOURCES.md). La migrazione verso l'app che gira
+interamente nel browser, con la spiegazione di cos'è una SPA statica, perché non cambia il deploy e
+come funziona il bundle client-side, è in
+[docs/MIGRAZIONE-CLIENT-SIDE.md](./docs/MIGRAZIONE-CLIENT-SIDE.md).
 
 ## Riferimenti
 

@@ -7,6 +7,27 @@
       "url": "https://www.youtube.com/@JoeUX9",
       "note": "Riferimento principale lato teambuilding. Pubblica con regolarita (circa un giorno su due o tre) i top risultati dei tornei per leggere come gira il meta, oltre ad analisi di team e archetipi.",
       "tags": ["teambuilding", "tournament", "meta"]
+    },
+    {
+      "handle": "WolfeyVGC",
+      "channel_id": "UC9OZkS1Mhl5UvKSiPrYqsxg",
+      "url": "https://www.youtube.com/@WolfeyVGC",
+      "note": "Wolfe Glick, campione del mondo VGC. Analisi di teambuilding e meta, tornei e partite commentate; ottimi spunti di costruzione.",
+      "tags": ["teambuilding", "tournament", "meta", "match"]
+    },
+    {
+      "handle": "CybertronVGC",
+      "channel_id": "UCYoTO-akZCsiusTe4rBxfhA",
+      "url": "https://www.youtube.com/@CybertronVGC",
+      "note": "Aaron Zheng. Teambuilding, tornei e match commentati; spesso analizza i team dei top player del momento.",
+      "tags": ["teambuilding", "tournament", "match"]
+    },
+    {
+      "handle": "aDrive",
+      "channel_id": "UCTrRj46ZQfPQoVREvCMmhwQ",
+      "url": "https://www.youtube.com/@aDrive",
+      "note": "Contenuti Pokémon quotidiani con partite ladder e reazioni al meta. Nota: il canale alterna VGC e contenuti TCG (apertura buste), quindi non tutti i video sono competitivi.",
+      "tags": ["match", "meta"]
     }
   ]
 }
