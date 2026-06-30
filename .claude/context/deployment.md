@@ -4,7 +4,7 @@ generated-from-branch: main
 generated-date: 2026-06-19
 covers-paths:
   - package.json
-last-verified-commit: ce14c8e
+last-verified-commit: 61690d5
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -36,6 +36,8 @@ npm start        avvia l'app in modo identico a dev (usato anche dal deploy)
 npm run generate genera i team da CLI e scrive report in data/generated_teams/
 npm run roster   ri-scarica il roster di stagione da serebii in data/seasons/
 npm run legality ri-scarica strumenti/mosse legali da serebii in data/seasons/legal_<id>.json
+npm run check-mb verifica se c'è un aggiornamento dati M-B a monte (@pkmn/mods, Mega Z-A)
+npm run creators mostra gli ultimi video dei content creator (RSS) da data/references/creators.json
 npm run build    compila TypeScript in dist/ (typecheck/rilascio; per servire serve copiare public/data)
 npm test         esegue la suite Vitest
 ```

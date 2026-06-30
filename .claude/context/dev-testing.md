@@ -5,7 +5,7 @@ generated-date: 2026-06-19
 covers-paths:
   - tests/**
   - package.json
-last-verified-commit: ce14c8e
+last-verified-commit: 61690d5
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -17,11 +17,13 @@ source-doc: pokemon-champions-team-builder-spec.md
 ## Test runner e comandi
 
 Il test runner è Vitest (MIT), eseguito con `npm test` (`vitest run`). I test stanno sotto `tests/`
-e sono 31 su sei file (inclusi i casi calc per meteo e immunità da abilità): `roleTagging.test.ts` (regole §4.1 su fixture), `pkmnData.test.ts` (mod
-champions: specie reali e tagging), `teamGenerator.test.ts` (archetipi, Species Clause, ordinamento,
+e sono 40 su sette file (inclusi i casi calc per meteo e immunità da abilità): `roleTagging.test.ts`
+(regole §4.1 su fixture), `pkmnData.test.ts` (mod champions: specie reali e tagging),
+`teamGenerator.test.ts` (archetipi, Species Clause, ordinamento, vincoli iniziali `locked`,
 integrazione), `calc.test.ts` (damage calc reale su matchup noti), `setBuilder.test.ts` (set, Mega,
-filtro mosse, Stat Points), `legality.test.ts` (validazione legalità formato). I test unitari usano
-fixture pure; quelli di integrazione interrogano la dex champions in-process.
+filtro mosse, Stat Points), `legality.test.ts` (validazione legalità formato), `showdown.test.ts`
+(mappatura SP<->EV, round-trip export/import Showdown, `prepareImport` sul roster M-B reale). I test
+unitari usano fixture pure; quelli di integrazione interrogano la dex champions in-process.
 
 ## Rotte e dati mockati
 

@@ -6,6 +6,37 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-06-30 - Vincoli iniziali + I/O Showdown, watcher creator JoeUX9, refresh dati M-B
+
+Commit: 61690d5
+File toccati: nuovi `src/showdown.ts`, `scripts/check_creators.ts`, `data/references/creators.json`,
+`tests/showdown.test.ts`; modificati `src/engine.ts`, `src/teamGenerator.ts`, `src/setBuilder.ts`,
+`src/server.ts`, `src/public/index.html`, `package.json`/`package-lock.json` (+`@pkmn/sets`),
+`docs/SOURCES.md`, `.gitignore`, `tests/teamGenerator.test.ts`, `data/seasons/season_MB.json` e
+`legal_MB.json` (solo data di verifica).
+Motivo: tre interventi richiesti dall'utente. (1) Allineamento M-B con Smogon: verificato il
+2026-06-30 che nell'ecosistema `@pkmn`/Showdown esistono solo i mod `champions` e `championsregma`
+(Reg M-A), nessun `championsregmb`, e le Mega Z-A restano assenti a monte; non è possibile agganciare
+la legalità M-B a un mod Smogon, serebii più usage community restano fonte di verità. Ri-eseguiti
+`check-mb`, `roster`, `legality`: dati già correnti (283 forme, 181 strumenti, 499 mosse identici),
+solo bump della data. Finding documentato in `docs/SOURCES.md` §2 e in ADR-010. (2) Content creator:
+JoeUX9 (channel_id UCGYfQmjOELGJZBsZBr2Z5nQ) aggiunto come reference (`docs/SOURCES.md` §10,
+`data/references/creators.json`) e `npm run creators` (`scripts/check_creators.ts`) legge i feed RSS
+pubblici dei canali (nessuna API key, parsing regex sul feed Atom), ordina per data, evidenzia i video
+su tornei/meta e marca i nuovi (registro `creators_seen.json`, gitignored). (3) Vincoli iniziali +
+import/export Showdown: nuovo `src/showdown.ts` (su `@pkmn/sets`) esporta i team in formato testuale
+Showdown (incollabile su Smogon/calc) e importa team anche parziali; mappatura Stat Points<->EV in un
+helper unico in `setBuilder.ts` (`spToEvs`/`evsToSp`, 32 SP ~ 252 EV). `teamGenerator` accetta
+`locked`: i membri forniti restano in ogni proposta, completata fino a 6 variando gli slot liberi.
+`engine.prepareImport` risolve i membri importati alla specie base del roster, valida la legalità
+senza mutare i set, e `generateForSeason` preserva i set bloccati verbatim escludendo una seconda
+Mega. UI: textarea vincoli, badge bloccati/avvisi, export Showdown reale. Verifica: typecheck pulito,
+40/40 test verdi, `npm run creators` e la generazione con import provati end-to-end (Incineroar
+bloccato e team completato a 6, export valido). Limite noto: la preservazione passa per gli SP, quindi
+gli EV si ri-quantizzano a multipli di 8 (un residuo di 4 EV diventa 8); i 252 principali restano
+esatti, coerente con il modello SP di Champions. Nota operativa: nel chiudere il server di prova il
+`taskkill` ha terminato tutti i processi node.exe (broad); in futuro usare il PID.
+
 ## 2026-06-24 - Stack: doc DEPLOY + Fase 1 migrazione (DataSource, engine fs-free)
 
 Commit: (da committare)

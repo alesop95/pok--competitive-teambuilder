@@ -3,7 +3,7 @@ generated-from-commit: 373419b
 generated-from-branch: main
 generated-date: 2026-06-19
 covers-paths: []
-last-verified-commit: ce14c8e
+last-verified-commit: 61690d5
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -54,4 +54,6 @@ slot, squadra giocabile 6 con 4 in campo in doppio) - non bloccante per l'archit
 Import su Pokémon Home da app di terze parti: esplorare se sia possibile creare/preparare Pokémon
 con un tool esterno e portarli su Pokémon Home, per chiudere il ciclo dal team proposto al team
 giocabile. Da verificare fattibilità e legittimità. Non prioritario: prima la logica applicativa e
-l'uso competitivo del tool; questa esplorazione viene dopo.
+l'uso competitivo del tool; questa esplorazione viene dopo. Primo passo del ciclo già fatto (commit
+61690d5, ADR-010): import/export in formato testuale Pokémon Showdown e vincoli iniziali alla
+generazione (membri bloccati completati fino a 6).

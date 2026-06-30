@@ -4,7 +4,7 @@ generated-from-branch: main
 generated-date: 2026-06-19
 covers-paths:
   - src/**
-last-verified-commit: ce14c8e
+last-verified-commit: 61690d5
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -28,6 +28,13 @@ principio di token economy del progetto
 (`rules/token-economy.md`) si riflette qui: il lavoro deterministico (tagging, coverage, scoring)
 sta nel codice; l'eventuale salto semantico (rationale in prosa naturale) è isolato nel solo
 Livello 2 opzionale.
+
+La generazione accetta dei vincoli iniziali (ADR-010): un team Showdown incollato viene parsato
+(`src/showdown.ts` su `@pkmn/sets`), risolto alla specie base del roster e validato senza mutare i
+set; i membri riconosciuti diventano un seed bloccato che `teamGenerator` include in ogni proposta,
+completando gli slot liberi e preservando i set importati verbatim. L'I/O usa il formato EV standard
+di Showdown con una mappatura Stat Points<->EV centralizzata in `setBuilder.ts`. Questo non altera la
+natura deterministica della pipeline: l'import è parsing puro, la generazione resta euristica su dati.
 
 Il rationale ha due livelli attivabili in configurazione: il Livello 1 è offline, deterministico,
 a template testuali sui fatti strutturati, sempre disponibile e a costo zero; il Livello 2 è un

@@ -7,7 +7,8 @@ covers-paths:
   - src/teamGenerator.ts
   - data/**
   - scripts/**
-last-verified-commit: ce14c8e
+  - src/showdown.ts
+last-verified-commit: 61690d5
 stato: in corso
 source-doc: pokemon-champions-team-builder-spec.md
 ---
@@ -50,6 +51,37 @@ fonte-di-verità vs euristiche) e `docs/SOURCES.md` (tutte le fonti).
 Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzionale la Fase 4
 (rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
 docs), poi `sync-context` per ri-ancorare le schede a HEAD.
+
+## Feature: vincoli iniziali + I/O Showdown, watcher creator (commit 61690d5)
+
+Cosa fa: tre interventi (ADR-010). (1) Generazione con vincoli iniziali: si forniscono dei membri
+bloccati e l'app completa la squadra fino a 6 variando gli slot liberi. (2) Import/export in formato
+testuale Pokémon Showdown (lo stesso di Smogon e calc.pokemonshowdown.com), così si parte da un team
+pre-esistente incollandolo e si esporta il risultato. (3) Watcher dei content creator competitivi
+(`npm run creators`) e JoeUX9 come reference per leggere il meta dai top risultati dei tornei.
+
+Implementazione: `src/showdown.ts` (su `@pkmn/sets`) per export/import; mappatura Stat Points<->EV in
+`setBuilder.ts` (`spToEvs`/`evsToSp`, 32 SP ~ 252 EV, punto unico condiviso col damage calc);
+`teamGenerator.GenerateOptions.locked` per il seed bloccato; `engine.prepareImport` (risolve la specie
+base, valida la legalità senza mutare) e `generateForSeason(..., constraints)` che preserva i set
+bloccati verbatim ed esclude una seconda Mega; `server.ts` accetta `importText` nel body di /generate;
+UI con textarea vincoli, badge bloccati/avvisi ed export Showdown. Watcher: `scripts/check_creators.ts`
+legge i feed RSS Atom (regex, niente dipendenze), `data/references/creators.json` la lista canali,
+`creators_seen.json` lo stato (gitignored).
+
+Definition of done:
+
+- [x] formato I/O = EV standard Showdown con mappatura SP<->EV (helper condivisi, test)
+- [x] import di team anche parziale; set bloccati preservati verbatim, set generati solo per gli slot mancanti
+- [x] generazione con `locked`: ogni proposta include i bloccati e arriva a 6 (Species Clause rispettata)
+- [x] export Showdown reale in UI (incollabile su Smogon), testato round-trip
+- [x] JoeUX9 + watcher RSS (`npm run creators`) con evidenziazione tornei/meta e marcatura nuovi
+- [x] allineamento M-B verificato: nessun mod `championsregmb` a monte; dati serebii correnti, finding documentato
+- [x] 40/40 test verdi, typecheck pulito; generazione con import provata end-to-end
+
+Limite noto: la preservazione verbatim dei set importati passa per gli Stat Points, quindi gli EV si
+ri-quantizzano a multipli di 8 (i 252 principali restano esatti, un residuo di 4 EV diventa 8). È
+inerente al modello SP di Champions, coerente con ADR-010.
 
 ## Feature: Fase 1 - fondamenta del motore (data layer + tagging ruoli)
 
@@ -97,7 +129,9 @@ lo scoring non usa ancora il damage calc reale (`@smogon/calc`). La qualità sal
 Domande aperte:
 
 Se/quando la community pubblicherà una mod per Reg M-B (oggi c'è solo `championsregma` ≈ M-A), va
-agganciata al posto della curatela manuale della legalità. Da monitorare.
+agganciata al posto della curatela manuale della legalità. Da monitorare. Ricontrollato il 2026-06-30
+(ADR-010): ancora nessun `championsregmb` né le Mega Z-A a monte; `npm run check-mb` resta il
+meccanismo di verifica e i dati serebii risultano correnti.
 
 Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il
 pacchetto va tenuto intero. Non bloccante.

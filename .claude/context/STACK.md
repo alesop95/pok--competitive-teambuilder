@@ -7,7 +7,7 @@ covers-paths:
   - package.json
   - tsconfig.json
   - data/**
-last-verified-commit: ce14c8e
+last-verified-commit: 61690d5
 source-doc: pokemon-champions-team-builder-spec.md
 ---
 
@@ -44,12 +44,12 @@ in sviluppo.
 
 Installati in aggiunta (Fase 1-3): `@pkmn/mods` (MIT, espone la mod `champions` - ADR-005),
 `@pkmn/data` (MIT, costruisce la `Generation` per `@smogon/calc` dalla dex moddata - Fase 3),
-`@fastify/static` (MIT, serve il frontend - Fase 2).
+`@fastify/static` (MIT, serve il frontend - Fase 2), `@pkmn/sets` (MIT, import/export dei team nel
+formato testuale Pokémon Showdown - ADR-010, `src/showdown.ts`).
 
 Pacchetti opzionali non installati: `@smogon/sets` (MIT, set da usage stats Showdown; riflette il
-meta dei tier Showdown, non quello Champions, solo riferimento generico), `@pkmn/sets` (MIT,
-import/export team in formato testo), `@pkmn/dmg` (MIT, successore di `@smogon/calc`),
-`better-sqlite3` (MIT, solo se servirà un DB - vedi ADR-003).
+meta dei tier Showdown, non quello Champions, solo riferimento generico), `@pkmn/dmg` (MIT,
+successore di `@smogon/calc`), `better-sqlite3` (MIT, solo se servirà un DB - vedi ADR-003).
 
 ## Fonti open source da consultare (non installate, ma origine di dati/logica)
 
@@ -98,8 +98,10 @@ src/teamGenerator.ts §4.2 - identifica archetipi, costruisce core, riempie slot
 src/rationale.ts     §4.3 - Livello 1 testo deterministico (con coverage offensiva); hook Livello 2 via API Claude
 src/public/index.html SPA frontend servita da Fastify (Fase 2): le 4 pagine §5
 src/engine.ts        orchestrazione: load dati, cache candidati, viability, generazione, salvataggio/storico, legalità
-src/setBuilder.ts    set completo per Pokémon: item, abilità, natura, Stat Points, 4 mosse, forme Mega
+src/setBuilder.ts    set completo per Pokémon: item, abilità, natura, Stat Points, 4 mosse, forme Mega; helper SP<->EV
+src/showdown.ts      import/export team in formato testuale Pokémon Showdown (su @pkmn/sets) - ADR-010
 data/champions_overrides.json   eccezioni residue non coperte dalla mod champions (ADR-005)
+data/references/creators.json   canali YouTube competitivi seguiti (reference, non dipendenze) - ADR-010
 data/seasons/season_<id>.json   roster + regolamento (regulation) di stagione
 data/seasons/season_<id>_meta.yaml  meta curato: top_threats, common_cores (curato a mano)
 data/seasons/legal_<id>.json    strumenti e mosse legali nel formato (da scripts/fetch_legality.ts, serebii)
@@ -107,6 +109,7 @@ data/generated_teams/           storico team salvati, un JSON timestampato per s
 scripts/fetch_roster.ts         scraper roster da serebii -> available_pokemon
 scripts/fetch_legality.ts       scraper items/moves legali da serebii -> legal_<id>.json
 scripts/generate.ts             CLI: genera team e scrive report .md/.json
+scripts/check_creators.ts       watcher RSS dei content creator (npm run creators) - ADR-010
 scripts/refresh_meta_sets.ts    opzionale: aggiorna riferimento da @smogon/sets
 ```
 

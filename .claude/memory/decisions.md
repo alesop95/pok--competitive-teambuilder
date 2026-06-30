@@ -139,6 +139,33 @@ curatela), arricchita a runtime con i dati della mod. Workflow stagionale §8 in
 stagione si rilegge serebii e si aggiorna il file. Da chiarire in seguito se/quando `championsregma`
 o una nuova mod coprirà M-B, per agganciarla.
 
+## ADR-010 - Import/export Pokémon Showdown e vincoli iniziali di generazione
+
+Data: 2026-06-30
+Stato: accettata
+Contesto: spesso si parte da un team pre-esistente e mancano uno o due membri; serve poter fissare
+dei vincoli iniziali e completare la squadra fino a 6, con import/export nello stesso formato testuale
+di Pokémon Showdown e Smogon. La particolarità di Champions è lo spread in Stat Points (66 totali,
+max 32 per stat) invece degli EV (252 per stat, 510 totali) usati da Showdown. In parallelo è stato
+verificato il punto di allineamento con Smogon: nell'ecosistema `@pkmn`/Showdown esistono solo i mod
+`champions` e `championsregma` (Reg M-A), nessun `championsregmb` (verifica del 2026-06-30), quindi la
+legalità M-B resta derivata da serebii più usage community (conferma operativa di ADR-007).
+Decisione: (1) Formato di I/O = EV standard Showdown, con mappatura interna SP<->EV (32 SP ~ 252 EV,
+helper `spToEvs`/`evsToSp` in `setBuilder.ts`, punto unico di verità condiviso col damage calc). Il
+parsing/serializzazione vengono da `@pkmn/sets` (MIT, stesso ecosistema), non da un parser fatto a
+mano. (2) I membri importati con set completo si preservano verbatim (item, abilità, natura, mosse);
+si generano i set solo per gli slot mancanti. (3) La generazione con `locked` riusa il seed di
+`buildTeam` e la penalità di diversità per variare i completamenti; la Species Clause è già garantita
+dal dexNum. (4) JoeUX9 e gli altri content creator sono reference (non dipendenze): lista versionata
+in `data/references/creators.json`, watcher RSS keyless in `scripts/check_creators.ts`.
+Motivazione: massima compatibilità con gli altri tool (incollabile su calc.pokemonshowdown.com),
+rispetto del team pre-esistente dell'utente, e lettura del meta ancorata a chi pubblica i top
+risultati dei tornei, il tutto senza nuove dipendenze pesanti né API key.
+Conseguenze: nuova dipendenza `@pkmn/sets` (leggera). La preservazione verbatim passa per gli Stat
+Points: gli EV si ri-quantizzano a multipli di 8 (i 252 principali restano esatti, un residuo di 4 EV
+diventa 8), conseguenza inerente al modello SP di Champions. Quando uscirà a monte un mod Reg M-B lo
+si aggancerà al posto della curatela serebii (ADR-007 invariata).
+
 ## ADR-006 - Fonti dati di stagione: serebii.net
 
 Data: 2026-06-19
