@@ -19,6 +19,27 @@ export interface PokemonSet {
   mega?: boolean;
 }
 
+// Mappa gli Stat Points di Champions (max 32/stat) in EV stile Showdown (max 252/stat): 32 SP ~ 252
+// EV, in proporzione (x8). Punto unico di verità per la conversione, riusato dal damage calc (engine,
+// per stimare il danno sulla stazza reale del set) e dall'export Showdown (src/showdown.ts), così la
+// stessa stazza vale nel calcolo interno e nel testo incollabile su Smogon.
+export function spToEvs(sp: Partial<Record<StatKey, number>>): Record<StatKey, number> {
+  const evs: Record<StatKey, number> = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+  for (const k of Object.keys(evs) as StatKey[]) evs[k] = Math.min(252, (sp[k] ?? 0) * 8);
+  return evs;
+}
+
+// Inverso di spToEvs: EV in formato Showdown -> Stat Points di Champions (cap 32, x1/8). Usato
+// dall'import di un team Showdown (src/showdown.ts). Include solo le statistiche effettivamente investite.
+export function evsToSp(evs: Partial<Record<StatKey, number>>): Partial<Record<StatKey, number>> {
+  const sp: Partial<Record<StatKey, number>> = {};
+  for (const k of Object.keys(evs) as StatKey[]) {
+    const v = Math.min(32, Math.round((evs[k] ?? 0) / 8));
+    if (v > 0) sp[k] = v;
+  }
+  return sp;
+}
+
 // Abilità preferite in ordine di rilevanza competitiva (si sceglie la prima presente sulla specie,
 // anche se hidden). Ampliata per coprire le abilità forti del doppio.
 const ABILITY_PREFERENCE = [

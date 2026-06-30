@@ -11,6 +11,7 @@ import {
   loadMetaRaw,
   saveMetaRaw,
   generateForSeason,
+  prepareImport,
   clearCandidateCache,
   saveTeams,
   listSavedTeams,
@@ -58,7 +59,7 @@ export function buildServer() {
     }
   });
 
-  app.post<{ Params: { id: string }; Querystring: { topN?: string; weather?: string; terrain?: string } }>(
+  app.post<{ Params: { id: string }; Querystring: { topN?: string; weather?: string; terrain?: string }; Body: { importText?: string } }>(
     '/api/season/:id/generate',
     async (req) => {
       const topN = req.query.topN ? Number(req.query.topN) : 5;
@@ -66,8 +67,12 @@ export function buildServer() {
       const override: FieldOverride = {};
       if (req.query.weather) override.weather = req.query.weather as FieldOverride['weather'];
       if (req.query.terrain) override.terrain = req.query.terrain as FieldOverride['terrain'];
-      const teams = await generateForSeason(req.params.id, topN, override);
-      return { teams };
+      // vincoli iniziali opzionali: team Showdown (anche parziale) incollato dall'utente. I membri
+      // riconosciuti diventano bloccati e ogni proposta li completa fino a 6.
+      const importText = req.body?.importText;
+      const prep = importText && importText.trim() ? await prepareImport(req.params.id, importText) : null;
+      const teams = await generateForSeason(req.params.id, topN, override, prep ? { locked: prep.locked, lockedSets: prep.lockedSets } : {});
+      return { teams, importWarnings: prep?.warnings ?? [], locked: prep?.locked ?? [] };
     },
   );
 

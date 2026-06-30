@@ -25,6 +25,10 @@ build/
 .env
 *.log
 
+# Stato derivato del watcher dei creator (npm run creators): si versiona la lista canali
+# (data/references/creators.json), si ignora il registro dei video già visti.
+data/references/creators_seen.json
+
 # Python (residuo, non usato dopo il pivot a Node/TS - ADR-001)
 .venv/
 venv/

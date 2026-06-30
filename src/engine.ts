@@ -3,11 +3,12 @@
 // sotto data/seasons/ e mantiene una cache in memoria dei candidati per stagione, così il tagging
 // delle ~200 specie avviene una sola volta per processo.
 import yaml from 'js-yaml';
-import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain, getDefenseMap } from './pkmnData.js';
+import { buildCandidates, getThreatTypes, getMegaForme, teamWeather, teamTerrain, getDefenseMap, getChampionsDex } from './pkmnData.js';
 import { generateTeams, type Candidate, type MetaContext, type TeamProposal, type CoreSpec } from './teamGenerator.js';
 import { buildRationale } from './rationale.js';
 import { bestDamagePercent, type Weather, type Terrain } from './calc.js';
-import { buildSet, type PokemonSet } from './setBuilder.js';
+import { buildSet, spToEvs, type PokemonSet } from './setBuilder.js';
+import { importTeam, exportTeam } from './showdown.js';
 import { toID, type RoleTag } from './roleTagging.js';
 import type { DataSource } from './dataSource.js';
 
@@ -48,6 +49,7 @@ export interface EnrichedTeam extends TeamProposal {
   baseScore: number; // punteggio difensivo/sinergia prima della coverage offensiva
   offensive: OffensiveAnswer[];
   sets: PokemonSet[]; // set completo (item, abilità, natura, Stat Points, mosse) per ogni membro
+  showdownText: string; // team in formato testuale Pokémon Showdown (EV), incollabile su Smogon
   rationale: string;
 }
 
@@ -180,13 +182,19 @@ export async function loadLegality(id: string): Promise<Legality | null> {
   return legality;
 }
 
-// Valida un set contro la legalità del formato: se lo strumento non è disponibile lo sostituisce con
-// un fallback legale, e segnala le mosse fuori lista. Ritorna i messaggi (vuoto se tutto legale).
-export function validateSet(set: PokemonSet, legality: Legality): string[] {
+// Valida un set contro la legalità del formato e ritorna i messaggi (vuoto se tutto legale). Per
+// default sostituisce lo strumento non disponibile con un fallback legale (set generati dal motore);
+// con `mutate = false` si limita a segnalare senza modificare, così i set importati dall'utente si
+// preservano verbatim e l'incongruenza resta un avviso.
+export function validateSet(set: PokemonSet, legality: Legality, mutate = true): string[] {
   const warnings: string[] = [];
-  if (legality.items.size && !legality.items.has(toID(set.item))) {
-    warnings.push(`strumento ${set.item} non disponibile in formato: sostituito con Sitrus Berry`);
-    set.item = 'Sitrus Berry';
+  if (legality.items.size && set.item && !legality.items.has(toID(set.item))) {
+    if (mutate) {
+      warnings.push(`strumento ${set.item} non disponibile in formato: sostituito con Sitrus Berry`);
+      set.item = 'Sitrus Berry';
+    } else {
+      warnings.push(`strumento ${set.item} (${set.species}) non disponibile in formato`);
+    }
   }
   if (legality.moves.size) {
     const illegal = set.moves.filter((m) => !legality.moves.has(toID(m)));
@@ -231,15 +239,66 @@ export interface FieldOverride {
   terrain?: Terrain | 'none';
 }
 
-// Converte gli Stat Points di Champions del set in EV per il damage calc: 32 SP (il massimo) ~ 252
-// EV, in proporzione. Permette di valutare il danno in arrivo sulla stazza reale del set (§4.8).
-function spToEvs(sp: PokemonSet['statPoints']): Record<string, number> {
-  const evs: Record<string, number> = {};
-  for (const [k, v] of Object.entries(sp)) evs[k] = Math.min(252, (v ?? 0) * 8);
-  return evs;
+// Membri bloccati passati alla generazione: nomi specie (base, presenti nel roster) da includere in
+// ogni proposta, e i set importati da preservare verbatim (per chi è arrivato da un import Showdown).
+export interface GenerateConstraints {
+  locked?: string[];
+  lockedSets?: PokemonSet[]; // allineati per specie base in lockedSetsBySpecies
 }
 
-export async function generateForSeason(id: string, topN = 5, override: FieldOverride = {}): Promise<EnrichedTeam[]> {
+// Prepara i vincoli iniziali da un team Showdown incollato: parsa il testo, risolve ogni membro alla
+// sua specie base nel roster della stagione, valida la legalità (senza mutare i set importati) e
+// ritorna i membri bloccati con i loro set. Le incongruenze diventano avvisi, non errori bloccanti.
+export interface PreparedImport {
+  locked: string[];
+  lockedSets: PokemonSet[];
+  warnings: string[];
+}
+
+export async function prepareImport(id: string, text: string): Promise<PreparedImport> {
+  const parsed = importTeam(text);
+  const warnings: string[] = [];
+  const locked: string[] = [];
+  const lockedSets: PokemonSet[] = [];
+  if (parsed.length === 0) {
+    if (text.trim()) warnings.push('Import non riconosciuto: nessun set valido nel testo incollato.');
+    return { locked, lockedSets, warnings };
+  }
+  const season = await loadSeason(id);
+  const candidates = await getCandidates(id, season);
+  const rosterSpecies = new Set(candidates.map((c) => c.species));
+  const legality = await loadLegality(id);
+  const dex = await getChampionsDex();
+  const seenBase = new Set<string>();
+
+  for (const set of parsed) {
+    const s = dex.species.get(set.species);
+    if (!s?.exists) {
+      warnings.push(`Specie non riconosciuta: ${set.species} (ignorata).`);
+      continue;
+    }
+    const base = s.baseSpecies || s.name;
+    if (!rosterSpecies.has(base)) {
+      warnings.push(`${set.species} non è nel roster di ${id}: ignorato come vincolo.`);
+      continue;
+    }
+    if (seenBase.has(base)) {
+      warnings.push(`${base} compare più volte nell'import: tengo solo il primo set.`);
+      continue;
+    }
+    seenBase.add(base);
+    if (legality) warnings.push(...validateSet(set, legality, false));
+    // Una Mega per battaglia: marca il set se la specie è una forma Mega o se lo strumento è la Mega
+    // Stone della specie base, così la generazione non assegna una seconda Mega ai membri liberi.
+    const mega = await getMegaForme(base);
+    set.mega = !!(mega && (/-Mega/i.test(set.species) || (set.item && toID(set.item) === toID(mega.stone))));
+    locked.push(base);
+    lockedSets.push(set);
+  }
+  return { locked, lockedSets, warnings };
+}
+
+export async function generateForSeason(id: string, topN = 5, override: FieldOverride = {}, constraints: GenerateConstraints = {}): Promise<EnrichedTeam[]> {
   const season = await loadSeason(id);
   const metaFile = await loadMeta(id);
   const candidates = await getCandidates(id, season);
@@ -264,9 +323,20 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
   // Pokémon davvero forti nel formato e non da mostri deboli ma versatili. I calc sono memoizzati.
   await computeViability(candidates, meta.topThreats, threatTypes);
 
-  // genera le proposte (core per viability + diversità + core di meta), poi affina con la coverage
-  // offensiva reale e riordina; il topN si applica dopo, così la scelta tiene conto del danno verificato.
-  const proposals = generateTeams(candidates, { topN: 99, meta, threatTypes, cores });
+  // vincoli iniziali: membri bloccati (specie base) e i loro set importati da preservare verbatim.
+  const lockedSetBySpecies = new Map<string, PokemonSet>();
+  if (constraints.locked && constraints.lockedSets) {
+    for (let i = 0; i < constraints.locked.length; i++) {
+      const set = constraints.lockedSets[i];
+      if (set) lockedSetBySpecies.set(constraints.locked[i], set);
+    }
+  }
+  const lockedHasMega = [...lockedSetBySpecies.values()].some((s) => s.mega);
+
+  // genera le proposte (core per viability + diversità + core di meta, oppure completamenti del seed
+  // bloccato se ci sono vincoli), poi affina con la coverage offensiva reale e riordina; il topN si
+  // applica dopo, così la scelta tiene conto del danno verificato.
+  const proposals = generateTeams(candidates, { topN: 99, meta, threatTypes, cores, locked: constraints.locked });
 
   const tagsBySpecies: Record<string, RoleTag[]> = {};
   for (const c of candidates) tagsBySpecies[c.species] = c.tags;
@@ -276,12 +346,16 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
     const roles: Record<string, RoleTag[]> = {};
     for (const m of t.members) roles[m] = tagsBySpecies[m] ?? [];
 
-    // una sola Mega per battaglia: la Mega con la somma statistiche più alta tra i membri.
+    // una sola Mega per battaglia: la Mega con la somma statistiche più alta tra i membri generati.
+    // Se un membro bloccato è già Mega, quella è la Mega del team e non se ne assegna un'altra.
     let megaMember: string | null = null;
-    let bestMegaBst = -1;
-    for (const m of t.members) {
-      const mf = await getMegaForme(m);
-      if (mf && mf.bst > bestMegaBst) { bestMegaBst = mf.bst; megaMember = m; }
+    if (!lockedHasMega) {
+      let bestMegaBst = -1;
+      for (const m of t.members) {
+        if (lockedSetBySpecies.has(m)) continue; // i set bloccati si preservano, non li si megaevolve
+        const mf = await getMegaForme(m);
+        if (mf && mf.bst > bestMegaBst) { bestMegaBst = mf.bst; megaMember = m; }
+      }
     }
 
     const trickRoom = t.archetype.includes('Trick Room');
@@ -292,13 +366,19 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
 
     // Costruisci i set e validane subito la legalità, così lo strumento è legale prima di usarlo nel
     // calcolo. Si tiene anche il ruolo di ciascun membro per le valutazioni successive.
-    const built: { roles: RoleTag[]; set: PokemonSet }[] = [];
+    const built: { roles: RoleTag[]; set: PokemonSet; locked: boolean }[] = [];
     for (const m of t.members) {
       const memberRoles = roles[m] ?? [];
+      // membro bloccato con set importato: si preserva verbatim (niente buildSet, niente fallback item).
+      const locked = lockedSetBySpecies.get(m);
+      if (locked) {
+        built.push({ roles: memberRoles, set: locked, locked: true });
+        continue;
+      }
       const s = await buildSet(m, memberRoles, { mega: m === megaMember, trickRoom, coverageValue });
       if (!s) continue;
       if (legality) notes.push(...validateSet(s, legality));
-      built.push({ roles: memberRoles, set: s });
+      built.push({ roles: memberRoles, set: s, locked: false });
     }
     const sets = built.map((b) => b.set);
 
@@ -331,6 +411,7 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
     // (invece dello split). Si segnala la vulnerabilità peggiore della squadra con una sola nota.
     let worstVuln = { pct: 0, species: '', by: '' };
     for (const b of built) {
+      if (b.locked) continue; // i set importati non si ritoccano: lo spread resta quello dell'utente
       if (!b.roles.some((r) => DEFENSIVE_ROLES.includes(r))) continue;
       const defenderEVs = spToEvs(b.set.statPoints);
       let mw = { pct: 0, by: '', cat: 'Physical' as 'Physical' | 'Special' };
@@ -353,6 +434,7 @@ export async function generateForSeason(id: string, topN = 5, override: FieldOve
       roles,
       offensive,
       sets,
+      showdownText: exportTeam(sets),
       notes,
       rationale: '',
     };

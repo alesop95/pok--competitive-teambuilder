@@ -21,6 +21,7 @@
     "roster": "tsx scripts/fetch_roster.ts",
     "legality": "tsx scripts/fetch_legality.ts",
     "check-mb": "tsx scripts/check_mb_update.ts",
+    "creators": "tsx scripts/check_creators.ts",
     "generate": "tsx scripts/generate.ts"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "@pkmn/data": "^0.10.11",
     "@pkmn/dex": "^0.9.0",
     "@pkmn/mods": "^0.10.11",
+    "@pkmn/sets": "^5.2.0",
     "@smogon/calc": "^0.10.0",
     "fastify": "^5.0.0",
     "js-yaml": "^4.1.0"

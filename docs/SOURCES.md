@@ -35,6 +35,7 @@ ufficiale Smogon. La mod specifica del formato e il motore del danno vengono da 
 | Pokémon Showdown (server) | https://github.com/smogon/pokemon-showdown | MIT | Origine di tutti i pacchetti `@pkmn`/`@smogon` |
 | Mod `champions` | https://github.com/smogon/pokemon-showdown/tree/master/data/mods/champions | MIT | Dati e regole di Pokémon Champions (via `@pkmn/mods`) |
 | Mod `championsregma` | https://github.com/smogon/pokemon-showdown/tree/master/data/mods/championsregma | MIT | Restrizioni Regulation M-A (non M-B; vedi ADR-007) |
+| Mod `championsregmb` | (non esistente) | - | Verificato il 2026-06-30: non esiste alcun mod Reg M-B nell'ecosistema `@pkmn`/Showdown. La legalità M-B resta derivata da serebii più le usage della community; quando uscirà a monte si aggancerà al posto della curatela manuale. |
 | Calcolatore ufficiale Smogon | https://calc.pokemonshowdown.com/ | - | Verifica manuale dei numeri di danno |
 | `@pkmn/dmg` (alternativa non usata) | https://github.com/pkmn/dmg | MIT | Damage calc alternativo, valutato e non adottato |
 | Showdown client (NON usato) | https://github.com/smogon/pokemon-showdown-client | AGPLv3 | Citato solo per chiarezza di licenza: non usiamo la loro UI |
@@ -116,3 +117,15 @@ Strumenti gratuiti consultati come confronto o ispirazione; non fanno parte del 
 | PokéBase - Team Builder Champions | https://pokebase.app/pokemon-champions/team-builder |
 | Game8 - Builder / Damage Calc | https://game8.co/games/Pokemon-Champions/archives/Builder |
 | VGC Multi Calc | https://vgcmulticalc.com/ |
+
+## 10. Content creator per la lettura del meta
+
+Canali YouTube competitivi seguiti per leggere come gira il meta. La maggior parte dei creator
+pubblica le proprie partite; il riferimento principale lato teambuilding è JoeUX9, che con regolarità
+passa i top risultati dei tornei per capire l'evoluzione del metagame. La lista versionata sta in
+`data/references/creators.json` e lo script `npm run creators` (`scripts/check_creators.ts`) ne legge
+i feed RSS pubblici, evidenziando i video su tornei e meta. Sono reference, non dipendenze.
+
+| Canale | Link | Ruolo |
+|---|---|---|
+| JoeUX9 | https://www.youtube.com/@JoeUX9 | Teambuilding e lettura del meta: top risultati dei tornei pubblicati con regolarità, analisi di team e archetipi |

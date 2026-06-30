@@ -205,6 +205,10 @@ export interface GenerateOptions {
   meta?: MetaContext;
   threatTypes?: Map<string, string[]>; // tipi delle specie-minaccia, per la coverage offensiva
   cores?: CoreSpec[]; // core osservati nel meta (season_<id>_meta.yaml)
+  // Vincoli iniziali: nomi specie da includere obbligatoriamente in OGNI proposta (membri bloccati).
+  // Quando presenti, la generazione produce solo completamenti del seed bloccato fino a 6, variati
+  // sugli slot liberi; non si esplorano gli archetipi liberi.
+  locked?: string[];
 }
 
 export function generateTeams(roster: Candidate[], opts: GenerateOptions = {}): TeamProposal[] {
@@ -226,6 +230,38 @@ export function generateTeams(roster: Candidate[], opts: GenerateOptions = {}): 
     proposals.push({ archetype: archetypeName, members: team.map((c) => c.species), score, strengths, weaknesses, notes });
     for (const c of team) usage.set(c.species, (usage.get(c.species) ?? 0) + 1);
   };
+
+  // Modalità vincoli iniziali: ogni proposta parte dai membri bloccati e ne completa gli slot
+  // mancanti fino a 6. La penalità di diversità (usage) fa variare i riempimenti tra una proposta e
+  // l'altra; si deduplicano i completamenti identici. Se i bloccati sono già 6, si ritorna quel team.
+  if (opts.locked && opts.locked.length) {
+    const seed: Candidate[] = [];
+    const seen = new Set<number>();
+    for (const name of opts.locked) {
+      const m = roster.find((c) => c.species === name);
+      if (m && !seen.has(m.dexNum)) {
+        seen.add(m.dexNum);
+        seed.push(m);
+      }
+    }
+    if (seed.length) {
+      const sig = (members: string[]) => [...members].sort().join('|');
+      const made = new Set<string>();
+      const label = seed.length >= 6 ? 'Team importato' : `Completamento da vincoli (${seed.length} bloccati)`;
+      for (let i = 0; i < topN * 2 && proposals.length < topN; i++) {
+        const before = proposals.length;
+        pushTeam(label, seed);
+        const added = proposals[proposals.length - 1];
+        if (proposals.length > before && added) {
+          const s = sig(added.members);
+          if (made.has(s)) proposals.pop(); // duplicato esatto: scarta e riprova
+          else made.add(s);
+        }
+        if (seed.length >= 6) break; // team già completo: nessuna variazione possibile
+      }
+      return proposals.sort((a, b) => b.score - a.score).slice(0, topN);
+    }
+  }
 
   // 1. team seedati dai core osservati nel meta: ancorano le proposte al meta reale
   for (const core of cores) {

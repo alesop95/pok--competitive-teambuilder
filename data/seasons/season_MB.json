@@ -1475,5 +1475,5 @@
       "source": "serebii pokemonchampions/pokemon.shtml"
     }
   ],
-  "available_pokemon_note": "Generato da scripts/fetch_roster.ts il 2026-06-20 da https://www.serebii.net/pokemonchampions/pokemon.shtml. 283 forme (le forme regionali che condividono nome+slug sono unite: da raffinare se serve distinguerle)."
+  "available_pokemon_note": "Generato da scripts/fetch_roster.ts il 2026-06-30 da https://www.serebii.net/pokemonchampions/pokemon.shtml. 283 forme (le forme regionali che condividono nome+slug sono unite: da raffinare se serve distinguerle)."
 }

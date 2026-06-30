@@ -1,0 +1,12 @@
+{
+  "note": "Canali YouTube competitivi seguiti per leggere il meta di Pokémon Champions. Lo script scripts/check_creators.ts (npm run creators) legge il feed RSS pubblico di ogni canale (nessuna API key, niente dipendenze). Per aggiungere un canale basta l'handle: se channel_id manca, lo script lo risolve dalla pagina del canale e suggerisce di salvarlo qui per le esecuzioni successive.",
+  "creators": [
+    {
+      "handle": "JoeUX9",
+      "channel_id": "UCGYfQmjOELGJZBsZBr2Z5nQ",
+      "url": "https://www.youtube.com/@JoeUX9",
+      "note": "Riferimento principale lato teambuilding. Pubblica con regolarita (circa un giorno su due o tre) i top risultati dei tornei per leggere come gira il meta, oltre ad analisi di team e archetipi.",
+      "tags": ["teambuilding", "tournament", "meta"]
+    }
+  ]
+}

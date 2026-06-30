@@ -58,6 +58,24 @@ describe('generateTeams §4.2', () => {
     expect([...scores].sort((x, y) => y - x)).toEqual(scores);
   });
 
+  it('vincoli iniziali: ogni proposta include i membri bloccati e arriva a 6', () => {
+    const teams = generateTeams(roster(), { topN: 3, locked: ['Pivot1', 'SpeedCtrl'] });
+    expect(teams.length).toBeGreaterThanOrEqual(1);
+    for (const t of teams) {
+      expect(t.members).toContain('Pivot1');
+      expect(t.members).toContain('SpeedCtrl');
+      expect(t.members.length).toBe(6);
+      expect(new Set(t.members).size).toBe(t.members.length); // niente duplicati interni
+    }
+  });
+
+  it('vincoli iniziali: un seed già completo (6) viene ritornato così com\'è', () => {
+    const six = ['ScreenSetter', 'Breaker1', 'Sweeper1', 'Pivot1', 'SpeedCtrl', 'Filler1'];
+    const teams = generateTeams(roster(), { topN: 5, locked: six });
+    expect(teams.length).toBe(1);
+    expect([...teams[0].members].sort()).toEqual([...six].sort());
+  });
+
   it('integrazione: costruisce candidati reali e genera proposte', async () => {
     const names = ['Grimmsnarl', 'Incineroar', 'Amoonguss', 'Garganacl', 'Dragonite', 'Gyarados', 'Tyranitar', 'Rillaboom'];
     const candidates = await buildCandidates(names);
