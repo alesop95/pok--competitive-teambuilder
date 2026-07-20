@@ -54,6 +54,27 @@ Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzion
 (rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
 docs), poi `sync-context` per ri-ancorare le schede a HEAD.
 
+## Feature ATTIVA (prossima): modalità Costruisci - builder interattivo (ADR-012, design fatto)
+
+Cosa fa: seconda modalità accanto a Genera. Builder manuale slot-based ispirato a champteams.gg/builder
+ma con quattro capacità distintive (ADR-012): copilota di completamento (suggerimenti dei prossimi pick
+con motivazione basata sul danno reale vs meta) come differenziatore principale, scorecard delle
+minacce con numeri reali, spiegazione narrativa on demand, confronto tra varianti. Design esteso e
+mappatura sul motore in `docs/BUILDER-COSTRUISCI.md`.
+
+Stato: design deciso e documentato, nessun codice ancora. v1 = builder + analisi/scorecard + copilota
+(+ Showdown I/O e salvataggio già esistenti); narrativa e confronto varianti come fast-follow.
+
+Piano di realizzazione (dal design):
+
+- [ ] `src/builderAnalysis.ts`: `analyzeTeam(seasonId, members)` (coverage, buchi difensivi, speed
+      tier, threatScorecard con danni reali) e `suggestNextPicks(seasonId, locked, topK)` (candidati
+      ordinati con reason). Riusa getThreatTypes, bestDamagePercent, getDefenseMap, stackedWeaknesses,
+      computeViability/marginalScore. Con test (fixture + roster reale).
+- [ ] scheda Costruisci in `web/`: 6 slot con picker sul roster, analisi live, pannello copilota,
+      import/export Showdown e salvataggio riusati. Verifica resa con screenshot.
+- [ ] spiegazione narrativa (riuso `rationale.ts`) e, fast-follow, confronto tra varianti.
+
 ## Feature: migrazione client-side (ADR-009/ADR-011), fasi 1-5 (da committare)
 
 Cosa fa: porta l'app da backend Fastify + motore server a SPA statica con motore eseguito nel browser,

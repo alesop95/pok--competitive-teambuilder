@@ -6,6 +6,27 @@
 > documenti `.docx`, con il nome del documento sorgente e l'esito, così la data di allineamento
 > sopravvive a un clone.
 
+## 2026-07-01 - Design modalità Costruisci (builder interattivo, ADR-012) + citato champteams
+
+Commit: (da committare)
+File toccati: nuovo `docs/BUILDER-COSTRUISCI.md`; modificati `docs/SOURCES.md` (citato
+champteams.gg/builder come riferimento della modalità Costruisci), `.claude/memory/decisions.md`
+(ADR-012), `.claude/memory/progress.md`, `.claude/memory/index.md`, `.claude/context/current-work.md`,
+`_notes/RESUME-PROMPT.md` (privato).
+Motivo: sessione di design del builder interattivo, concordata come prossimo grande lavoro dopo la
+migrazione. Deciso con l'utente (ADR-012): modalità Costruisci accanto a Genera, builder manuale
+slot-based ispirato a champteams.gg/builder ma con quattro capacità distintive tutte adottate, in
+primo luogo il copilota di completamento (il motore suggerisce i prossimi pick con motivazione basata
+sul danno reale vs meta), poi scorecard delle minacce con numeri reali, spiegazione narrativa e
+confronto tra varianti. v1 = builder + analisi/scorecard + copilota (+ Showdown I/O e salvataggio già
+esistenti); narrativa e confronto come fast-follow. Design esteso e mappatura sul motore in
+`docs/BUILDER-COSTRUISCI.md`: riusa `locked`, `setBuilder`, `calc`, la logica offensiva/difensiva e di
+vulnerabilità di `engine`, `rationale`, `showdown`, IndexedDB; servono solo due funzioni nuove in
+`src/builderAnalysis.ts` (`analyzeTeam`, `suggestNextPicks`) e una scheda Costruisci in `web/`.
+NB: nessun codice scritto in questa sessione oltre alla documentazione; la sessione si chiude qui.
+Restano da committare due blocchi: la migrazione client-side (voce precedente) e questo design.
+Prossimo passo: implementare `src/builderAnalysis.ts` con i test, poi la scheda Costruisci.
+
 ## 2026-06-30 - Migrazione ADR-009 fasi 3-5: porting SPA a Vite + hosting GitHub Pages
 
 Commit: (da committare)

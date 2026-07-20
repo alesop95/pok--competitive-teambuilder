@@ -192,6 +192,31 @@ non sono necessarie alla versione pubblicata. I dati di stagione diventano asset
 `fetch` (BrowserDataSource), lo storico va su IndexedDB. React non viene aggiunto ora: nessuna nuova
 dipendenza UI. ADR-009 resta valida nell'architettura; questa voce ne fissa solo lo strumento di UI.
 
+## ADR-012 - Modalità Costruisci: builder manuale con copilota (differenziatore)
+
+Data: 2026-07-01
+Stato: accettata (design; realizzazione da avviare)
+Contesto: l'app deve offrire qualcosa che i builder esistenti (in primis champteams.gg/builder, più
+Pikalytics e VGC.tools) non hanno. Quei tool fanno analisi statica della squadra che monti a mano;
+noi abbiamo un motore generativo con viability e damage calc reale contro il meta corrente. Il design
+esteso, con mappatura sul motore e UX, è in `docs/BUILDER-COSTRUISCI.md`.
+Decisione: aggiungere una seconda modalità, Costruisci, un builder manuale slot-based accanto a
+Genera, con quattro capacità distintive tutte adottate. Principale è il copilota di completamento:
+mentre costruisci, il motore propone i migliori pick per gli slot vuoti con una motivazione fondata
+sul danno reale vs il meta. A supporto, una scorecard delle minacce con numeri di danno reali (matrice
+minaccia per minaccia, non coverage di tipo astratta), la spiegazione narrativa della squadra su
+richiesta, e il confronto tra varianti. La v1 consegna builder manuale, analisi con scorecard e
+copilota (più import/export Showdown e salvataggio già esistenti); narrativa e confronto varianti
+come completamento immediato successivo.
+Motivazione: il copilota fonde controllo manuale e intelligenza generativa, cosa che nessun tool fa,
+ed è direttamente il nostro generatore usato in modo incrementale; la scorecard e la spiegazione
+sfruttano punti di forza che già abbiamo (danno reale, ragionamento a parole). Il costo è contenuto
+perché quasi tutto riusa il motore: `locked` (ADR-010), `setBuilder`, `calc`, la logica di risposte
+offensive/difensive e vulnerabilità di `engine`, `rationale`, `showdown`, IndexedDB.
+Conseguenze: due funzioni nuove lato motore in `src/builderAnalysis.ts` (`analyzeTeam`,
+`suggestNextPicks`) più una scheda Costruisci nella SPA `web/`; nessuna nuova dipendenza. L'app resta
+client-side e statica (ADR-009/ADR-011).
+
 ## ADR-006 - Fonti dati di stagione: serebii.net
 
 Data: 2026-06-19

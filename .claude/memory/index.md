@@ -45,9 +45,13 @@ Due modi di eseguire l'app: server locale Fastify su http://127.0.0.1:5187 (`npm
 3000), e la nuova SPA statica client-side in `web/` (`npm run dev:web`, build `npm run build:web`,
 anteprima `npm run preview:web`). La migrazione ADR-009/ADR-011 è completata nel codice (porting UI +
 hosting Pages configurato); manca solo, lato utente, abilitare Pages (Settings > Pages > Source =
-GitHub Actions) e fare push, oltre al commit di questo blocco (schede da ri-ancorare con sync-context
-dopo il commit). Prossimo lavoro concordato: modalità Costruisci, builder manuale interattivo ispirato
-a champteams.gg/builder (coverage, speed tier, damage calc live, share), riusando l'engine. Sviluppi
-opzionali residui: Fase 4 rationale Livello 2 via API Claude (non selezionata); altri canali in
-`creators.json` (James Baek in attesa dell'URL giusto); limiti in `docs/TECHNICAL.md` §7 e
-ri-quantizzazione EV->SP dell'import (ADR-010).
+GitHub Actions) e fare push. Prossimo lavoro: implementare la modalità Costruisci, builder manuale
+interattivo con copilota (ADR-012, design in `docs/BUILDER-COSTRUISCI.md`), a partire da
+`src/builderAnalysis.ts` (`analyzeTeam`, `suggestNextPicks`) con test, poi la scheda Costruisci in
+`web/`. Nessun codice del builder ancora scritto.
+
+DUE BLOCCHI DA COMMITTARE (files su disco, sopravvivono al riavvio; commit manuale dell'utente):
+(1) migrazione client-side, (2) design del builder. Vedi `_notes/RESUME-PROMPT.md` per i comandi.
+Dopo il commit, ri-ancorare le schede con sync-context. Sviluppi opzionali residui: Fase 4 rationale
+Livello 2 (non selezionata); altri canali in `creators.json` (James Baek in attesa dell'URL); limiti
+in `docs/TECHNICAL.md` §7 e ri-quantizzazione EV->SP dell'import (ADR-010).
