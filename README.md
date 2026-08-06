@@ -1,17 +1,12 @@
 # Pokémon Champions Team Builder
 
-Strumento locale (Windows 11 / Linux) che, dato il roster di Pokémon disponibili in una stagione di
-Pokémon Champions, genera proposte di team competitivi con ruoli, sinergie, copertura difensiva e
-offensiva, tattica e counter attesi. Ragiona per tag deterministici e coverage, non per simulazione
-di combattimento. È pensato per essere aggiornato stagione per stagione modificando solo i file
-dati, senza toccare il codice.
+Strumento locale (Windows 11 / Linux) che, dato il roster di Pokémon disponibili in una stagione di Pokémon Champions, genera proposte di team competitivi con ruoli, sinergie, copertura difensiva e offensiva, tattica e counter attesi. Ragiona per tag deterministici e coverage, non per simulazione di combattimento. È pensato per essere aggiornato stagione per stagione modificando solo i file dati, senza toccare il codice.
 
 ---
 
 ## Stack
 
-Backend Node.js 20+ LTS in TypeScript, web server [Fastify](https://fastify.dev/). I dati di gioco
-e i calcoli provengono dall'ecosistema open source MIT costruito attorno a Pokémon Showdown:
+Backend Node.js 20+ LTS in TypeScript, web server [Fastify](https://fastify.dev/). I dati di gioco e i calcoli provengono dall'ecosistema open source MIT costruito attorno a Pokémon Showdown:
 
 | Componente | Pacchetto | Licenza |
 |---|---|---|
@@ -20,9 +15,7 @@ e i calcoli provengono dall'ecosistema open source MIT costruito attorno a Poké
 | Parsing meta di stagione | [`js-yaml`](https://www.npmjs.com/package/js-yaml) | MIT |
 | Test runner | [Vitest](https://vitest.dev/) | MIT |
 
-Le regole specifiche del formato derivano dalla mod community
-[`champions`](https://github.com/smogon/pokemon-showdown/tree/master/data/mods/champions) del
-repository MIT di [Pokémon Showdown](https://github.com/smogon/pokemon-showdown).
+Le regole specifiche del formato derivano dalla mod community [`champions`](https://github.com/smogon/pokemon-showdown/tree/master/data/mods/champions) del repository MIT di [Pokémon Showdown](https://github.com/smogon/pokemon-showdown).
 
 ---
 
@@ -41,9 +34,7 @@ generazione candidati per archetipo  →  scoring sinergia + coverage vs meta th
 N proposte di team, ciascuna con tattica, debolezze e counter (rationale testuale)
 ```
 
-Il rationale ha due livelli: il Livello 1 è offline e deterministico (sempre disponibile, zero
-costi); il Livello 2 è un enhancement opzionale che usa l'API Claude per prosa più naturale, attivo
-solo se è presente `ANTHROPIC_API_KEY`.
+Il rationale ha due livelli: il Livello 1 è offline e deterministico (sempre disponibile, zero costi); il Livello 2 è un enhancement opzionale che usa l'API Claude per prosa più naturale, attivo solo se è presente `ANTHROPIC_API_KEY`.
 
 ---
 
@@ -56,8 +47,7 @@ npm run generate # in alternativa: genera i team da CLI e scrive un report in da
 npm test         # esegue la suite Vitest
 ```
 
-L'avvio è identico su Windows e Linux. La porta di default è 5187; si cambia con la variabile
-d'ambiente `PORT`.
+L'avvio è identico su Windows e Linux. La porta di default è 5187; si cambia con la variabile d'ambiente `PORT`.
 
 ---
 
@@ -78,15 +68,7 @@ d'ambiente `PORT`.
 
 ## Documentazione
 
-La documentazione tecnica completa (stack, tool open source, e la matematica del motore: tagging,
-viability, scoring, damage calc con la formula e la sua provenienza) è in
-[docs/TECHNICAL.md](./docs/TECHNICAL.md). La spiegazione discorsiva della pipeline stadio per stadio
-è in [docs/WALKTHROUGH.md](./docs/WALKTHROUGH.md). Dove e come l'app viene pubblicata (deploy, bundle,
-ruolo di Render) è spiegato in [docs/DEPLOY.md](./docs/DEPLOY.md). L'inventario di tutte le fonti
-usate dal progetto è in [docs/SOURCES.md](./docs/SOURCES.md). La migrazione verso l'app che gira
-interamente nel browser, con la spiegazione di cos'è una SPA statica, perché non cambia il deploy e
-come funziona il bundle client-side, è in
-[docs/MIGRAZIONE-CLIENT-SIDE.md](./docs/MIGRAZIONE-CLIENT-SIDE.md).
+La documentazione tecnica completa (stack, tool open source, e la matematica del motore: tagging, viability, scoring, damage calc con la formula e la sua provenienza) è in [docs/TECHNICAL.md](./docs/TECHNICAL.md). La spiegazione discorsiva della pipeline stadio per stadio è in [docs/WALKTHROUGH.md](./docs/WALKTHROUGH.md). Dove e come l'app viene pubblicata (deploy, bundle, ruolo di Render) è spiegato in [docs/DEPLOY.md](./docs/DEPLOY.md). L'inventario di tutte le fonti usate dal progetto è in [docs/SOURCES.md](./docs/SOURCES.md). La migrazione verso l'app che gira interamente nel browser, con la spiegazione di cos'è una SPA statica, perché non cambia il deploy e come funziona il bundle client-side, è in [docs/MIGRAZIONE-CLIENT-SIDE.md](./docs/MIGRAZIONE-CLIENT-SIDE.md).
 
 ## Riferimenti
 

@@ -36,15 +36,9 @@ Sono invece euristiche di progetto, cioè scelte di design nostre con costanti t
 
 Il motore è una pipeline deterministica in cui ogni stadio ha una responsabilità unica. Il punto di accesso ai dati di gioco è `src/pkmnData.ts:getChampionsDex`, che carica `@pkmn/dex` applicando la mod `champions` tramite `Dex.mod('champions', …)`. Da qui derivano le query su specie, movepool e mosse, la mappa difensiva di type-effectiveness (`src/pkmnData.ts:getDefenseMap`) e l'arricchimento dei candidati (`src/pkmnData.ts:buildCandidates`).
 
-L'orchestrazione vive in `src/engine.ts:generateForSeason`, che legge i file di stagione, calcola la *viability* di ogni candidato, invoca la generazione, esegue la verifica offensiva col damage calc e costruisce i set completi e il testo. Il tagging dei ruoli è in `src/roleTagging.ts:tagRoles`, la generazione e lo scoring in `src/teamGenerator.ts:generateTeams`, il damage calc in
-`src/calc.ts:bestDamagePercent`, la costruzione dei set in `src/setBuilder.ts:buildSet`, il testo in
-`src/rationale.ts:buildRationale`. Lo stesso motore alimenta sia la CLI (`scripts/generate.ts`) sia
-il server (`src/server.ts`).
+L'orchestrazione vive in `src/engine.ts:generateForSeason`, che legge i file di stagione, calcola la *viability* di ogni candidato, invoca la generazione, esegue la verifica offensiva col damage calc e costruisce i set completi e il testo. Il tagging dei ruoli è in `src/roleTagging.ts:tagRoles`, la generazione e lo scoring in `src/teamGenerator.ts:generateTeams`, il damage calc in `src/calc.ts:bestDamagePercent`, la costruzione dei set in `src/setBuilder.ts:buildSet`, il testo in `src/rationale.ts:buildRationale`. Lo stesso motore alimenta sia la CLI (`scripts/generate.ts`) sia il server (`src/server.ts`).
 
-La pipeline è rappresentata dal diagramma sotto. Il sorgente Mermaid canonico è
-`.claude/context/diagrams/pipeline.mmd` e la versione resa è
-[`.claude/context/diagrams/pipeline.svg`](../.claude/context/diagrams/pipeline.svg), generata con
-`tools/render-diagrams.mjs`. Il blocco Mermaid seguente è reso nativamente da GitHub.
+La pipeline è rappresentata dal diagramma sotto. Il sorgente Mermaid canonico è `.claude/context/diagrams/pipeline.mmd` e la versione resa è [`.claude/context/diagrams/pipeline.svg`](../.claude/context/diagrams/pipeline.svg), generata con `tools/render-diagrams.mjs`. Il blocco Mermaid seguente è reso nativamente da GitHub.
 
 ```mermaid
 flowchart TD
@@ -99,13 +93,11 @@ Un *debole impilato* è un tipo verso cui almeno tre membri della squadra hanno 
 
 ### 4.2 Tagging dei ruoli
 
-A ogni Pokémon si assegnano tag di ruolo con regole deterministiche su statistiche base, abilità e movepool (la tabella §4.1 dell'handoff, implementata in `src/roleTagging.ts:tagRoles`). Per esempio`screens_setter` richiede l'abilità Prankster più Reflect o Light Screen nel movepool;`trick_room_setter` richiede velocità base non superiore a 60 più Trick Room; `wallbreaker` richiede Attacco o Attacco Speciale base almeno 110 in assenza di recupero affidabile. Il controllo della
-velocità "in avanti" (`speed_control`) considera Tailwind, Icy Wind ed Electroweb ed è tenuto distinto dal Trick Room, che è controllo inverso, così un setter di Trick Room non viene scambiato per un membro adatto a un team Tailwind.
+A ogni Pokémon si assegnano tag di ruolo con regole deterministiche su statistiche base, abilità e movepool (la tabella §4.1 dell'handoff, implementata in `src/roleTagging.ts:tagRoles`). Per esempio`screens_setter` richiede l'abilità Prankster più Reflect o Light Screen nel movepool;`trick_room_setter` richiede velocità base non superiore a 60 più Trick Room; `wallbreaker` richiede Attacco o Attacco Speciale base almeno 110 in assenza di recupero affidabile. Il controllo della velocità "in avanti" (`speed_control`) considera Tailwind, Icy Wind ed Electroweb ed è tenuto distinto dal Trick Room, che è controllo inverso, così un setter di Trick Room non viene scambiato per un membro adatto a un team Tailwind.
 
 ### 4.3 Damage calc reale
 
-Da dove viene il numero del danno. Il danno non è stimato dal progetto: è calcolato da `@smogon/calc`, il motore del calcolatore ufficiale Smogon (`calc.pokemonshowdown.com`), su una `Generation` di`@pkmn/data` costruita dalla dex moddata `champions` (`src/calc.ts:getChampionsGen`), con un predicatodi esistenza permissivo per non escludere specie marcate non standard dalla mod. Quel motore
-implementa la formula canonica del danno delle generazioni Pokémon, la stessa documentata su Bulbapedia (vedi `docs/SOURCES.md` §3). Nella forma di Gen 9 la formula è, in sintesi:
+Da dove viene il numero del danno. Il danno non è stimato dal progetto: è calcolato da `@smogon/calc`, il motore del calcolatore ufficiale Smogon (`calc.pokemonshowdown.com`), su una `Generation` di`@pkmn/data` costruita dalla dex moddata `champions` (`src/calc.ts:getChampionsGen`), con un predicatodi esistenza permissivo per non escludere specie marcate non standard dalla mod. Quel motore implementa la formula canonica del danno delle generazioni Pokémon, la stessa documentata su Bulbapedia (vedi `docs/SOURCES.md` §3). Nella forma di Gen 9 la formula è, in sintesi:
 
 ```
 danno = ( ( (2·Livello/5 + 2) · Potenza · A/D ) / 50 + 2 ) · M
@@ -115,8 +107,7 @@ danno = ( ( (2·Livello/5 + 2) · Potenza · A/D ) / 50 + 2 ) · M
           e il roll casuale 0.85-1.00
 ```
 
-Il progetto consuma questa formula tramite il pacchetto e non la reimplementa; ciò che è "nostro" è solo come impostiamo i due Pokémon e quale mossa scegliamo. Entrambi i contendenti ricevono la loro abilità competitiva (`src/setBuilder.ts:pickCompetitiveAbility`), così il calcolo rispetta immunità e
-modificatori reali: una mossa di Terra contro un Pokémon Levitate dà zero, Thick Fat dimezza Fuoco e Ghiaccio, Adaptability e Huge Power alzano l'offesa.
+Il progetto consuma questa formula tramite il pacchetto e non la reimplementa; ciò che è "nostro" è solo come impostiamo i due Pokémon e quale mossa scegliamo. Entrambi i contendenti ricevono la loro abilità competitiva (`src/setBuilder.ts:pickCompetitiveAbility`), così il calcolo rispetta immunità e modificatori reali: una mossa di Terra contro un Pokémon Levitate dà zero, Thick Fat dimezza Fuoco e Ghiaccio, Adaptability e Huge Power alzano l'offesa.
 
 Il meteo e il terreno sono offerti come opzioni (`DamageOptions.weather`/`terrain` in `src/calc.ts`): la baseline resta neutra, ma quando un team ha un weather/terrain setter tra i membri (`src/pkmnData.ts:teamWeather`/`teamTerrain`) la sua coverage offensiva viene calcolata sotto quel campo, così una squadra pioggia vede le STAB Acqua potenziate (verificato: Basculegion Wave Crash vs Garganacl da circa 104% a 156% sotto pioggia). Punto chiave: il PUNTEGGIO e l'ordinamento usano sempre il campo che il team imposta da solo (auto); l'override manuale dalla UI è solo una lente di visualizzazione del danno mostrato e non riordina i team (un team senza setter non sale in cima sotto un meteo forzato che non potrebbe garantire). Anche gli strumenti entrano nel calcolo: l'attaccante usa lo strumento reale del proprio set (Life Orb potenzia del 30 per cento) nella coverage, e il difensore usa il proprio nel controllo di vulnerabilità. La *viability* per candidato resta neutra, perché team-agnostica. Resta fuori dalla baseline il modificatore 0.75 dei colpi multi-bersaglio, perché la coverage è a bersaglio singolo.
 
@@ -193,9 +184,7 @@ Da qui la regola di vulnerabilità strutturale (`src/engine.ts`): per ogni membr
 
 ### 4.9 Legalità di formato
 
-Gli strumenti e le mosse legali nel formato sono estratti da serebii.net in `data/seasons/legal_<id>.json`
-(`scripts/fetch_legality.ts`). Dopo la costruzione, ogni set è validato (`src/engine.ts:validateSet`):
-uno strumento non disponibile nel formato viene sostituito con un fallback legale e segnalato, e le mosse fuori lista sono evidenziate. Questo controllo ha già corretto un errore reale, l'uso di Safety Goggles, non disponibile in Regulation M-B.
+Gli strumenti e le mosse legali nel formato sono estratti da serebii.net in `data/seasons/legal_<id>.json` (`scripts/fetch_legality.ts`). Dopo la costruzione, ogni set è validato (`src/engine.ts:validateSet`): uno strumento non disponibile nel formato viene sostituito con un fallback legale e segnalato, e le mosse fuori lista sono evidenziate. Questo controllo ha già corretto un errore reale, l'uso di Safety Goggles, non disponibile in Regulation M-B.
 
 ## 5. Modello dati e aggiornamento stagionale
 
@@ -205,8 +194,7 @@ A ogni nuova stagione il lavoro si riduce a rieseguire gli scraper e aggiornare 
 
 ## 6. Esecuzione e deploy
 
-In locale si esegue `npm install` seguito da `npm run dev`, che avvia il server su
-`http://127.0.0.1:5187` (porta e host sovrascrivibili con `PORT` e `HOST`). La CLI offline è`npm run generate`. Il deploy web gratuito è descritto da `render.yaml` per Render (vedi `.claude/context/deployment.md`).
+In locale si esegue `npm install` seguito da `npm run dev`, che avvia il server su `http://127.0.0.1:5187` (porta e host sovrascrivibili con `PORT` e `HOST`). La CLI offline è`npm run generate`. Il deploy web gratuito è descritto da `render.yaml` per Render (vedi `.claude/context/deployment.md`).
 
 ## 7. Limiti noti e direzioni
 

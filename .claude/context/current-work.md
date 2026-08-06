@@ -17,78 +17,43 @@ source-doc: pokemon-champions-team-builder-spec.md
 
 # Lavoro in corso
 
-> La fonte di verità su cosa è fatto resta `memory/index.md` e il work-log, non le spunte di
-> questo file.
+> La fonte di verità su cosa è fatto resta `memory/index.md` e il work-log, non le spunte di questo file.
 
 ## Stato corrente (accumulo feature, rifinitura alla fine)
 
-Fatto in questa fase di accumulo: 3 migliorie set (Mega, abilità competitive incl. hidden, filtro
-mosse impratiche); selezione guidata da viability competitiva via damage calc (ADR-008, risolve il
-bias "stessi Pokémon in ogni team"); uso dei `common_cores` del meta.
+Fatto in questa fase di accumulo: 3 migliorie set (Mega, abilità competitive incl. hidden, filtro mosse impratiche); selezione guidata da viability competitiva via damage calc (ADR-008, risolve il bias "stessi Pokémon in ogni team"); uso dei `common_cores` del meta.
 
-Feature scelte: tutte fatte (common_cores, salvataggio/storico UI, legalità M-B cross-check serebii
-con `data/seasons/legal_MB.json` + validatore). Da valutare poi: Fase 4 (rationale Livello 2 via API
-Claude), Fase 5 (packaging/deploy).
+Feature scelte: tutte fatte (common_cores, salvataggio/storico UI, legalità M-B cross-check serebii con `data/seasons/legal_MB.json` + validatore). Da valutare poi: Fase 4 (rationale Livello 2 via API Claude), Fase 5 (packaging/deploy).
 
-Rifinitura finale: FATTA. Viability ora include la stazza (no Pyroar dominante); speed_control
-distinto da Trick Room nel tagging; natura/Stat Points dei set dal contesto del team (Brave/Quiet
-solo nei team Trick Room).
+Rifinitura finale: FATTA. Viability ora include la stazza (no Pyroar dominante); speed_control distinto da Trick Room nel tagging; natura/Stat Points dei set dal contesto del team (Brave/Quiet solo nei team Trick Room).
 
-Fase 5 (prep deploy): FATTA. `npm start` + `render.yaml` per deploy web Render gratuito. Tauri
-desktop resta alternativa futura non implementata.
+Fase 5 (prep deploy): FATTA. `npm start` + `render.yaml` per deploy web Render gratuito. Tauri desktop resta alternativa futura non implementata.
 
-Documentazione tecnica: FATTA in `docs/TECHNICAL.md` (stack, tool open source con licenze, matematica
-del motore con formule e riferimenti percorso:simbolo); linkata dal README.
+Documentazione tecnica: FATTA in `docs/TECHNICAL.md` (stack, tool open source con licenze, matematica del motore con formule e riferimenti percorso:simbolo); linkata dal README.
 
-Meta da usage reali: FATTO. `season_MB_meta.yaml` rigenerato dalle usage stats reali (Pikalytics
-Reg M-B / ChampionsMeta, ~22 giu 2026): 17 top_threats per ranking di usage e common_cores reali
-(Incineroar+Sinistcha, rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler). La
-generazione è ora ancorata ai core realmente giocati.
+Meta da usage reali: FATTO. `season_MB_meta.yaml` rigenerato dalle usage stats reali (Pikalytics Reg M-B / ChampionsMeta, ~22 giu 2026): 17 top_threats per ranking di usage e common_cores reali (Incineroar+Sinistcha, rain Archaludon+Pelipper+Swampert, screens Grimmsnarl+Sneasler). La generazione è ora ancorata ai core realmente giocati.
 
-Limiti noti: affrontati. Damage calc ora ability-aware (immunità/riduttori/boost); Mega Z-A confermata
-limitazione dei dati `@pkmn/mods` (non un bug); item/meteo/multi-bersaglio sono baseline neutra
-documentata. Documentazione esaustiva: `docs/TECHNICAL.md` ampliato (formula del danno + provenienza,
-fonte-di-verità vs euristiche) e `docs/SOURCES.md` (tutte le fonti). 
+Limiti noti: affrontati. Damage calc ora ability-aware (immunità/riduttori/boost); Mega Z-A confermata limitazione dei dati `@pkmn/mods` (non un bug); item/meteo/multi-bersaglio sono baseline neutra documentata. Documentazione esaustiva: `docs/TECHNICAL.md` ampliato (formula del danno + provenienza, fonte-di-verità vs euristiche) e `docs/SOURCES.md` (tutte le fonti).
 
-Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzionale la Fase 4
-(rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità +
-docs), poi `sync-context` per ri-ancorare le schede a HEAD.
+Stato: l'app è completa e documentata rispetto a quanto richiesto. Resta opzionale la Fase 4 (rationale Livello 2 via API Claude, non selezionata). Processo: commit del blocco (calc abilità + docs), poi `sync-context` per ri-ancorare le schede a HEAD.
 
 ## Feature ATTIVA (prossima): modalità Costruisci - builder interattivo (ADR-012, design fatto)
 
-Cosa fa: seconda modalità accanto a Genera. Builder manuale slot-based ispirato a champteams.gg/builder
-ma con quattro capacità distintive (ADR-012): copilota di completamento (suggerimenti dei prossimi pick
-con motivazione basata sul danno reale vs meta) come differenziatore principale, scorecard delle
-minacce con numeri reali, spiegazione narrativa on demand, confronto tra varianti. Design esteso e
-mappatura sul motore in `docs/BUILDER-COSTRUISCI.md`.
+Cosa fa: seconda modalità accanto a Genera. Builder manuale slot-based ispirato a champteams.gg/builder ma con quattro capacità distintive (ADR-012): copilota di completamento (suggerimenti dei prossimi pick con motivazione basata sul danno reale vs meta) come differenziatore principale, scorecard delle minacce con numeri reali, spiegazione narrativa on demand, confronto tra varianti. Design esteso e mappatura sul motore in `docs/BUILDER-COSTRUISCI.md`.
 
-Stato: design deciso e documentato, nessun codice ancora. v1 = builder + analisi/scorecard + copilota
-(+ Showdown I/O e salvataggio già esistenti); narrativa e confronto varianti come fast-follow.
+Stato: design deciso e documentato, nessun codice ancora. v1 = builder + analisi/scorecard + copilota (+ Showdown I/O e salvataggio già esistenti); narrativa e confronto varianti come fast-follow.
 
 Piano di realizzazione (dal design):
 
-- [ ] `src/builderAnalysis.ts`: `analyzeTeam(seasonId, members)` (coverage, buchi difensivi, speed
-      tier, threatScorecard con danni reali) e `suggestNextPicks(seasonId, locked, topK)` (candidati
-      ordinati con reason). Riusa getThreatTypes, bestDamagePercent, getDefenseMap, stackedWeaknesses,
-      computeViability/marginalScore. Con test (fixture + roster reale).
-- [ ] scheda Costruisci in `web/`: 6 slot con picker sul roster, analisi live, pannello copilota,
-      import/export Showdown e salvataggio riusati. Verifica resa con screenshot.
+- [ ] `src/builderAnalysis.ts`: `analyzeTeam(seasonId, members)` (coverage, buchi difensivi, speed tier, threatScorecard con danni reali) e `suggestNextPicks(seasonId, locked, topK)` (candidati ordinati con reason). Riusa getThreatTypes, bestDamagePercent, getDefenseMap, stackedWeaknesses, computeViability/marginalScore. Con test (fixture + roster reale).
+- [ ] scheda Costruisci in `web/`: 6 slot con picker sul roster, analisi live, pannello copilota, import/export Showdown e salvataggio riusati. Verifica resa con screenshot.
 - [ ] spiegazione narrativa (riuso `rationale.ts`) e, fast-follow, confronto tra varianti.
 
 ## Feature: migrazione client-side (ADR-009/ADR-011), fasi 1-5 (da committare)
 
-Cosa fa: porta l'app da backend Fastify + motore server a SPA statica con motore eseguito nel browser,
-ospitabile gratis su GitHub Pages senza backend. Dati di stagione come asset statici via fetch, storico
-e override del meta su IndexedDB. La spiegazione formativa completa (cos'è una SPA statica, perché non
-cambia deploy/costi, come funziona il bundle e la cache) è in `docs/MIGRAZIONE-CLIENT-SIDE.md`.
+Cosa fa: porta l'app da backend Fastify + motore server a SPA statica con motore eseguito nel browser, ospitabile gratis su GitHub Pages senza backend. Dati di stagione come asset statici via fetch, storico e override del meta su IndexedDB. La spiegazione formativa completa (cos'è una SPA statica, perché non cambia deploy/costi, come funziona il bundle e la cache) è in `docs/MIGRAZIONE-CLIENT-SIDE.md`.
 
-Stato per fase: (1) DataSource astratto - fatto (`src/dataSource.ts`, `nodeDataSource.ts`,
-`browserDataSource.ts`). (2) Spike di bundling - fatto: build per browser OK, ~1.9 MB gzip (~12 MB
-grezzi, cache una tantum), 3 team in ~650 ms client-side. (3-4) Porting UI - fatto: `web/index.html`
-(markup riusato, script in modulo) e `web/main.ts` (chiamate dirette all'engine al posto dell'API REST);
-storico/meta su IndexedDB; riscontro browser confermato dall'utente. (5) Hosting - configurato:
-`vite.config.ts` con `base` per Pages, fetch dati via `import.meta.env.BASE_URL`, workflow
-`.github/workflows/deploy.yml`. Scelta UI: porting vanilla, React rinviato (ADR-011).
+Stato per fase: (1) DataSource astratto - fatto (`src/dataSource.ts`, `nodeDataSource.ts`, `browserDataSource.ts`). (2) Spike di bundling - fatto: build per browser OK, ~1.9 MB gzip (~12 MB grezzi, cache una tantum), 3 team in ~650 ms client-side. (3-4) Porting UI - fatto: `web/index.html` (markup riusato, script in modulo) e `web/main.ts` (chiamate dirette all'engine al posto dell'API REST); storico/meta su IndexedDB; riscontro browser confermato dall'utente. (5) Hosting - configurato: `vite.config.ts` con `base` per Pages, fetch dati via `import.meta.env.BASE_URL`, workflow `.github/workflows/deploy.yml`. Scelta UI: porting vanilla, React rinviato (ADR-011).
 
 Definition of done:
 
@@ -100,25 +65,13 @@ Definition of done:
 - [x] 40/40 test verdi, typecheck pulito, riscontro browser dell'utente
 - [ ] passo manuale utente: Settings > Pages > Source = GitHub Actions, poi push su main
 
-Prossimo (concordato): modalità Costruisci, builder manuale interattivo ispirato a champteams.gg/builder
-(coverage, speed tier, damage calc live, share), riusando l'engine esistente.
+Prossimo (concordato): modalità Costruisci, builder manuale interattivo ispirato a champteams.gg/builder (coverage, speed tier, damage calc live, share), riusando l'engine esistente.
 
 ## Feature: vincoli iniziali + I/O Showdown, watcher creator (commit 61690d5)
 
-Cosa fa: tre interventi (ADR-010). (1) Generazione con vincoli iniziali: si forniscono dei membri
-bloccati e l'app completa la squadra fino a 6 variando gli slot liberi. (2) Import/export in formato
-testuale Pokémon Showdown (lo stesso di Smogon e calc.pokemonshowdown.com), così si parte da un team
-pre-esistente incollandolo e si esporta il risultato. (3) Watcher dei content creator competitivi
-(`npm run creators`) e JoeUX9 come reference per leggere il meta dai top risultati dei tornei.
+Cosa fa: tre interventi (ADR-010). (1) Generazione con vincoli iniziali: si forniscono dei membri bloccati e l'app completa la squadra fino a 6 variando gli slot liberi. (2) Import/export in formato testuale Pokémon Showdown (lo stesso di Smogon e calc.pokemonshowdown.com), così si parte da un team pre-esistente incollandolo e si esporta il risultato. (3) Watcher dei content creator competitivi (`npm run creators`) e JoeUX9 come reference per leggere il meta dai top risultati dei tornei.
 
-Implementazione: `src/showdown.ts` (su `@pkmn/sets`) per export/import; mappatura Stat Points<->EV in
-`setBuilder.ts` (`spToEvs`/`evsToSp`, 32 SP ~ 252 EV, punto unico condiviso col damage calc);
-`teamGenerator.GenerateOptions.locked` per il seed bloccato; `engine.prepareImport` (risolve la specie
-base, valida la legalità senza mutare) e `generateForSeason(..., constraints)` che preserva i set
-bloccati verbatim ed esclude una seconda Mega; `server.ts` accetta `importText` nel body di /generate;
-UI con textarea vincoli, badge bloccati/avvisi ed export Showdown. Watcher: `scripts/check_creators.ts`
-legge i feed RSS Atom (regex, niente dipendenze), `data/references/creators.json` la lista canali,
-`creators_seen.json` lo stato (gitignored).
+Implementazione: `src/showdown.ts` (su `@pkmn/sets`) per export/import; mappatura Stat Points<->EV in `setBuilder.ts` (`spToEvs`/`evsToSp`, 32 SP ~ 252 EV, punto unico condiviso col damage calc); `teamGenerator.GenerateOptions.locked` per il seed bloccato; `engine.prepareImport` (risolve la specie base, valida la legalità senza mutare) e `generateForSeason(..., constraints)` che preserva i set bloccati verbatim ed esclude una seconda Mega; `server.ts` accetta `importText` nel body di /generate; UI con textarea vincoli, badge bloccati/avvisi ed export Showdown. Watcher: `scripts/check_creators.ts` legge i feed RSS Atom (regex, niente dipendenze), `data/references/creators.json` la lista canali, `creators_seen.json` lo stato (gitignored).
 
 Definition of done:
 
@@ -130,23 +83,16 @@ Definition of done:
 - [x] allineamento M-B verificato: nessun mod `championsregmb` a monte; dati serebii correnti, finding documentato
 - [x] 40/40 test verdi, typecheck pulito; generazione con import provata end-to-end
 
-Limite noto: la preservazione verbatim dei set importati passa per gli Stat Points, quindi gli EV si
-ri-quantizzano a multipli di 8 (i 252 principali restano esatti, un residuo di 4 EV diventa 8). È
-inerente al modello SP di Champions, coerente con ADR-010.
+Limite noto: la preservazione verbatim dei set importati passa per gli Stat Points, quindi gli EV si ri-quantizzano a multipli di 8 (i 252 principali restano esatti, un residuo di 4 EV diventa 8). È inerente al modello SP di Champions, coerente con ADR-010.
 
 ## Feature: Fase 1 - fondamenta del motore (data layer + tagging ruoli)
 
-Cosa fa: porta i dati di gioco reali nel codice (mod `champions` via `@pkmn/mods` + `@pkmn/dex`),
-costruisce il roster M-B e implementa il tagging dei ruoli deterministico (§4.1), primo mattone
-della generazione team (§4.2).
+Cosa fa: porta i dati di gioco reali nel codice (mod `champions` via `@pkmn/mods` + `@pkmn/dex`), costruisce il roster M-B e implementa il tagging dei ruoli deterministico (§4.1), primo mattone della generazione team (§4.2).
 
 Decisioni di contesto (vedi ADR-005, ADR-006, ADR-007):
 
-- Dati di gioco (stats, abilità, movepool, mosse, strumenti, regole) dalla mod `champions` via
-  `@pkmn/mods` + `@pkmn/dex`. Verificato: la mod è su npm (`@pkmn/mods@0.10.11`).
-- Regolamento target: Reg M-B, in vigore dalle 02:00 UTC di mer 17 giugno 2026 alle 01:59 UTC di
-  mer 2 settembre 2026. La mod ha solo `championsregma` (verosimilmente Reg M-A), quindi la lista
-  di disponibilità e la legalità M-B le deriviamo da serebii.net + conoscenza utente.
+- Dati di gioco (stats, abilità, movepool, mosse, strumenti, regole) dalla mod `champions` via `@pkmn/mods` + `@pkmn/dex`. Verificato: la mod è su npm (`@pkmn/mods@0.10.11`).
+- Regolamento target: Reg M-B, in vigore dalle 02:00 UTC di mer 17 giugno 2026 alle 01:59 UTC di mer 2 settembre 2026. La mod ha solo `championsregma` (verosimilmente Reg M-A), quindi la lista di disponibilità e la legalità M-B le deriviamo da serebii.net + conoscenza utente.
 - serebii.net resta il cross-check umano e la fonte della lista M-B (link in `data/seasons/README.md`).
 
 File da creare/modificare:
@@ -172,26 +118,17 @@ Definition of done:
 - [x] `rationale.ts` Livello 1 (§4.3) e CLI `scripts/generate.ts` con output Markdown + JSON
 - [x] Fase 1 completa: pipeline offline tag→genera→rationale→file gira in ~2s sul roster M-B
 
-Limiti noti (rinviati a Fase 3, non bloccanti): con meta non curato i punteggi sono quasi tutti
-pari (manca la coverage offensiva reale); il riempimento è greedy con tiebreak sul numero di ruoli;
-lo scoring non usa ancora il damage calc reale (`@smogon/calc`). La qualità sale quando si cura
-`season_MB_meta.yaml` (top_threats) e in Fase 3.
+Limiti noti (rinviati a Fase 3, non bloccanti): con meta non curato i punteggi sono quasi tutti pari (manca la coverage offensiva reale); il riempimento è greedy con tiebreak sul numero di ruoli; lo scoring non usa ancora il damage calc reale (`@smogon/calc`). La qualità sale quando si cura `season_MB_meta.yaml` (top_threats) e in Fase 3.
 
 Domande aperte:
 
-Se/quando la community pubblicherà una mod per Reg M-B (oggi c'è solo `championsregma` ≈ M-A), va
-agganciata al posto della curatela manuale della legalità. Da monitorare. Ricontrollato il 2026-06-30
-(ADR-010): ancora nessun `championsregmb` né le Mega Z-A a monte; `npm run check-mb` resta il
-meccanismo di verifica e i dati serebii risultano correnti.
+Se/quando la community pubblicherà una mod per Reg M-B (oggi c'è solo `championsregma` ≈ M-A), va agganciata al posto della curatela manuale della legalità. Da monitorare. Ricontrollato il 2026-06-30 (ADR-010): ancora nessun `championsregmb` né le Mega Z-A a monte; `npm run check-mb` resta il meccanismo di verifica e i dati serebii risultano correnti.
 
-Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il
-pacchetto va tenuto intero. Non bloccante.
+Peso di `@pkmn/mods` (~173 MB unpacked): valutare se è importabile solo la mod `champions` o se il pacchetto va tenuto intero. Non bloccante.
 
 ## Feature: Fase 3 - damage calc reale e raffinamento (handoff §7)
 
-Cosa fa: porta numeri di danno verificati nel motore e affina lo scoring. `src/calc.ts` usa
-`@smogon/calc` su una `Generation` `@pkmn/data` costruita sulla mod champions; l'engine calcola la
-coverage offensiva reale contro le minacce meta e la espone in rationale e UI.
+Cosa fa: porta numeri di danno verificati nel motore e affina lo scoring. `src/calc.ts` usa `@smogon/calc` su una `Generation` `@pkmn/data` costruita sulla mod champions; l'engine calcola la coverage offensiva reale contro le minacce meta e la espone in rationale e UI.
 
 Definition of done:
 
@@ -200,18 +137,14 @@ Definition of done:
 - [x] engine: post-pass coverage offensiva (≥50% = risposta solida), score aggiornato e riordino
 - [x] rationale e card UI mostrano i numeri di danno reali; coverage 10/10 minacce M-B
 - [x] archetipo Weather Offense + bonus di sinergia; 21/21 test verdi, typecheck pulito
-- [x] set completi per ogni membro: item, abilità, natura, Stat Points (66/max32, §0.5), 4 mosse
-      (`src/setBuilder.ts`), esposti in rationale, API e UI + export testuale
+- [x] set completi per ogni membro: item, abilità, natura, Stat Points (66/max32, §0.5), 4 mosse (`src/setBuilder.ts`), esposti in rationale, API e UI + export testuale
 - [x] resa visiva di coverage offensiva e set nelle card verificata con screenshot (OK)
 
-Limiti noti: scelte di set euristiche (talvolta mosse subottimali, abilità non ideale se l'unica
-utile è hidden); la scelta mossa del calc resta euristica (1 calc per coppia, spread standard, niente
-field/abilità avversarie); Mega via strumento non auto-evolve in calc; il meta è preliminare.
+Limiti noti: scelte di set euristiche (talvolta mosse subottimali, abilità non ideale se l'unica utile è hidden); la scelta mossa del calc resta euristica (1 calc per coppia, spread standard, niente field/abilità avversarie); Mega via strumento non auto-evolve in calc; il meta è preliminare.
 
 ## Feature: Fase 2 - UI web minima (handoff §5)
 
-Cosa fa: espone il motore via browser. Engine condiviso `src/engine.ts` (cache candidati), server
-Fastify `src/server.ts` con API REST + static, SPA `src/public/index.html` con le 4 pagine §5.
+Cosa fa: espone il motore via browser. Engine condiviso `src/engine.ts` (cache candidati), server Fastify `src/server.ts` con API REST + static, SPA `src/public/index.html` con le 4 pagine §5.
 
 Definition of done:
 
@@ -223,5 +156,4 @@ Definition of done:
 
 ## Riconciliazione
 
-Ultima verifica: 2026-06-20 al commit 373419b (le schede non riflettono ancora i commit successivi;
-ri-ancorare con `sync-context` dopo il prossimo commit).
+Ultima verifica: 2026-06-20 al commit 373419b (le schede non riflettono ancora i commit successivi; ri-ancorare con `sync-context` dopo il prossimo commit).

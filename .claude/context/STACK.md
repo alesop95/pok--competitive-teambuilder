@@ -13,19 +13,13 @@ source-doc: pokemon-champions-team-builder-spec.md
 
 # Stack applicativo
 
-> Documento di recupero più importante: tracciato, perché un collega che clona deve vederlo. Le
-> decisioni di stack derivano dall'handoff `pokemon-champions-team-builder-spec.md` (§2, §9), che
-> resta la fonte. I dettagli di implementazione dei file si affinano leggendo il codice man mano.
+> Documento di recupero più importante: tracciato, perché un collega che clona deve vederlo. Le decisioni di stack derivano dall'handoff `pokemon-champions-team-builder-spec.md` (§2, §9), che resta la fonte. I dettagli di implementazione dei file si affinano leggendo il codice man mano.
 
 ## Stack e runtime
 
-Il backend è interamente Node.js, versione 20 o superiore LTS, scritto in TypeScript. Il web server
-è Fastify. La gestione delle dipendenze è npm tramite `package.json`, con `package-lock.json`
-tracciato per garantire build riproducibili; l'avvio è identico su Windows e Linux (`npm install`
-poi `npm run dev`), senza script di shell separati per i due sistemi operativi.
+Il backend è interamente Node.js, versione 20 o superiore LTS, scritto in TypeScript. Il web server è Fastify. La gestione delle dipendenze è npm tramite `package.json`, con `package-lock.json` tracciato per garantire build riproducibili; l'avvio è identico su Windows e Linux (`npm install` poi `npm run dev`), senza script di shell separati per i due sistemi operativi.
 
-I dati di gioco non si importano a mano: arrivano dall'ecosistema open source MIT costruito attorno
-a Pokémon Showdown. Le dipendenze npm dirette, con licenza e ruolo, sono le seguenti.
+I dati di gioco non si importano a mano: arrivano dall'ecosistema open source MIT costruito attorno a Pokémon Showdown. Le dipendenze npm dirette, con licenza e ruolo, sono le seguenti.
 
 ```
 @pkmn/dex     MIT  dati di gioco completi: specie, stats base, abilità, movepool, type chart
@@ -38,20 +32,11 @@ fastify       MIT  web server leggero (Fase 2+)
               https://www.npmjs.com/package/fastify  ·  repo https://github.com/fastify/fastify
 ```
 
-DevDependencies: TypeScript (compilatore Apache 2.0), Vitest (MIT,
-https://www.npmjs.com/package/vitest) come test runner, tsx (MIT) per eseguire TS senza build
-in sviluppo, e Vite (MIT, https://www.npmjs.com/package/vite) per impacchettare la SPA client-side
-(ADR-009/ADR-011): build con `npm run build:web`, sviluppo con `npm run dev:web`, anteprima con
-`npm run preview:web`.
+DevDependencies: TypeScript (compilatore Apache 2.0), Vitest (MIT, https://www.npmjs.com/package/vitest) come test runner, tsx (MIT) per eseguire TS senza build in sviluppo, e Vite (MIT, https://www.npmjs.com/package/vite) per impacchettare la SPA client-side (ADR-009/ADR-011): build con `npm run build:web`, sviluppo con `npm run dev:web`, anteprima con `npm run preview:web`.
 
-Installati in aggiunta (Fase 1-3): `@pkmn/mods` (MIT, espone la mod `champions` - ADR-005),
-`@pkmn/data` (MIT, costruisce la `Generation` per `@smogon/calc` dalla dex moddata - Fase 3),
-`@fastify/static` (MIT, serve il frontend - Fase 2), `@pkmn/sets` (MIT, import/export dei team nel
-formato testuale Pokémon Showdown - ADR-010, `src/showdown.ts`).
+Installati in aggiunta (Fase 1-3): `@pkmn/mods` (MIT, espone la mod `champions` - ADR-005), `@pkmn/data` (MIT, costruisce la `Generation` per `@smogon/calc` dalla dex moddata - Fase 3), `@fastify/static` (MIT, serve il frontend - Fase 2), `@pkmn/sets` (MIT, import/export dei team nel formato testuale Pokémon Showdown - ADR-010, `src/showdown.ts`).
 
-Pacchetti opzionali non installati: `@smogon/sets` (MIT, set da usage stats Showdown; riflette il
-meta dei tier Showdown, non quello Champions, solo riferimento generico), `@pkmn/dmg` (MIT,
-successore di `@smogon/calc`), `better-sqlite3` (MIT, solo se servirà un DB - vedi ADR-003).
+Pacchetti opzionali non installati: `@smogon/sets` (MIT, set da usage stats Showdown; riflette il meta dei tier Showdown, non quello Champions, solo riferimento generico), `@pkmn/dmg` (MIT, successore di `@smogon/calc`), `better-sqlite3` (MIT, solo se servirà un DB - vedi ADR-003).
 
 ## Fonti open source da consultare (non installate, ma origine di dati/logica)
 
@@ -66,9 +51,7 @@ calc.pokemonshowdown.com           -       calcolatore ufficiale, per verifiche 
 
 ## Fonti dati di stagione (serebii.net) - da rileggere a ogni aggiornamento del roster
 
-Fonte autorevole per la disponibilità di stagione (Pokémon, mosse, strumenti), da riconsultare ogni
-volta che cambia la stagione prima di rigenerare i file `data/seasons/`. Riferimento, non dipendenze.
-La procedura operativa di aggiornamento vive in `data/seasons/README.md` (handoff §8).
+Fonte autorevole per la disponibilità di stagione (Pokémon, mosse, strumenti), da riconsultare ogni volta che cambia la stagione prima di rigenerare i file `data/seasons/`. Riferimento, non dipendenze. La procedura operativa di aggiornamento vive in `data/seasons/README.md` (handoff §8).
 
 ```
 Pokémon disponibili     https://www.serebii.net/pokemonchampions/pokemon.shtml
@@ -79,16 +62,11 @@ Strumenti disponibili   https://www.serebii.net/pokemonchampions/items.shtml
 
 ## Alternative deliberatamente escluse
 
-Python come linguaggio del backend: scartato (ADR-002) perché imporrebbe un ponte permanente verso
-Node per usare l'ecosistema `@pkmn`/`@smogon`, nativo TypeScript. Battle engine completo / simulazione
-turno per turno: fuori ambito per l'MVP, l'app ragiona per sinergie e coverage, non per simulazione
-(eventuale Fase 5). Database relazionale o SQLite per l'MVP: non necessario (ADR-003), si usano file
-flat JSON/YAML. Client di Pokémon Showdown: escluso per licenza AGPLv3 e perché non serve la loro UI.
+Python come linguaggio del backend: scartato (ADR-002) perché imporrebbe un ponte permanente verso Node per usare l'ecosistema `@pkmn`/`@smogon`, nativo TypeScript. Battle engine completo / simulazione turno per turno: fuori ambito per l'MVP, l'app ragiona per sinergie e coverage, non per simulazione (eventuale Fase 5). Database relazionale o SQLite per l'MVP: non necessario (ADR-003), si usano file flat JSON/YAML. Client di Pokémon Showdown: escluso per licenza AGPLv3 e perché non serve la loro UI.
 
 ## Flussi di codice e ruolo architetturale dei file
 
-La struttura sorgente segue §6 dell'handoff. In Fase 0 i moduli sono stub commentati; la logica
-arriva in Fase 1+.
+La struttura sorgente segue §6 dell'handoff. In Fase 0 i moduli sono stub commentati; la logica arriva in Fase 1+.
 
 ```
 src/dataSource.ts    interfaccia di accesso ai dati (ADR-009): readText/writeText/list, niente Node
@@ -124,5 +102,4 @@ scripts/refresh_meta_sets.ts    opzionale: aggiorna riferimento da @smogon/sets
 
 ## Riferimenti a snippet
 
-Da popolare leggendo il codice quando la Fase 1 implementa la logica. In Fase 0 i file sono stub.
-Per le regole di tagging dei ruoli la fonte è l'handoff §4.1; per lo scoring dei team §4.2.
+Da popolare leggendo il codice quando la Fase 1 implementa la logica. In Fase 0 i file sono stub. Per le regole di tagging dei ruoli la fonte è l'handoff §4.1; per lo scoring dei team §4.2.
