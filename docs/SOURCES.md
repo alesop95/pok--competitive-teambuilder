@@ -111,6 +111,7 @@ Strumenti gratuiti consultati come confronto o ispirazione; non fanno parte del 
 |---|---|
 | Pikalytics - Team Builder | https://www.pikalytics.com/team |
 | ChampTeams.gg | https://champteams.gg/ |
+| ChampTeams.gg - Builder (riferimento della modalità Costruisci) | https://champteams.gg/builder |
 | VGC.tools | https://vgc.tools/ |
 | Champions Builder | https://www.championsbuilder.com/ |
 | Champions Lab | https://championslab.xyz/team-builder |
